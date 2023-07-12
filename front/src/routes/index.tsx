@@ -5,7 +5,6 @@ import { Register } from '../pages/Register';
 // import { Error404 } from '../pages/Error404';
 // import { Home } from '../pages/Home';
 
-
 export const Router = () => {
   return (
     <Routes>
