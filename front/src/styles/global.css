@@ -7,7 +7,7 @@
 body {
   height: 100vh;
   width: 100vw;
-  background-image: url("../assets/images/background.svg");
+  background-image: url("../assets/images/background.jpg");
   background-size: cover;
   background-repeat: no-repeat;
   display: flex;
