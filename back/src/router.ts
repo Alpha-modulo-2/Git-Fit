@@ -9,5 +9,7 @@ const userController = new UserController();
 router.post("/users/", userController.insert);
 router.get("/users/:id", userController.getOne);
 router.get("/users/", userController.get);
+router.patch("/users/:id", userController.update);
+router.delete("/users/:id", userController.delete);
 
 export { router };

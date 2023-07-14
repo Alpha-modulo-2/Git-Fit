@@ -1,16 +1,15 @@
-import { ObjectId } from "mongodb";
-
 export default interface IUser {
-    userName: String,
-    password: String,
-    email: String,
+    userName: string,
+    password: string,
+    email: string,
     created_at: Date,
-    friends: [ObjectId],
-    photo: String,
-    gender: String,
-    weight: String,
-    height: String,
-    occupation: String,
-    age: Number,
-    id?: ObjectId,
+    updated_at: Date,
+    friends: [string],
+    photo: string,
+    gender: string,
+    weight: string,
+    height: string,
+    occupation: string,
+    age: number,
+    id?: string,
 }

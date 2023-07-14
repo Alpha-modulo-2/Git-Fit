@@ -4,8 +4,6 @@ declare global {
             HOST: string
             PORT: string
             DB_CONN_STRING: string
-            DB_NAME: string
-            USERS_COLLECTION_NAME: string
             JWTSECRET: string
         }
     }
