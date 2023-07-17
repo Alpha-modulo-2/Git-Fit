@@ -11,15 +11,12 @@ export const Register = () => {
       <div className="All-content-register">
         <div className="container-register-content">
           <div className="menu-register">
-
             <div className="container-first-content-register">
-
               <form encType="multipart/form-data" method="POST" action="/upload">
                 <label htmlFor="photo-upload" className="custom-file-label-register"></label>
                 <input id="photo-upload" className="custom-file-input-register" type="file" name="photo" accept="image/*" />
                 <input type="submit" className="addPhoto-register" value="Adicionar foto" />
               </form>
-
               <br />
               <input type="text" className="input-register" placeholder="Nome Completo" />
               <br />
@@ -42,7 +39,7 @@ export const Register = () => {
               <br />
               <input type="text" className="input-register" placeholder="Confirme a senha" />
               <br />
-              <div className="DivprofessionalProfile">
+              <div className="divprofessionalProfile">
                 <label className="professionalProfile">Perfil Profissional?</label>
                 <br />
                 <label className="switch">
@@ -52,9 +49,11 @@ export const Register = () => {
               </div>
             </div>
           </div>
+
           <div className="divButton">
-            <Button category="primary" label="Cadastrar" onClick={() => navigate("/register")} />
+            <Button category="primary" label="Cadastrar" onClick={() => navigate("/")} />
           </div>
+          
         </div>
       </div>
     </div>

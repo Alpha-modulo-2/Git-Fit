@@ -3,6 +3,7 @@
     padding: 0;
     font-family: "Poppins", sans-serif;
   }
+
   /*All content*/
   .All-content-register {
     display: flex;
@@ -23,6 +24,7 @@
     box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.638);
     background-color: rgba(240, 248, 255, 0.766);
   }
+
   /*Menu content*/
   .menu-register{
     display: flex;
@@ -69,6 +71,7 @@
     color: rgba(115, 83, 186, 1);
     transform: translate(-50%, -50%);
   }
+  
   .addPhoto-register {
     background: transparent !important;
     font-weight: bold;
@@ -110,6 +113,7 @@
   .input-weightHight-register::value {
     color: rgba(115, 83, 186, 1);
   }
+
   /*switch*/
   .switch {
     position: relative;
@@ -122,7 +126,6 @@
     opacity: 0;
     width: 0;
     height: 0;
-
   }
   
   .slider {
@@ -166,8 +169,9 @@
   .slider.round:before {
     border-radius: 50%;
   }
+  
  /*button config*/
-  .DivprofessionalProfile {
+  .divprofessionalProfile {
     margin-top: 15px;
   }
 

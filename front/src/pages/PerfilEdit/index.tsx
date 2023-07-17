@@ -11,15 +11,12 @@ export const PerfilEdit = () => {
       <div className="All-content-edit">
         <div className="container-edit-content">
           <div className="menu-edit">
-
             <div className="container-first-content-edit">
-
               <form encType="multipart/form-data" method="POST" action="/upload">
                 <label htmlFor="photo-upload" className="custom-file-label-edit"></label>
                 <input id="photo-upload" className="custom-file-input-edit" type="file" name="photo" accept="image/*" />
                 <input type="submit" className="addPhoto-edit" value="Adicionar foto" />
               </form>
-
               <br />
               <input type="text" className="input-edit" placeholder="Nome Completo" />
               <br />
@@ -42,7 +39,7 @@ export const PerfilEdit = () => {
               <br />
               <input type="text" className="input-edit" placeholder="Confirme a senha" />
               <br />
-              <div className="DivprofessionalProfile">
+              <div className="divprofessionalProfile">
                 <label className="professionalProfile">Perfil Profissional?</label>
                 <br />
                 <label className="switch">
@@ -51,14 +48,17 @@ export const PerfilEdit = () => {
                 </label>
               </div>
             </div>
+
+
           </div>
-          <div className="divButton-edit">
-            <Button category="primary" label="Editar" onClick={() => navigate("/edit")} />
+            <div className="divButton-edit">
+              <Button category="primary" label="Editar" onClick={() => navigate("/")} />
+            </div>
+            <div className="divDeleteAccount-edit">
+              <button className="deleteAccount-edit">Excluir Conta</button>
+            </div>
           </div>
-          <div className="divDeleteAccount-edit">
-          <button className="deleteAccount-edit">Excluir Conta</button>
-          </div>
-        </div>
+          
       </div>
     </div>
   );
