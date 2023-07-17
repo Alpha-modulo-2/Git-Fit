@@ -6,18 +6,18 @@ import { Button } from "../../components/Button";
 export const PerfilEdit = () => {
   const navigate: NavigateFunction = useNavigate();
   return (
-    <div className="PerfilEdit">
+    <div className="Edit">
       <Header isLoggedIn={true} />
-      <div className="All-content-PerfilEdit">
+      <div className="All-content-edit">
         <div className="container-edit-content">
-          <div className="menu-PerfilEdit">
+          <div className="menu-edit">
 
-            <div className="container-first-content-PerfilEdit">
+            <div className="container-first-content-edit">
 
               <form encType="multipart/form-data" method="POST" action="/upload">
-                <label htmlFor="photo-upload" className="custom-file-label-PerfilEdit"></label>
-                <input id="photo-upload" className="custom-file-input-PerfilEdit" type="file" name="photo" accept="image/*" />
-                <input type="submit" className="addPhoto-PerfilEdit" value="Adicionar foto" />
+                <label htmlFor="photo-upload" className="custom-file-label-edit"></label>
+                <input id="photo-upload" className="custom-file-input-edit" type="file" name="photo" accept="image/*" />
+                <input type="submit" className="addPhoto-edit" value="Adicionar foto" />
               </form>
 
               <br />
@@ -30,21 +30,20 @@ export const PerfilEdit = () => {
               <input type="text" className="input-edit" placeholder="Profissão" />
             </div>
 
-            <div className="container-second-content-PerfilEdit">
-
+            <div className="container-second-content-edit">
               <input type="text" className="input-edit" placeholder="Gênero" />
               <br />
-              <div className="pesoAltura">
-                <input type="text" className="input-pesoAltura" placeholder="Peso" />
-                <input type="text" className="input-pesoAltura" placeholder="Altura" />
+              <div className="weightHight-edit">
+                <input type="text" className="input-weightHight-edit" placeholder="Peso" />
+                <input type="text" className="input-weightHight-edit" placeholder="Altura" />
               </div>
               <br />
               <input type="text" className="input-edit" placeholder="Senha" />
               <br />
               <input type="text" className="input-edit" placeholder="Confirme a senha" />
               <br />
-              <div className="align-left">
-                <label className="perfilProfissional">Perfil Profissional?</label>
+              <div className="DivprofessionalProfile">
+                <label className="professionalProfile">Perfil Profissional?</label>
                 <br />
                 <label className="switch">
                   <input type="checkbox" />
@@ -53,8 +52,8 @@ export const PerfilEdit = () => {
               </div>
             </div>
           </div>
-          <div className="divButton-PerfilEdit">
-            <Button category="primary" label="Editar" onClick={() => navigate("/register")} />
+          <div className="divButton-edit">
+            <Button category="primary" label="Editar" onClick={() => navigate("/edit")} />
           </div>
           <div className="divDeleteAccount-edit">
           <button className="deleteAccount-edit">Excluir Conta</button>

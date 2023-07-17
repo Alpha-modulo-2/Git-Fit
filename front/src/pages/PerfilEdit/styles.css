@@ -1,206 +1,190 @@
 * {
-    margin: 0;
-    padding: 0;
-    font-family: "Poppins", sans-serif;
-  }
-  
-  .All-content-PerfilEdit {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  
-  .container-edit-content {
-    margin-top: 5%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    background-color: rgba(240, 248, 255, 0.766);
-    height: 38vw;
-    width: 60vw;
-    border-radius: 25px;
-    border: 0.9px solid rgba(0, 0, 0, 0.604);
-    box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.638);
-  }
-  .menu-PerfilEdit{
-    display: flex;
-    width: 100%;
-  }
-  
-  .container-first-content-PerfilEdit,
-  .container-second-content-PerfilEdit {
-    flex: 1;
-    text-align: center;
-  }
-  
-  .input-edit {
-    padding: 5%;
-    background-color: transparent;
-    color: rgba(115, 83, 186, 1);
-    background: transparent !important;
-    font-weight: bold;
-    border-bottom: 1px solid rgb(0, 0, 0);
-    width: 70%;
-  }
-  
-  
-  .input-edit::placeholder {
-    color: rgb(0, 0, 0);
-  }
-  
-  .input-edit::value {
-    color: rgba(115, 83, 186, 1);
-  }
-  
+  margin: 0;
+  padding: 0;
+  font-family: "Poppins", sans-serif;
+}
+/*All content*/
+.All-content-edit {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 
-  .custom-file-input-PerfilEdit {
-    opacity: 0;
-    position: absolute;
-    width: 0;
-    height: 0;
-  }
-  
-  .custom-file-label-PerfilEdit {
-    display: inline-block;
-    background-color: #ffffff;
-    width: 90px;
-    height: 90px;
-    padding: 10px;
-    border-radius: 50%;
-    border: 0.9px solid rgba(115, 83, 186, 1);
-    cursor: pointer;
-  }
-  
-  .custom-file-label-PerfilEdit::before {
-    content: "+";
-    color: rgba(115, 83, 186, 1);
-    font-size: 70px;
-    border-radius: 50%;
-    background-color: rgb(144, 144, 144);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 5vw;
-    height: 5vw;
-    position: relative;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-  }
-  .addPhoto-PerfilEdit {
-    color: rgba(115, 83, 186, 1);
-    background: transparent !important;
-    font-weight: bold;
-  }
-  .input-pesoAltura {
-    padding: 5%;
-    margin-left: 10px;
-    background-color: transparent;
-    color: rgba(115, 83, 186, 1);
-    background: transparent !important;
-    font-weight: bold;
-    border-bottom: 1px solid rgb(0, 0, 0);
-    width: 34%;
-  }
-  
-  .input-pesoAltura::placeholder {
-    color: rgb(0, 0, 0);
-  }
-  
-  .input-pesoAltura::value {
-    color: rgba(115, 83, 186, 1);
-  }
-  
+.container-edit-content {
+  margin-top: 5%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 38vw;
+  width: 60vw;
+  border-radius: 25px;
+  border: 0.9px solid rgba(0, 0, 0, 0.604);
+  box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.638);
+  background-color: rgba(240, 248, 255, 0.766);
+}
+/*Menu content*/
+.menu-edit{
+  display: flex;
+  width: 100%;
+}
 
-  
-  .switch {
-    position: relative;
-    display: inline-block;
-    width: 60px;
-    height: 34px;
-  }
-  
-  /* Hide default HTML checkbox */
-  .switch input {
-    opacity: 0;
-    width: 0;
-    height: 0;
+.container-first-content-edit,
+.container-second-content-edit {
+  flex: 1;
+  text-align: center;
+}
 
-  }
-  
-  /* The slider */
-  .slider {
-    position: absolute;
-    cursor: pointer;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: #919191;
-    -webkit-transition: .4s;
-    transition: .4s;
-  }
-  
-  .slider:before {
-    position: absolute;
-    content: "";
-    height: 26px;
-    width: 26px;
-    left: 4px;
-    bottom: 4px;
-    background-color: white;
-    -webkit-transition: .4s;
-    transition: .4s;
-  }
-  
-  input:checked + .slider {
-    background-color: rgba(115, 83, 186, 1);
-  }
+.custom-file-input-edit {
+  position: absolute;
+  width: 0;
+  height: 0;
+  opacity: 0;
+}
 
-  input:checked + .slider:before {
-    -webkit-transform: translateX(26px);
-    -ms-transform: translateX(26px);
-    transform: translateX(26px);
-  }
-  
-  /* Rounded sliders */
-  .slider.round {
-    border-radius: 34px;
-  }
-  
-  .slider.round:before {
-    border-radius: 50%;
-  }
+.custom-file-label-edit {
+  display: inline-block;
+  width: 90px;
+  height: 90px;
+  padding: 10px;
+  border-radius: 50%;
+  border: 0.9px solid rgba(115, 83, 186, 1);
+  background-color: #ffffff;
+  cursor: pointer;
+}
 
-  .align-left {
-    margin-top: 15px;
-  }
+.custom-file-label-edit::before {
+  content: "+";
+  font-size: 70px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 5vw;
+  height: 5vw;
+  position: relative;
+  top: 50%;
+  left: 50%;
+  background-color: rgb(144, 144, 144);
+  color: rgba(115, 83, 186, 1);
+  transform: translate(-50%, -50%);
+}
+.addPhoto-edit {
+  background: transparent !important;
+  font-weight: bold;
+  color: rgba(115, 83, 186, 1);
+}
 
-  .c-jlWRHd-jHfZlp-category-primary {
-    /* Estilo personalizado do botão */
-    background-color: #ff0000;
-    border-radius: 8px;
-    border: none;
-    padding: 10px 20px;
-    font-family: Arial, sans-serif;
-    font-weight: bold;
-    color: #ffffff;
-  }
-  .divButton-PerfilEdit{
-    margin-top: 5%;
-  }
-  .perfilProfissional-PerfilEdit{
-    font-weight: bold;
-  }
-  .divDeleteAccount-edit {
+.input-edit {
+  width: 70%;
+  padding: 5%;
+  font-weight: bold;
+  color: rgba(115, 83, 186, 1);
+  border-bottom: 1px solid rgb(0, 0, 0);
+  background-color: transparent;
+  background: transparent !important;
+}
+
+.input-edit::placeholder {
+  color: rgb(0, 0, 0);
+}
+
+.input-edit::value {
+  color: rgba(115, 83, 186, 1);
+}
+
+.input-weightHight-edit {
+  padding: 5%;
+  background-color: transparent;
+  color: rgba(115, 83, 186, 1);
+  background: transparent !important;
+  font-weight: bold;
+  border-bottom: 1px solid rgb(0, 0, 0);
+  width: 35%;
+}
+
+.input-weightHight-edit::placeholder {
+  color: rgb(0, 0, 0);
+}
+
+.input-weightHight-edit::value {
+  color: rgba(115, 83, 186, 1);
+}
+/*switch*/
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #919191;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: rgba(115, 83, 186, 1);
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+/*button config*/
+.DivprofessionalProfile {
+  margin-top: 15px;
+}
+
+.divButton{
+  margin-top: 5%;
+}
+.professionalProfile{
+  font-weight: bold;
+}
+.divDeleteAccount-edit {
     display: flex;
     justify-content: flex-end;
     width: 100%;
     height: 50px;
   }
   
-  .deleteAccount-edit {
+.deleteAccount-edit {
     border-radius: 20px;
     background-color: rgba(166, 38, 38, 1);
     color: #ffffff;
