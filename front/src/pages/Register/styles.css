@@ -1,0 +1,182 @@
+* {
+    margin: 0;
+    padding: 0;
+    font-family: "Poppins", sans-serif;
+  }
+  /*All content*/
+  .All-content-register {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .container-register-content {
+    margin-top: 5%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 38vw;
+    width: 60vw;
+    border-radius: 25px;
+    border: 0.9px solid rgba(0, 0, 0, 0.604);
+    box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.638);
+    background-color: rgba(240, 248, 255, 0.766);
+  }
+  /*Menu content*/
+  .menu-register{
+    display: flex;
+    width: 100%;
+  }
+  
+  .container-first-content-register,
+  .container-second-content-register {
+    flex: 1;
+    text-align: center;
+  }
+
+  .custom-file-input-register {
+    position: absolute;
+    width: 0;
+    height: 0;
+    opacity: 0;
+  }
+  
+  .custom-file-label-register {
+    display: inline-block;
+    width: 90px;
+    height: 90px;
+    padding: 10px;
+    border-radius: 50%;
+    border: 0.9px solid rgba(115, 83, 186, 1);
+    background-color: #ffffff;
+    cursor: pointer;
+  }
+  
+  .custom-file-label-register::before {
+    content: "+";
+    font-size: 70px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 5vw;
+    height: 5vw;
+    position: relative;
+    top: 50%;
+    left: 50%;
+    background-color: rgb(144, 144, 144);
+    color: rgba(115, 83, 186, 1);
+    transform: translate(-50%, -50%);
+  }
+  .addPhoto-register {
+    background: transparent !important;
+    font-weight: bold;
+    color: rgba(115, 83, 186, 1);
+  }
+  
+  .input-register {
+    width: 70%;
+    padding: 5%;
+    font-weight: bold;
+    color: rgba(115, 83, 186, 1);
+    border-bottom: 1px solid rgb(0, 0, 0);
+    background-color: transparent;
+    background: transparent !important;
+  }
+  
+  .input-register::placeholder {
+    color: rgb(0, 0, 0);
+  }
+  
+  .input-register::value {
+    color: rgba(115, 83, 186, 1);
+  }
+  
+  .input-weightHight-register {
+    padding: 5%;
+    background-color: transparent;
+    color: rgba(115, 83, 186, 1);
+    background: transparent !important;
+    font-weight: bold;
+    border-bottom: 1px solid rgb(0, 0, 0);
+    width: 35%;
+  }
+  
+  .input-weightHight-register::placeholder {
+    color: rgb(0, 0, 0);
+  }
+  
+  .input-weightHight-register::value {
+    color: rgba(115, 83, 186, 1);
+  }
+  /*switch*/
+  .switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+  }
+  
+  .switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+
+  }
+  
+  .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #919191;
+    -webkit-transition: .4s;
+    transition: .4s;
+  }
+  
+  .slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    -webkit-transition: .4s;
+    transition: .4s;
+  }
+  
+  input:checked + .slider {
+    background-color: rgba(115, 83, 186, 1);
+  }
+
+  input:checked + .slider:before {
+    -webkit-transform: translateX(26px);
+    -ms-transform: translateX(26px);
+    transform: translateX(26px);
+  }
+  
+  .slider.round {
+    border-radius: 34px;
+  }
+  
+  .slider.round:before {
+    border-radius: 50%;
+  }
+ /*button config*/
+  .DivprofessionalProfile {
+    margin-top: 15px;
+  }
+
+  .divButton{
+    margin-top: 5%;
+  }
+  .professionalProfile{
+    font-weight: bold;
+  }
+  
+  
+  
