@@ -4,8 +4,8 @@ import UserService from "../services/UserServices";
 export default class UserController {
     private service: UserService;
 
-    constructor() {
-        this.service = new UserService();
+    constructor(service?: UserService) {  // Allow service to be injected
+        this.service = service || new UserService();
         this.insert = this.insert.bind(this);
         this.get = this.get.bind(this);
         this.getOne = this.getOne.bind(this);
