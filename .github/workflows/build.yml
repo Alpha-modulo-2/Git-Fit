@@ -23,7 +23,7 @@ jobs:
         working-directory: ./back
 
   test-back:
-    needs: build
+    needs: build-back
     runs-on: ubuntu-latest
 
     steps:
