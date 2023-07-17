@@ -8,16 +8,16 @@ export const PerfilEdit = () => {
   return (
     <div className="PerfilEdit">
       <Header isLoggedIn={true} />
-      <div className="All-content">
+      <div className="All-content-PerfilEdit">
         <div className="container-edit-content">
-          <div className="menu">
+          <div className="menu-PerfilEdit">
 
-            <div className="container-first-content">
+            <div className="container-first-content-PerfilEdit">
 
               <form encType="multipart/form-data" method="POST" action="/upload">
-                <label htmlFor="photo-upload" className="custom-file-label button-add-photo"></label>
-                <input id="photo-upload" className="custom-file-input" type="file" name="photo" accept="image/*" />
-                <input type="submit" className="addPhoto" value="Adicionar foto" />
+                <label htmlFor="photo-upload" className="custom-file-label-PerfilEdit"></label>
+                <input id="photo-upload" className="custom-file-input-PerfilEdit" type="file" name="photo" accept="image/*" />
+                <input type="submit" className="addPhoto-PerfilEdit" value="Adicionar foto" />
               </form>
 
               <br />
@@ -30,7 +30,7 @@ export const PerfilEdit = () => {
               <input type="text" className="input-edit" placeholder="Profissão" />
             </div>
 
-            <div className="container-second-content">
+            <div className="container-second-content-PerfilEdit">
 
               <input type="text" className="input-edit" placeholder="Gênero" />
               <br />
@@ -53,8 +53,11 @@ export const PerfilEdit = () => {
               </div>
             </div>
           </div>
-          <div className="divButton">
-            <Button category="primary" label="Cadastrar" onClick={() => navigate("/register")} />
+          <div className="divButton-PerfilEdit">
+            <Button category="primary" label="Editar" onClick={() => navigate("/register")} />
+          </div>
+          <div className="divDeleteAccount-edit">
+          <button className="deleteAccount-edit">Excluir Conta</button>
           </div>
         </div>
       </div>
