@@ -130,4 +130,40 @@ export default class CardService {
             }
         }
     }
+
+    async delTask(cardId: string, taskId: string): Promise<IResult> {
+        try {
+            const result = await this.repository.delTask(cardId, taskId);
+
+            if (result.error) {
+                throw new Error(result.message);
+            }
+
+            return result;
+        } catch (error: any) {
+            return {
+                error: true,
+                message: error.message,
+                statusCode: 500,
+            };
+        }
+    }
+
+    async delMeal(cardId: string, mealId: string): Promise<IResult> {
+        try {
+            const result = await this.repository.delMeal(cardId, mealId);
+
+            if (result.error) {
+                throw new Error(result.message);
+            }
+
+            return result;
+        } catch (error: any) {
+            return {
+                error: true,
+                message: error.message,
+                statusCode: 500,
+            };
+        }
+    }
 }

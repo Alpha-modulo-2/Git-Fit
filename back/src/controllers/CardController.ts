@@ -18,8 +18,8 @@ export default class CardController {
         this.addMeal = this.addMeal.bind(this);
         this.updateTask = this.updateTask.bind(this);
         this.updateMeal = this.updateMeal.bind(this);
-        //this.update = this.update.bind(this);
-        //this.delete = this.delete.bind(this);
+        this.delTask = this.delTask.bind(this);
+        this.delMeal = this.delMeal.bind(this);
     }
 
     async insert(req: Request, res: Response) {
@@ -150,6 +150,42 @@ export default class CardController {
             return res.status(result.statusCode || 500).json(result.card || result.message);
         } catch (error: any) {
             console.log("Erro ao atualizar a refeição:", error.message);
+            return res.status(500).json({
+                error: true,
+                statusCode: 500,
+                message: error.message
+            });
+        }
+    }
+
+    async delTask(req: Request, res: Response) {
+        const { cardId, taskId } = req.params;
+
+        try {
+            const result = await this.service.delTask(cardId, taskId);
+            console.log(TAG, result);
+
+            return res.status(result.statusCode).json(result.card || result.message);
+        } catch (error: any) {
+            console.log("Erro ao deletar a task:", error.message);
+            return res.status(500).json({
+                error: true,
+                statusCode: 500,
+                message: error.message
+            });
+        }
+    }
+
+    async delMeal(req: Request, res: Response) {
+        const { cardId, mealId } = req.params;
+
+        try {
+            const result = await this.service.delMeal(cardId, mealId);
+            console.log(TAG, result);
+            
+            return res.status(result.statusCode).json(result.card || result.message);
+        } catch (error: any) {
+            console.log("Erro ao deletar a refeição:", error.message);
             return res.status(500).json({
                 error: true,
                 statusCode: 500,

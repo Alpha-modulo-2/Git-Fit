@@ -23,6 +23,7 @@ router.post("/card/:cardId/task", cardController.addTask); //Add uma task ao car
 router.post("/card/:cardId/meal", cardController.addMeal); //Add uma refeição ao card indicado
 router.patch("/card/:cardId/task/:taskId", cardController.updateTask); //Atualiza uma task do card indicado
 router.patch("/card/:cardId/meal/:mealId", cardController.updateMeal); //Atualiza uma meal do card indicado
-//router.delete("/users/:id", cardController.delete);
+router.delete("/card/:cardId/task/:taskId", cardController.delTask); //Deleta uma task do card indicado
+router.delete("/card/:cardId/meal/:mealId", cardController.delMeal); //Deleta uma meal do card indicado
 
 export { router };

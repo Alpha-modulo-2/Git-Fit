@@ -1,5 +1,6 @@
 import IResult from "../interfaces/IResult";
 /* import IUpdateCardData from "../interfaces/IUpdateCardData"; */
+import { Types } from 'mongoose';
 import ICard from "../interfaces/ICard";
 import ITask from "../interfaces/ITask";
 import IMeal from "../interfaces/IMeal";
@@ -103,6 +104,9 @@ export default class CardRepository {
     async addTask(cardId: string, task: ITask): Promise<IResult> {
         try {
             console.log(TAG, "entrou");
+            if (!task._id) {
+                task._id = new Types.ObjectId();
+            }
             const card = await cardModel.findByIdAndUpdate(
                 cardId,
                 // O que será dado Update
@@ -136,6 +140,9 @@ export default class CardRepository {
     async addMeal(cardId: string, meal: IMeal): Promise<IResult> {
         try {
             console.log(TAG, "entrou");
+            if (!meal._id) {
+                meal._id = new Types.ObjectId();
+            }
             const card = await cardModel.findByIdAndUpdate(
                 cardId,
                 { $push: { "mealsCard.meals": meal } },
@@ -227,34 +234,64 @@ export default class CardRepository {
         }
     }
 
-/*     async delete(id: string): Promise<IResult> {
-
+    async delTask(cardId: string, taskId: string): Promise<IResult> {
         try {
-
-            const user = await userModel.findById(id)
-
-            if (user) {
-
-                user.deleteOne()
-
+            console.log(TAG, "entrou");
+            const card = await cardModel.findOneAndUpdate(
+                { _id: cardId },
+                { $pull: { 'trainingCard.tasks': { _id: taskId } } },
+                { new: true }
+            );
+            console.log(TAG, card);
+            if (!card) {
                 return {
-                    error: false,
-                    statusCode: 204,
-                }
+                    error: true,
+                    message: "Card or Task not found",
+                    statusCode: 404,
+                };
             }
 
             return {
-                error: true,
-                statusCode: 404,
-                message: "User not found"
-            }
-
+                error: false,
+                statusCode: 200,
+                card,
+            };
         } catch (error: any) {
             return {
                 error: true,
                 message: error.message,
                 statusCode: 500,
-            }
+            };
         }
-    } */
+    }
+
+    async delMeal(cardId: string, mealId: string): Promise<IResult> {
+        try {
+            const card = await cardModel.findOneAndUpdate(
+                { _id: cardId },
+                { $pull: { 'mealsCard.meals': { _id: mealId } } },
+                { new: true }
+            );
+
+            if (!card) {
+                return {
+                    error: true,
+                    message: "Card or Meal not found",
+                    statusCode: 404,
+                };
+            }
+
+            return {
+                error: false,
+                statusCode: 200,
+                card,
+            };
+        } catch (error: any) {
+            return {
+                error: true,
+                message: error.message,
+                statusCode: 500,
+            };
+        }
+    }
 }
