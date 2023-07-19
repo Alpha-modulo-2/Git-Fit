@@ -9,9 +9,9 @@ import { Profile } from "../pages/Profile";
 export const Router = () => {
   return (
     <Routes>
-      <Route path="/" element={<LandingPage />} />
-      <Route path="/register" element={<Register />} />
-      <Route path="/profile" element={<Profile />} />
+      <Route path="/landing-page" Component={LandingPage} />
+      <Route path="/register" Component={Register} />
+      <Route path="/profile" Component={Profile} />
       {/* <Route path="*" element={<Error404 />} />
       <Route path="/" element={<Navigate to="/home" />} />
       <Route path="/details/:type/:movieTitle/:movieId" element={<Details />} /> */}
