@@ -1,0 +1,30 @@
+.structure-photo-profile{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.name-profile{
+    border-radius: 5rem;
+    background-color: #C7D3EB;
+    width: 170px;
+    text-align: center;
+    padding: 0.5rem;
+    border: 1px solid rgb(0, 0, 0);
+}
+
+.moldure-photo{
+    background-color: #C7D3EB;
+    width: 200px;
+    height: 200px;
+    border-radius: 25rem;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 0.5rem #7353BA solid;
+}
+
+.photo-profile{
+    height: 100%;
+}
