@@ -1,5 +1,5 @@
 import IResult from "../interfaces/IResult";
-import IUpdateData from "../interfaces/IUpdateData";
+import IUpdateData from "../interfaces/IUpdateUserData";
 import IUser from "../interfaces/IUser";
 import UserRepository from "../repositories/UserRepository";
 

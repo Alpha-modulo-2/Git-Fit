@@ -1,5 +1,5 @@
 import IResult from "../interfaces/IResult";
-import IUpdateData from "../interfaces/IUpdateData";
+import IUpdateUserData from "../interfaces/IUpdateUserData";
 import IUser from "../interfaces/IUser";
 import { userModel } from "../models/user";
 
@@ -70,7 +70,7 @@ export default class UserRepository {
         }
     }
 
-    async update(id: string, updateData: IUpdateData): Promise<IResult> {
+    async update(id: string, updateData: IUpdateUserData): Promise<IResult> {
 
         try {
 
