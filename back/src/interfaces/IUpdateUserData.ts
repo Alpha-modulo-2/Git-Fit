@@ -1,4 +1,4 @@
-export default interface IUpdateData {
+export default interface IUpdateUserData {
     userName?: string,
     password?: string,
     email?: string,
