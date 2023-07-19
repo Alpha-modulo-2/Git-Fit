@@ -9,7 +9,7 @@ import { Profile } from "../pages/Profile";
 export const Router = () => {
   return (
     <Routes>
-      <Route path="/landing-page" Component={LandingPage} />
+      <Route path="/landing" Component={LandingPage} />
       <Route path="/register" Component={Register} />
       <Route path="/profile" Component={Profile} />
       {/* <Route path="*" element={<Error404 />} />
