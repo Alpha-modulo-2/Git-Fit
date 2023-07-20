@@ -1,0 +1,26 @@
+name: Deploy
+
+on: workflow_dispatch
+
+jobs:
+  deploy-production:
+    runs-on: self-hosted
+
+    if: github.ref_name == 'main'
+
+    strategy:
+      matrix:
+        node-version: [12.x]
+
+    steps:
+      - uses: actions/checkout@v3
+        - name: Use Node.js ${{ matrix.node-version }}
+          uses: actions/setup-node@v1
+          with:
+            node-version: ${{ matrix.node-version }}
+
+      - name: Git pull
+        run: git pull origin main
+
+      - name: Run Docker Compose
+        run: docker-compose up --build -d
