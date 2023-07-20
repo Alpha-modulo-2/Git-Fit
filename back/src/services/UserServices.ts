@@ -6,13 +6,11 @@ import UserRepository from "../repositories/UserRepository";
 export default class UserService {
     private repository: UserRepository;
 
-    constructor() {
-        this.repository = new UserRepository();
+    constructor(repository: UserRepository = new UserRepository()) {
+        this.repository = repository;
     }
 
     async insert(user: IUser): Promise<IResult> {
-
-        // user = { ...user, created_at: new Date, updated_at: new Date }
 
         try {
             const result = await this.repository.insert(user);

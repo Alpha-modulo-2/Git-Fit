@@ -1,0 +1,29 @@
+.see-more {
+  height: 100%;
+}
+.container-all-content-seemore {
+  display: flex;
+  justify-content: center;
+  color: #fff;
+  font-family: "Poppins", sans-serif;
+  height: 85%;
+}
+
+.container-content-seemore {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5rem;
+  width: 50%;
+
+}
+
+.text-see-more{
+  padding: 2.5rem 3rem;
+  max-height: 100%;
+  text-align: center;
+  border-radius: 1.1rem;
+  background-color: #7353BAA9;
+  overflow: auto;
+}

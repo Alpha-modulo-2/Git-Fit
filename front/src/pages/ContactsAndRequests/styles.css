@@ -1,0 +1,137 @@
+.contacts-page {
+  height: 100%;
+}
+.container-contacts-request {
+  display: flex;
+  justify-content: center;
+  color: #000000;
+  font-family: "Poppins", sans-serif;
+  height: 85%;
+}
+/* problema com essa altura */
+
+.content-contacts {
+  width: 50rem;
+  /* padding: 0 2rem; */
+  color: black;
+  background-color: #ffffffd5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-radius: 25px;
+}
+
+.container-titles-contacts{
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+  font-weight: 500;
+  /* padding: 1.5rem 2.5rem 0.5rem 2.5rem; */
+
+}
+
+.titles-line{
+  width: 1px;
+  height: 2rem;
+  background-color: #000000;
+}
+
+.contacts-line{
+  width: 95%;
+  height: 1px;
+  background-color: #000000;
+}
+
+.title-contacts{
+  width: 50%;
+  height: 4rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: transform ease-in-out 0.4s;
+}
+
+.title-content-right{
+  border-left: 1px solid black;
+}
+
+.title-content-left:hover{
+  border-top-left-radius: 25px;
+  cursor: pointer;
+  background-color: #bea5f8;
+}
+.title-content-right:hover{
+  border-top-right-radius: 25px;
+  cursor: pointer;
+  background-color: #bea5f8;
+}
+
+.container-contact-cards{
+  width: 100%;
+  display: grid; 
+  grid-template-columns: 50% 50%;
+  justify-items: center;
+  grid-auto-rows: 100px;
+  align-items: center;
+  overflow-y: auto;
+  padding-top: 1rem;
+
+  /* column-count: 2; 
+  column-gap: 1rem;  */
+  /* padding: 2rem 0rem 0rem 5.5rem; */
+}
+
+.contact-card{
+  width: 250px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #ffffff;
+  border: 1px solid #000000;
+  border-radius: 1rem;
+
+}
+.contact-card:hover{
+  background-color: #e0e0e0;
+  cursor: pointer;
+
+}
+
+.icon-add-contact{
+  padding-right: 1rem;
+}
+.icon-add-contact:hover{
+  scale: 1.1
+}
+
+
+.img-card-contacts{
+  width:90px;
+  /* overflow: hidden; */
+}
+.img-card-contacts img{
+  width:100%;
+  border-top-left-radius: 25px;
+}
+/* 
+.logo-name {
+  display: flex;
+  flex-direction: column;
+  font-size: 3rem;
+}
+
+.logo-name-git {
+  padding-right: 1rem;
+}
+
+.logo-name-fit {
+  padding-left: 1rem;
+}
+
+.text-info {
+  font-size: 1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 2rem;
+} */
