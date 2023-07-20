@@ -9,7 +9,14 @@ jobs:
     if: github.ref_name == 'main'
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Move .env file to a safe place
+        run: mv .env ../
+
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Move .env file back
+        run: mv ../.env .
 
       - name: Git pull
         run: git pull origin main
