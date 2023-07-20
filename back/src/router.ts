@@ -1,6 +1,7 @@
 import { Router } from "express";
 import UserController from "./controllers/UserController";
 import CardController from "./controllers/CardController";
+import path from "path";
 
 const router: Router = Router();
 
@@ -24,5 +25,9 @@ router.post("/card/:cardId/meal", cardController.addMeal); //Add uma refeição 
 router.patch("/card/:cardId/task/:taskId", cardController.updateTask); //Atualiza uma task do card indicado
 router.patch("/card/:cardId/meal/:mealId", cardController.updateMeal); //Atualiza uma meal do card indicado
 //router.delete("/users/:id", cardController.delete);
+
+router.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public/index.html'));
+});
 
 export { router };

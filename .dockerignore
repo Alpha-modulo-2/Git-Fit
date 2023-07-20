@@ -1,0 +1,21 @@
+# Ignore all logs
+**/*.log
+
+# Ignore node_modules for both front and back
+/front/node_modules
+/back/node_modules
+
+# Ignore .env files
+**/.env
+
+# Ignore .git folder
+.git/
+
+# Ignore any Editors files
+.vscode
+.idea
+*.swp
+*.swo
+
+# Ignore operating system files
+.DS_Store
