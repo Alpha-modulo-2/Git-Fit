@@ -9,17 +9,19 @@ jobs:
     if: github.ref_name == 'main'
 
     steps:
-      - name: Move .env file to a safe place
-        run: mv .env ../
-
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Move .env file back
-        run: mv ../.env .
-
       - name: Git pull
         run: git pull origin main
+
+      - name: Create .env file
+        run: |
+          echo HOST=${{ secrets.HOST }} >> ./back/.env
+          echo PORT=${{ secrets.PORT }} >> ./back/.env
+          echo DB_CONN_STRING=${{ secrets.DB_CONN_STRING }} >> ./back/.env
+          echo JWTSECRET=${{ secrets.JWTSECRET }} >> ./back/.env
+          echo NODE_ENV=${{ secrets.NODE_ENV }} >> ./back/.env
 
       - name: Run Docker Compose
         run: docker-compose up --build -d
