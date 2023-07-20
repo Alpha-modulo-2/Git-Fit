@@ -1,0 +1,18 @@
+name: Deploy
+
+on: workflow_dispatch
+
+jobs:
+  deploy-production:
+    runs-on: self-hosted
+
+    if: github.ref_name == 'main'
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Git pull
+        run: git pull origin main
+
+      - name: Run Docker Compose
+        run: docker-compose up --build -d
