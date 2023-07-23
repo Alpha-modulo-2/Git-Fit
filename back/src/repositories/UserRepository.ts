@@ -58,7 +58,7 @@ export default class UserRepository {
                 return {
                     error: true,
                     statusCode: 500,
-                    message: "User not Found"
+                    message: "Usuário não encontrado"
                 }
             }
         } catch (error: any) {
@@ -101,7 +101,7 @@ export default class UserRepository {
             return {
                 error: true,
                 statusCode: 404,
-                message: "User not found"
+                message: "Usuário não encontrado"
             }
 
         } catch (error: any) {
@@ -133,7 +133,7 @@ export default class UserRepository {
             return {
                 error: true,
                 statusCode: 404,
-                message: "User not found"
+                message: "Usuário não encontrado"
             }
 
         } catch (error: any) {
