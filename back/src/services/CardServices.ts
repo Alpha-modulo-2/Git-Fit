@@ -1,6 +1,5 @@
 import IResult from "../interfaces/IResult";
 import CardRepository from "../repositories/CardRepository";
-import ICard from "../interfaces/ICard";
 import ITask from "../interfaces/ITask";
 import IMeal from "../interfaces/IMeal";
 
@@ -17,7 +16,6 @@ export default class CardService {
 
         try {
             const result = await this.repository.insert(userId);
-            console.log(TAG, result);
 
             if (result.error) {
                 throw new Error(result.message)
@@ -32,7 +30,6 @@ export default class CardService {
     async get(): Promise<IResult> {
         try {
             const result = await this.repository.get();
-            console.log(TAG, result);
 
             if (result.error) {
                 throw new Error(result.message)
@@ -47,7 +44,6 @@ export default class CardService {
     async getOne(cardId: string): Promise<IResult> {
         try {
             const result = await this.repository.getOne(cardId);
-            console.log(TAG, result);
 
             if (result.error) {
                 throw new Error(result.message)
@@ -62,7 +58,6 @@ export default class CardService {
     async addTask(cardId: string, task: ITask): Promise<IResult> {
         try {
             const result = await this.repository.addTask(cardId, task);
-            console.log(TAG, result);
 
             if (result.error) {
                 throw new Error(result.message)
@@ -77,7 +72,6 @@ export default class CardService {
     async addMeal(cardId: string, meal: IMeal): Promise<IResult> {
         try {
             const result = await this.repository.addMeal(cardId, meal);
-            console.log(TAG, result);
 
             if (result.error) {
                 throw new Error(result.message);
@@ -96,7 +90,6 @@ export default class CardService {
     async updateTask(cardId: string, taskId: string, task: ITask): Promise<IResult> {
         try {
             const result = await this.repository.updateTask(cardId, taskId, task);
-            console.log(TAG, result);
 
             if (result.error) {
                 throw new Error(result.message);
@@ -115,7 +108,6 @@ export default class CardService {
     async updateMeal(cardId: string, mealId: string, meal: IMeal): Promise<IResult> {
         try {
             const result = await this.repository.updateMeal(cardId, mealId, meal);
-            console.log(TAG, result);
 
             if (result.error) {
                 throw new Error(result.message)
