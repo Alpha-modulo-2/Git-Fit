@@ -1,5 +1,4 @@
 import IResult from "../interfaces/IResult";
-/* import IUpdateCardData from "../interfaces/IUpdateCardData"; */
 import { Types } from 'mongoose';
 import ICard from "../interfaces/ICard";
 import ITask from "../interfaces/ITask";
@@ -10,7 +9,7 @@ const TAG = "Card Repository "
 
 export default class CardRepository {
     async insert(userId: string): Promise<IResult> {
-        console.log(TAG, "entrou");
+
         const existingCards = await cardModel.findOne({ userId });
 
         if (existingCards) {
@@ -57,8 +56,15 @@ export default class CardRepository {
     
     async get(): Promise<IResult> {
         try {
-            console.log(TAG, "entrou");
             const cards = await cardModel.find().populate("userId");
+
+            if (!cards) {
+                return {
+                    error: true,
+                    statusCode: 404,
+                    message: "Card não encontrado"
+                };
+            }
 
             return {
                 error: false,
@@ -76,7 +82,6 @@ export default class CardRepository {
 
     async getOne(cardId: string): Promise<IResult> {
         try {
-            console.log(TAG, "entrou");
             const card = await cardModel.findById(cardId).populate("userId")
 
             if (card) {
@@ -88,8 +93,8 @@ export default class CardRepository {
             } else {
                 return {
                     error: true,
-                    statusCode: 500,
-                    message: "Card not Found"
+                    statusCode: 404,
+                    message: "Card não encontrado"
                 }
             }
         } catch (error: any) {
@@ -103,23 +108,20 @@ export default class CardRepository {
 
     async addTask(cardId: string, task: ITask): Promise<IResult> {
         try {
-            console.log(TAG, "entrou");
             if (!task._id) {
                 task._id = new Types.ObjectId();
             }
             const card = await cardModel.findByIdAndUpdate(
                 cardId,
-                // O que será dado Update
                 { $push: { "trainingCard.tasks": task } },
-                // Opção para retorna o obejto após a atualização
                 { new: true } 
             );
     
             if (!card) {
                 return {
                     error: true,
-                    message: "Card não encontrado",
                     statusCode: 404,
+                    message: "Card não encontrado"
                 };
             }
     
@@ -139,7 +141,6 @@ export default class CardRepository {
 
     async addMeal(cardId: string, meal: IMeal): Promise<IResult> {
         try {
-            console.log(TAG, "entrou");
             if (!meal._id) {
                 meal._id = new Types.ObjectId();
             }
@@ -152,7 +153,7 @@ export default class CardRepository {
             if (!card) {
                 return {
                     error: true,
-                    message: "Card not found",
+                    message: "Card não encontrado",
                     statusCode: 404
                 }
             }
@@ -173,7 +174,6 @@ export default class CardRepository {
 
     async updateTask(cardId: string, taskId: string, task: ITask): Promise<IResult> {
         try {
-            console.log(TAG, "entrou");
             const card = await cardModel.findOneAndUpdate(
                 { _id: cardId, "trainingCard.tasks._id": taskId },
                 { $set: { "trainingCard.tasks.$": task } },
@@ -181,10 +181,9 @@ export default class CardRepository {
             );
 
             if (!card) {
-                console.log("aqui")
                 return {
                     error: true,
-                    message: "Card or Task not found",
+                    message: "Card ou Task não encontrado",
                     statusCode: 404
                 }
             }
@@ -205,17 +204,16 @@ export default class CardRepository {
 
     async updateMeal(cardId: string, mealId: string, meal: IMeal): Promise<IResult> {
         try {
-            console.log(TAG, "entrou");
             const card = await cardModel.findOneAndUpdate(
                 { "_id": cardId, "mealsCard.meals._id": mealId },
                 { $set: { "mealsCard.meals.$": meal } },
-                { new: true } // Retorna o documento atualizado
+                { new: true } 
             );
     
             if (!card) {
                 return {
                     error: true,
-                    message: "Card or Meal not found",
+                    message: "Card ou Meal não encontrado",
                     statusCode: 404
                 }
             }
@@ -236,17 +234,16 @@ export default class CardRepository {
 
     async delTask(cardId: string, taskId: string): Promise<IResult> {
         try {
-            console.log(TAG, "entrou");
             const card = await cardModel.findOneAndUpdate(
                 { _id: cardId },
                 { $pull: { 'trainingCard.tasks': { _id: taskId } } },
                 { new: true }
             );
-            console.log(TAG, card);
+
             if (!card) {
                 return {
                     error: true,
-                    message: "Card or Task not found",
+                    message: "Card ou Task não encontrado",
                     statusCode: 404,
                 };
             }
@@ -276,7 +273,7 @@ export default class CardRepository {
             if (!card) {
                 return {
                     error: true,
-                    message: "Card or Meal not found",
+                    message: "Card ou Meal não encontrado",
                     statusCode: 404,
                 };
             }
