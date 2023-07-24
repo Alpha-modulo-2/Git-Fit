@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import bcrypt from "bcrypt";
 import UserService from "../services/UserServices";
 
 export default class UserController {
@@ -14,8 +15,11 @@ export default class UserController {
     }
 
     async insert(req: Request, res: Response) {
+        const { password } = req.body
         try {
-            const result = await this.service.insert(req.body);
+            const passwordHash = await bcrypt.hash(password, 10);
+
+            const result = await this.service.insert({ ...req.body, password: passwordHash });
             return res.status(result.statusCode || 500).json(result.user || result.message);
         } catch (error: any) {
             console.log("Erro ao inserir a conta", error.message);

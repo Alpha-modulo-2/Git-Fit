@@ -2,6 +2,7 @@ import { Router } from "express";
 import UserController from "./controllers/UserController";
 import CardController from "./controllers/CardController";
 import path from "path";
+import loginController from "./controllers/loginController";
 
 const router: Router = Router();
 
@@ -26,8 +27,13 @@ router.patch("/card/:cardId/task/:taskId", cardController.updateTask); //Atualiz
 router.patch("/card/:cardId/meal/:mealId", cardController.updateMeal); //Atualiza uma meal do card indicado
 //router.delete("/users/:id", cardController.delete);
 
+router.post("/login", loginController.login);
+// router.delete("/logout", loginController.logout);
+
 router.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, 'public/index.html'));
 });
+
+
 
 export { router };
