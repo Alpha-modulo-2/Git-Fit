@@ -1,10 +1,8 @@
 import "./styles.css";
 import { Header } from "../../components/Header";
-import { NavigateFunction, useNavigate } from "react-router-dom";
 import { Button } from "../../components/Button";
 
 export const Register = () => {
-  const navigate: NavigateFunction = useNavigate();
   return (
     <div className="Register">
       <Header isLoggedIn={true} />
@@ -18,26 +16,26 @@ export const Register = () => {
                 <input type="submit" className="addPhoto-register" value="Adicionar foto" />
               </form>
               <br />
-              <input type="text" className="input-register" placeholder="Nome Completo" />
+              <input type="text" id="userName" className="input-register" placeholder="Nome Completo" />
               <br />
-              <input type="text" className="input-register" placeholder="E-mail" />
+              <input type="text" id="email" className="input-register" placeholder="E-mail" />
               <br />
-              <input type="text" className="input-register" placeholder="Idade" />
+              <input type="text" id="age" className="input-register" placeholder="Idade" />
               <br />
-              <input type="text" className="input-register" placeholder="Profissão" />
+              <input type="text" id="occupation" className="input-register" placeholder="Profissão" />
             </div>
 
             <div className="container-second-content-register">
-              <input type="text" className="input-register" placeholder="Gênero" />
+              <input type="text" id="gender" className="input-register" placeholder="Gênero" />
               <br />
               <div className="weightHight-register">
-                <input type="text" className="input-weightHight-register" placeholder="Peso" />
-                <input type="text" className="input-weightHight-register" placeholder="Altura" />
+                <input type="text" id="weight" className="input-weightHight-register" placeholder="Peso" />
+                <input type="text" id="height" className="input-weightHight-register" placeholder="Altura" />
               </div>
               <br />
-              <input type="text" className="input-register" placeholder="Senha" />
+              <input type="password" id="password" className="input-register" placeholder="Senha" />
               <br />
-              <input type="text" className="input-register" placeholder="Confirme a senha" />
+              <input type="password" id="passwordCheck" className="input-register" placeholder="Confirme a senha" />
               <br />
               <div className="divprofessionalProfile">
                 <label className="professionalProfile">Perfil Profissional?</label>
@@ -51,7 +49,29 @@ export const Register = () => {
           </div>
 
           <div className="divButton">
-            <Button category="primary" label="Cadastrar" onClick={() => navigate("/")} />
+            <Button category="primary" label="Cadastrar" onClick={async () => {
+              let userName = (document.getElementById("userName") as HTMLInputElement)?.value;
+              let email = (document.getElementById('email') as HTMLInputElement)?.value;
+              let occupation = (document.getElementById('occupation') as HTMLInputElement)?.value;
+              let password = (document.getElementById('password') as HTMLInputElement)?.value;
+
+              // let passwordCheck = document.getElementById('passwordCheck')?.textContent;
+
+              let user = {userName,  email,  occupation, password};
+              console.log(user)
+              
+              const response = await fetch("http://localhost:3000/users", {
+                method: 'POST',
+                body: JSON.stringify(user),
+                headers: {'Content-Type': 'application/json'} 
+              });
+          
+              if (!response.ok) 
+              { 
+                  console.error("Error");
+              }
+ 
+            }} />
           </div>
           
         </div>
