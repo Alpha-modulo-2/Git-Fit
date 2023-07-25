@@ -20,7 +20,7 @@ const cardController = new CardController();
 router.post("/cards/:userId", cardController.insert);
 router.get("/allcards/:userId", cardController.get);
 router.get("/card/:cardId", cardController.getOne);
-router.post("/card/:cardId/task", cardController.addTask); 
+router.post("/card/:cardId/task", cardController.addTask);
 router.post("/card/:cardId/meal", cardController.addMeal);
 router.patch("/card/:cardId/task/:taskId", cardController.updateTask);
 router.patch("/card/:cardId/meal/:mealId", cardController.updateMeal);
