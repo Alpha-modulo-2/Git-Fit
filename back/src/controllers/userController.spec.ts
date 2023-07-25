@@ -16,8 +16,9 @@ describe('UserController', () => {
     let userService: MockUserService;
 
     const mockUser: IUser = {
+        "id": "123456789101112131415161",
         "userName": "teste",
-        "password": "teste",
+        "password": "teste123",
         "email": "teste@teste.com",
         "friends": [""],
         "created_at": new Date,
@@ -77,13 +78,20 @@ describe('UserController', () => {
         expect(res.json).toHaveBeenCalledWith(users);
     });
 
-    it('should update a user', async () => {
-        userService.update.mockResolvedValue({ error: false, statusCode: 200, user: mockUser });
+    fit('should update a user', async () => {
+        const { id, ...restOfUser } = mockUser
+        const req = {
+            params: {
+                id: id,
+            },
+            body: { ...restOfUser }
+        }
+        userService.update.mockResolvedValue({ error: false, statusCode: 200, user: restOfUser, });
 
         await userController.update(req, res);
 
         expect(res.status).toHaveBeenCalledWith(200);
-        expect(res.json).toHaveBeenCalledWith(mockUser);
+        expect(res.json).toHaveBeenCalledWith(restOfUser);
     });
 
     it('should delete a user', async () => {

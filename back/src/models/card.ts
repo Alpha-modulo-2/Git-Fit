@@ -1,13 +1,13 @@
-import mongoose, { Schema, model } from 'mongoose';
+import { Schema, model } from 'mongoose';
 import ICard from '../interfaces/ICard';
 
 const TaskSchema: Schema = new Schema({
-    _id: { type: mongoose.Schema.Types.ObjectId, auto: true },
+    _id: { type: Schema.Types.ObjectId},
     description: String,
 });
 
 const MealSchema: Schema = new Schema({
-    _id: { type: mongoose.Schema.Types.ObjectId, auto: true },
+    _id: { type: Schema.Types.ObjectId },
     description: String,
 });
 
