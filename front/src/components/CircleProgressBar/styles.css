@@ -62,6 +62,7 @@
     width: 5em;
     height: 5em;
  }
+ 
  .progress-circle:not(.over50) .first50-bar{ display: none; }
  
  .progress-circle.p0 .value-bar { display: none; }

@@ -1,0 +1,46 @@
+.structure-daily-card{
+    margin-bottom: 1rem;
+    width: 23vw;
+    height: 16vw;
+    background-color: #151b228f;
+    border: 2px solid rgb(255, 255, 255);
+    border-radius: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    padding: 1.5rem;
+    color: rgb(255, 255, 255);
+    font-family: "Arial";
+    cursor: pointer;
+}
+
+.structure-daily-card:hover{
+  background-color: #151b22e9;
+}
+
+.structure-daily-card:active{
+    background-color: #151b22e7;
+    border: 2px solid rgb(0, 0, 0);
+}
+
+.structure-daily-card h2{
+    line-height: 2rem;
+}
+
+.body-card{
+    margin: 1%;
+    border-top: 1.5px solid rgb(255, 255, 255);
+    display: flex;
+    height: 70%;
+    flex-direction: column;
+    justify-content: space-around;
+}
+
+.training-day-card{
+    display: flex;
+    align-items: center;
+}
+
+.training-day-card p{
+    font-size: 1.1rem;
+    margin-left: 0.5rem;
+}

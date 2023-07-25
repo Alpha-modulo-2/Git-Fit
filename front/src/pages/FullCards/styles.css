@@ -1,0 +1,130 @@
+.structure-fullcard{
+    display: flex;
+    justify-content: flex-start;
+}  
+
+.structure-carrossel{
+    position: absolute;
+    right: 0.1rem;
+    width: 30vw;
+    height: 88vh;
+    overflow-y: scroll;
+    overflow-x: hidden;
+  }
+  
+.structure-carrossel::-webkit-scrollbar-track{
+  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+	border-radius: 10px;
+	background-color: #151b228f;
+}
+
+.structure-carrossel::-webkit-scrollbar
+{
+	width: 12px;
+	background-color: #ffffff00;
+}
+
+.structure-carrossel::-webkit-scrollbar-thumb
+{
+	border-radius: 10px;
+	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+	background-color: #949191;
+}
+
+  .background-card{
+    font-family: "Poppins", sans-serif;
+    width: 50vw;
+    height: 87vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-evenly;
+    background-color: #151b228f;
+    margin-left: 8%;
+    margin-right: 3%;
+    border: 1.5px solid rgb(255, 255, 255);
+    border-radius: 1.5rem;
+    align-self: center;
+  }
+  
+.background-card h2{
+  line-height: 1.5rem;
+  color: rgb(255, 255, 255);
+}
+
+.div_training_card{
+  border: 1.5px solid rgb(255, 255, 255);
+  background-color: #151b228f;
+  border-radius: 1.5rem;
+  width: 80%;
+  height: 40%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.div_meal_card{
+  border: 1.5px solid rgb(255, 255, 255);
+  background-color: #151b228f;
+  border-radius: 1.5rem;
+  width: 80%;
+  height: 40%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.title_training_card, .title_meal_card{
+  color: white;
+  width: 90%;
+  padding: 1rem;
+  display: flex;
+  justify-content: space-between;
+  border-bottom: white solid 1px;
+}
+
+.body_training_card{
+  color: white;
+  width: 90%;
+  padding: 1rem;
+}
+
+.body_training_card h3{
+  font-size: 1rem;
+  margin-bottom: 0.8rem;
+}
+
+.body_training_card li{
+  font-size: 0.8rem;
+}
+
+.daily_training_check, .daily_meal_check{
+  width: 90%;
+  display: flex;
+  justify-content: end;
+}
+
+.daily_training_checkbox, .daily_meal_checkbox{
+  width: 1.2rem;
+  height: 1.2rem;
+}
+
+.body_meal_card{
+  color: white;
+  width: 80%;
+  height: 60%;
+  padding: 1rem;
+  display: flex;
+  justify-content: space-between;
+}
+
+.body_meal_card h3{
+  font-size: 0.8rem;
+  margin-bottom: 1rem;
+}
+
+.body_meal_card li{
+  font-size: 0.8rem;
+}

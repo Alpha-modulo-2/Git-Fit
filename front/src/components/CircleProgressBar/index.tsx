@@ -26,7 +26,7 @@ export const CircleProgressBar = ({progress, title_bar}:PropTypes) => {
                 <span>{title_progress}</span>
                 <div className="clipper-progress-bar">
                     <div className="first50-bar"></div>
-                    <div className="value-bar"></div>
+                    <div className="value-bar red"></div>
                 </div>
             </div>
     </div>
