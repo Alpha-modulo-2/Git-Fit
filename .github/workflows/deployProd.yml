@@ -1,0 +1,27 @@
+name: Deploy
+
+on: workflow_dispatch
+
+jobs:
+  deploy-production:
+    runs-on: self-hosted
+
+    if: github.ref_name == 'main'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Git pull
+        run: git pull origin main
+
+      - name: Create .env file
+        run: |
+          echo HOST=${{ secrets.HOST }} >> ./back/.env
+          echo PORT=${{ secrets.PORT }} >> ./back/.env
+          echo DB_CONN_STRING=${{ secrets.DB_CONN_STRING }} >> ./back/.env
+          echo JWTSECRET=${{ secrets.JWTSECRET }} >> ./back/.env
+          echo NODE_ENV=${{ secrets.NODE_ENV }} >> ./back/.env
+
+      - name: Run Docker Compose
+        run: docker-compose up --build -d
