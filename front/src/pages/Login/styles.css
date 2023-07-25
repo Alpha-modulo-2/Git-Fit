@@ -1,107 +1,99 @@
 @import url('https://fonts.googleapis.com/css2?family=Italiana&display=swap');
 
 * {
-    margin: 0;
-    padding: 0;
-    font-family: "Poppins", sans-serif;
-  }
+  margin: 0;
+  padding: 0;
+  font-family: "Poppins", sans-serif;
+}
 
-  /*All content*/
-  .All-content-login {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 550px;
-    width: 100%;
-  }
-  .logo-name-login{
-    position: absolute;
-    display: flex;
-    flex-direction: column;
-    font-size: 5rem;
-  }
+/* All content */
+.All-content-login {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+}
 
-  .logo-name-git-login,
-  .logo-name-fit-login{
-    color: rgb(255, 255, 255);
-    font-family: 'Italiana', serif;
-  }
+.logo-name-login {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  font-size: 5vw; /* Alterado para unidade vw */
+}
 
-  .container-login-content {
-    margin-top: 15%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    height: 90%;
-    width: 30%;
-    border-radius: 25px;
-    border: 0.9px solid rgba(0, 0, 0, 0.604);
-    box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.638);
-    background-color: rgba(240, 248, 255, 0.766);
-  }
-  
-  /*Menu content*/
-  .loginTitle{
-    color: rgba(115, 83, 186, 1);
-    font-size: 20px !important;
-    font-weight: bold;
-  }
+.logo-name-git-login,
+.logo-name-fit-login {
+  color: rgb(255, 255, 255);
+  font-family: 'Italiana', serif;
+}
 
-  .input-login {
-    width: 70%;
-    padding: 5%;
-    font-weight: bold;
-    color: rgba(115, 83, 186, 1);
-    border-bottom: 1px solid rgb(0, 0, 0);
-    background-color: transparent;
-    background: transparent !important;
-  }
-  
-  .input-login::placeholder {
-    color: rgb(0, 0, 0);
-  }
-  
-  .input-login::value {
-    color: rgba(115, 83, 186, 1);
-  }
-  
- /*button config*/
-  .divButton-edit {
-    display: flex;
-    flex-direction: column;
-    font-weight: bold;
-    font-size: 15px;
-    gap: 5px;
-  }
+.container-login-content {
+  margin-top: 5%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 30%;
+  min-width: 100px;
+  height: 35vw;
+  min-height: 300px; /* Defina o valor mínimo desejado, por exemplo, 300px */
+  border-radius: 25px;
+  border: 0.9px solid rgba(0, 0, 0, 0.604);
+  box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.638);
+  background-color: rgba(240, 248, 255, 0.766);
+}
 
-  .forgetPassEdit{
-    font-size: 10px;
-    cursor: pointer;
-  }
 
-  .forgetPassEdit:hover{
-    color: rgba(115, 83, 186, 1);
-  }
 
-  .registerOption{
-    color: rgba(115, 83, 186, 1);
-    cursor: pointer;
-  }
+/* Menu content */
+.loginTitle {
+  color: rgba(115, 83, 186, 1);
+  font-size: 2vw;
+  font-weight: bold;
+}
 
-  .registerOption{
-    color: rgba(115, 83, 186, 1);
-    cursor: pointer;
-    animation: brilho 0.5s infinite alternate;
-  }
+.input-login {
+  font-size: 0.8vw;
+  width: 70%;
+  padding: 5%;
+  font-weight: bold;
+  color: rgba(115, 83, 186, 1);
+  border-bottom: 1px solid rgb(0, 0, 0);
+  background-color: transparent;
+  background: transparent !important;
+}
 
-  @keyframes brilho {
-    from {
-      
-    }
-    to {
-      color: rgb(81, 0, 255);
-    }
-  }
-  
-  
+.input-login::placeholder {
+  color: rgb(0, 0, 0);
+}
+
+.input-login::value {
+  color: rgba(115, 83, 186, 1);
+}
+
+/* Button config */
+.divButton-edit {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-weight: bold;
+  font-size: 0.8vw; /* Alterado para unidade vw */
+}
+
+.forgetPassEdit:hover {
+  color: rgba(115, 83, 186, 1);
+}
+
+.registerOption {
+  color: rgba(115, 83, 186, 1);
+  cursor: pointer;
+}
+
+.registerOption {
+  color: rgba(115, 83, 186, 1);
+  cursor: pointer;
+  animation: brilho 0.5s infinite alternate;
+}
+
+
