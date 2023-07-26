@@ -1,6 +1,9 @@
 import UserController from '../controllers/UserController';
 import IUser from '../interfaces/IUser';
 import UserService from '../services/UserServices';
+import bcrypt from 'bcrypt';
+
+jest.mock('bcrypt');
 
 interface MockUserService extends UserService {
     insert: jest.Mock;
@@ -51,6 +54,7 @@ describe('UserController', () => {
     });
 
     it('should insert a user', async () => {
+
         userService.insert.mockResolvedValue({ error: false, statusCode: 201, user: mockUser });
 
         await userController.insert(req, res);
