@@ -1,3 +1,7 @@
+body {
+  caret-color: transparent;
+}
+
 .structure-profile{
   display: flex;
 }
