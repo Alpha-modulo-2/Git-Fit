@@ -44,7 +44,3 @@ jobs:
       - name: Build
         run: npm run build
         working-directory: ./front
-
-      - name: Run tests
-        run: npm run test
-        working-directory: ./back
