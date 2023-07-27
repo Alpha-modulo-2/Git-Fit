@@ -3,7 +3,7 @@ import jwtLib, { JwtPayload } from "jsonwebtoken";
 import ILogin from "../interfaces/ILogin";
 import loginService from "../services/loginService";
 
-class LoginController {
+export default class LoginController {
     private service: loginService;
 
     constructor(service?: loginService) {  // Allow service to be injected
@@ -19,6 +19,7 @@ class LoginController {
             };
 
             const result = await this.service.login(credentials);
+
 
             if (!process.env.JWTSECRET) {
                 throw new Error('JWTSECRET nao definido');
@@ -39,13 +40,8 @@ class LoginController {
             );
 
         } catch (error: any) {
-            console.log("Erro ao fazer login", error.message);
-            return res.status(500);
+            return res.status(500).json({ message: error.message })
         }
     }
 
 }
-
-const loginController = new LoginController();
-
-export default loginController;
