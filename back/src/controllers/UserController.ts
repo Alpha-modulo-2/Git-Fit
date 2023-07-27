@@ -13,6 +13,7 @@ export default class UserController {
         this.getOne = this.getOne.bind(this);
         this.update = this.update.bind(this);
         this.delete = this.delete.bind(this);
+        this.getByName = this.getByName.bind(this);
     }
 
     async insert(req: Request, res: Response) {
@@ -30,7 +31,6 @@ export default class UserController {
             const { password } = req.body
 
             const passwordHash = await bcrypt.hash(password, 10);
-            console.log(passwordHash);
 
             const result = await this.service.insert({ ...req.body, password: passwordHash });
             return res.status(result.statusCode || 500).json(result.user || result.message);
@@ -88,6 +88,10 @@ export default class UserController {
         }
 
         try {
+            if (!id) {
+                throw new Error("Id nao encontrada")
+            }
+
             const result = await this.service.update(id, req.body);
             return res.status(result.statusCode || 500).json(result.user || result.message);
         } catch (error: any) {
@@ -99,7 +103,6 @@ export default class UserController {
             });
         }
     }
-
 
     async delete(req: Request, res: Response) {
         const { id } = req.params
@@ -113,6 +116,26 @@ export default class UserController {
                 error: true,
                 statusCode: 500,
                 message: `Erro ao deletar a conta ${error.message}`
+            });
+        }
+    }
+
+    async getByName(req: Request, res: Response) {
+        const { name } = req.params
+
+        try {
+            if (!name) {
+                throw new Error("Nome nao encontrado")
+            }
+
+            const result = await this.service.getByName(name);
+            return res.status(result.statusCode || 500).json(result.user || result.message);
+        } catch (error: any) {
+            console.log("Erro ao atualizar a conta", error.message);
+            return res.status(500).json({
+                error: true,
+                statusCode: 500,
+                message: `Erro ao inserir a conta ${error.message}`
             });
         }
     }

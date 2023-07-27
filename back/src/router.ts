@@ -15,6 +15,8 @@ router.get("/users/:id", authenticate, userController.getOne);
 router.get("/users/", authenticate, userController.get);
 router.patch("/users/:id", authenticate, userController.update);
 router.delete("/users/:id", authenticate, userController.delete);
+router.get("/users/search/:name", authenticate, userController.getByName);
+
 
 const cardController = new CardController();
 

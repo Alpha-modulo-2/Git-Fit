@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 services:
   server:
     build:
@@ -6,6 +6,7 @@ services:
       dockerfile: Dockerfile
     ports:
       - 3000:3000
+      - 443:443
     restart: always
     env_file:
       - ./back/.env
