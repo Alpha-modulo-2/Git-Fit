@@ -55,6 +55,42 @@ export default class CardService {
         }
     }
 
+    async updateTrainingCardChecked(cardId: string, checked: boolean): Promise<IResult> {
+        try {
+            const result = await this.repository.updateTrainingCardChecked(cardId, checked);
+    
+            if (result.error) {
+                throw new Error(result.message);
+            }
+    
+            return result;
+        } catch (error: any) {
+            return {
+                error: true,
+                statusCode: 500,
+                message: error.message
+            };
+        }
+    }
+
+    async updateMealsCardChecked(cardId: string, checked: boolean): Promise<IResult> {
+        try {
+            const result = await this.repository.updateMealsCardChecked(cardId, checked);
+    
+            if (result.error) {
+                throw new Error(result.message);
+            }
+    
+            return result;
+        } catch (error: any) {
+            return {
+                error: true,
+                statusCode: 500,
+                message: error.message
+            };
+        }
+    }
+
     async addTask(cardId: string, task: ITask): Promise<IResult> {
         try {
             const result = await this.repository.addTask(cardId, task);

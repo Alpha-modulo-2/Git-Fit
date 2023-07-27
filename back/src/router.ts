@@ -24,6 +24,8 @@ router.get("/allcards/:userId", cardController.get);
 router.get("/card/:cardId", cardController.getOne);
 router.post("/card/:cardId/task", cardController.addTask);
 router.post("/card/:cardId/meal", cardController.addMeal);
+router.patch("/card/:cardId/trainingCard/check", cardController.updateTrainingCardChecked);
+router.patch("/card/:cardId/mealsCard/check", cardController.updateMealsCardChecked);
 router.patch("/card/:cardId/task/:taskId", cardController.updateTask);
 router.patch("/card/:cardId/meal/:mealId", cardController.updateMeal);
 router.delete("/card/:cardId/task/:taskId", cardController.delTask);
