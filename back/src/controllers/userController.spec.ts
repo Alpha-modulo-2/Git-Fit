@@ -1,9 +1,11 @@
 import UserController from '../controllers/UserController';
 import IUser from '../interfaces/IUser';
 import UserService from '../services/UserServices';
+import UserValidator from '../validators/UserValidator';
 import bcrypt from 'bcrypt';
 
 jest.mock('bcrypt');
+jest.mock('../validators/UserValidator'); // Mock UserValidator
 
 interface MockUserService extends UserService {
     insert: jest.Mock;
@@ -35,7 +37,7 @@ describe('UserController', () => {
     };
 
     beforeEach(() => {
-        req = { body: {}, params: {} };
+        req = { body: { ...mockUser }, params: {} };
         res = {
             json: jest.fn(() => res),
             status: jest.fn(() => res),
@@ -54,12 +56,16 @@ describe('UserController', () => {
     });
 
     it('should insert a user', async () => {
-
-        userService.insert.mockResolvedValue({ error: false, statusCode: 201, user: mockUser });
+        userService.insert.mockResolvedValue({ error: false, statusCode: 200, user: mockUser });
+        (UserValidator as jest.Mock).mockReturnValue({});
+        (bcrypt.hash as jest.Mock).mockReturnValue('hashedPassword');
 
         await userController.insert(req, res);
 
-        expect(res.status).toHaveBeenCalledWith(201);
+        expect(UserValidator).toHaveBeenCalledWith(mockUser);
+        expect(bcrypt.hash).toHaveBeenCalledWith(mockUser.password, 10);
+        expect(userService.insert).toHaveBeenCalledWith({ ...mockUser, password: 'hashedPassword' });
+        expect(res.status).toHaveBeenCalledWith(200);
         expect(res.json).toHaveBeenCalledWith(mockUser);
     });
 
@@ -82,7 +88,7 @@ describe('UserController', () => {
         expect(res.json).toHaveBeenCalledWith(users);
     });
 
-    fit('should update a user', async () => {
+    it('should update a user', async () => {
         const { id, ...restOfUser } = mockUser
         const req = {
             params: {

@@ -17,6 +17,7 @@ export default class UserController {
 
     async insert(req: Request, res: Response) {
         try {
+
             const validationErrors = UserValidator(req.body);
 
             if (Object.keys(validationErrors).length > 0) {
@@ -26,10 +27,10 @@ export default class UserController {
                 });
                 return;
             }
-
             const { password } = req.body
 
             const passwordHash = await bcrypt.hash(password, 10);
+            console.log(passwordHash);
 
             const result = await this.service.insert({ ...req.body, password: passwordHash });
             return res.status(result.statusCode || 500).json(result.user || result.message);
