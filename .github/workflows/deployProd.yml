@@ -9,11 +9,14 @@ jobs:
     if: github.ref_name == 'main'
 
     steps:
+      - name: Run Docker Compose down
+        run: docker-compose down
+
+      - name: Clear Docker Cache
+        run: docker system prune -a
+
       - name: Checkout code
         uses: actions/checkout@v3
-
-      - name: Git pull
-        run: git pull origin main
 
       - name: Create .env file
         run: |
@@ -22,6 +25,8 @@ jobs:
           echo DB_CONN_STRING=${{ secrets.DB_CONN_STRING }} >> ./back/.env
           echo JWTSECRET=${{ secrets.JWTSECRET }} >> ./back/.env
           echo NODE_ENV=${{ secrets.NODE_ENV }} >> ./back/.env
+          echo SSL_KEY_PATH=${{ secrets.SSL_KEY_PATH }} >> ./back/.env
+          echo SSL_CERT_PATH=${{ secrets.SSL_CERT_PATH }} >> ./back/.env
 
-      - name: Run Docker Compose
+      - name: Run Docker Compose up
         run: docker-compose up --build -d

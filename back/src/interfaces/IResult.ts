@@ -7,6 +7,5 @@ export default interface IResult {
     message?: string,
     statusCode: number,
     user?: IUser | IUser[],
-    card?: ICard | ICard[]
-    friendRequests?: IFriendsRequests | IFriendsRequests[]
-}
+    card?: ICard | ICard[],
+    data?: string
