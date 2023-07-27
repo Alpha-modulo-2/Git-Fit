@@ -4,6 +4,7 @@ import { Header } from "../../components/Header";
 import { UserCirclePlus, XCircle, Check } from "@phosphor-icons/react";
 import { useState, useEffect } from "react";
 import ContactCard from "../../components/ContactCard";
+import { Chat } from "../../components/Chat";
 
 interface ContactsProps{
     photo: string;
@@ -225,6 +226,7 @@ export const Contacts = () => {
         <div className="contacts-page">
             <Header isLoggedIn={true}/>
             <div className="container-contacts-request">
+                <Chat/>
                 <div className="search-box">
                     <input type="text" className="search-text" placeholder="Pesquisar"/>
                 </div>
