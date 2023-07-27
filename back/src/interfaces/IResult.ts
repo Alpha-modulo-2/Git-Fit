@@ -1,5 +1,6 @@
 import ICard from "./ICard";
 import IUser from "./IUser";
+import IFriendsRequests from "./IFriendRequests";
 
 export default interface IResult {
     error: boolean,
@@ -7,4 +8,5 @@ export default interface IResult {
     statusCode: number,
     user?: IUser | IUser[],
     card?: ICard | ICard[]
+    friendRequests?: IFriendsRequests | IFriendsRequests[]
 }
