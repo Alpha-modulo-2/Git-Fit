@@ -113,7 +113,6 @@ export default class UserRepository {
         }
     }
 
-
     async delete(id: string): Promise<IResult> {
 
         try {
@@ -144,4 +143,32 @@ export default class UserRepository {
             }
         }
     }
+
+    async getByName(name: string): Promise<IResult> {
+
+        try {
+            const user = await userModel.find({ userName: { $regex: '.*' + name + '.*', $options: 'i' } }).populate("friends");
+
+            if (user) {
+                return {
+                    error: false,
+                    statusCode: 200,
+                    user: user,
+                }
+            } else {
+                return {
+                    error: true,
+                    statusCode: 500,
+                    message: "Usuário não encontrado"
+                }
+            }
+        } catch (error: any) {
+            return {
+                error: true,
+                message: error.message,
+                statusCode: 500,
+            }
+        }
+    }
+
 }

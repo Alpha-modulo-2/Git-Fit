@@ -106,6 +106,64 @@ export default class CardRepository {
         }
     }
 
+    async updateTrainingCardChecked(cardId: string, checked: boolean): Promise<IResult> {
+        try {
+            const card = await cardModel.findById(cardId);
+    
+            if (!card) {
+                return {
+                    error: true,
+                    message: "Card não encontrado",
+                    statusCode: 404,
+                };
+            }
+    
+            card.trainingCard.checked = checked;
+            const updatedCard = await card.save();
+    
+            return {
+                error: false,
+                statusCode: 200,
+                card: updatedCard,
+            };
+        } catch (error: any) {
+            return {
+                error: true,
+                message: error.message,
+                statusCode: 500,
+            };
+        }
+    }
+
+    async updateMealsCardChecked(cardId: string, checked: boolean): Promise<IResult> {
+        try {
+            const card = await cardModel.findById(cardId);
+    
+            if (!card) {
+                return {
+                    error: true,
+                    message: "Card não encontrado",
+                    statusCode: 404,
+                };
+            }
+    
+            card.mealsCard.checked = checked;
+            const updatedCard = await card.save();
+    
+            return {
+                error: false,
+                statusCode: 200,
+                card: updatedCard,
+            };
+        } catch (error: any) {
+            return {
+                error: true,
+                message: error.message,
+                statusCode: 500,
+            };
+        }
+    }
+
     async addTask(cardId: string, task: ITask): Promise<IResult> {
         try {
             if (!task._id) {
