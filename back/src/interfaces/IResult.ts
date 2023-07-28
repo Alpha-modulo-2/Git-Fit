@@ -8,4 +8,6 @@ export default interface IResult {
     statusCode: number,
     user?: IUser | IUser[],
     card?: ICard | ICard[],
-    data?: string
+    data?: string,
+    friendRequests?: IFriendsRequests | IFriendsRequests[]
+}
