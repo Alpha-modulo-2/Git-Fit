@@ -1,8 +1,7 @@
 import "./styles.css"
 import { Header } from "../../components/Header";
 
-import { UserCirclePlus, XCircle, Check } from "@phosphor-icons/react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import ContactCard from "../../components/ContactCard";
 import { Chat } from "../../components/Chat";
 
@@ -13,17 +12,12 @@ interface ContactsProps{
     id: string;
 }
 
-interface AddFriendResponse {
-    error: boolean;
-    statusCode: number;
-    message: string;
-}
 
 export const Contacts = () => {
     const [contacts, setContacts] = useState<ContactsProps[]>();
     const [requests, setRequests] = useState<ContactsProps[]>([]);
     const [showRequests, setShowRequests] = useState(false); // Estado para controlar exibição das solicitações
-    const [error, setError] = useState('');
+    // const [error, setError] = useState('');
 
     const getContacts =  () => {
         try {
@@ -100,7 +94,7 @@ export const Contacts = () => {
             // }
         }catch (error) {
             console.error('Erro na requisição:', error);
-            setError('An error occurred while fetching the contacts.');
+            // setError('An error occurred while fetching the contacts.');
         }
     }
     const getRequests =  () => {
@@ -177,7 +171,7 @@ export const Contacts = () => {
             // }
         }catch (error) {
             console.error('Erro na requisição:', error);
-            setError('Erro na requisição');
+            // setError('Erro na requisição');
         }
     }
     const updateFriends = (userId: string, friendId: string) => {
@@ -194,7 +188,7 @@ export const Contacts = () => {
                 return response.json();
             } else {
                 console.error('Erro ao atualizar os contatos');
-                setError('Failed to update contacts.');
+                // setError('Failed to update contacts.');
             }
         })
         .then((data) => {
@@ -204,7 +198,7 @@ export const Contacts = () => {
         })
         .catch((error) => {
             console.error('Erro na requisição:', error);
-            setError('An error occurred while updating the contacts.');
+            // setError('An error occurred while updating the contacts.');
         });
     };
     
@@ -252,7 +246,9 @@ export const Contacts = () => {
                         key={user.id}
                         user={user}
                         onAddClick={(userId, friendId) => updateFriends(userId, friendId)}
-                        onRemoveClick={(userId) => {/* Lógica para remover contato */}}
+                        onRemoveClick={(userId) => console.log(userId)
+                        } 
+                        // logica para remover contato
                         />
                     )) : contacts?.map((user) => (
                         <ContactCard
