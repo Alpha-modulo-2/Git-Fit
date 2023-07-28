@@ -118,4 +118,75 @@ describe('UserService', () => {
         expect(userRepository.getOne).toHaveBeenCalledWith(id);
     });
 
+    it('should not update a user without required fields', async () => {
+        const id = '123';
+        const updateData = { userName: '' };
+        userRepository.update.mockResolvedValue({ error: true, message: 'userName is required', statusCode: 400 });
+
+        const result = await userService.update(id, updateData);
+
+        expect(result).toEqual('userName is required');
+        expect(userRepository.update).toHaveBeenCalledWith(id, updateData);
+    });
+
+    it('should handle error when updating a user', async () => {
+        const id = '123';
+        const updateData = { userName: 'Updated' };
+        userRepository.update.mockRejectedValue({ error: true, message: 'Server error', statusCode: 500 });
+
+        const result = await userService.update(id, updateData);
+
+        expect(result).toEqual('Server error');
+        expect(userRepository.update).toHaveBeenCalledWith(id, updateData);
+    });
+
+    it('should handle error when deleting a user', async () => {
+        const id = '123';
+        userRepository.delete.mockRejectedValue({ error: true, message: 'Server error', statusCode: 500 });
+
+        const result = await userService.delete(id);
+
+        expect(result).toEqual('Server error');
+        expect(userRepository.delete).toHaveBeenCalledWith(id);
+    });
+
+    it('should handle user not found when deleting', async () => {
+        const id = '123';
+        userRepository.delete.mockResolvedValue({ error: true, message: 'user not found', statusCode: 404 });
+
+        const result = await userService.delete(id);
+
+        expect(result).toEqual('user not found');
+        expect(userRepository.delete).toHaveBeenCalledWith(id);
+    });
+
+    it('should get user by name', async () => {
+        const userName = 'TestUser';
+        userRepository.getByName.mockResolvedValue({ error: false, statusCode: 200, user });
+
+        const result = await userService.getByName(userName);
+
+        expect(result).toEqual({ error: false, statusCode: 200, user });
+        expect(userRepository.getByName).toHaveBeenCalledWith(userName);
+    });
+
+    it('should handle user not found when getting by name', async () => {
+        const userName = 'TestUser';
+        userRepository.getByName.mockResolvedValue({ error: false, statusCode: 200, user: [] });
+
+        const result = await userService.getByName(userName);
+
+        expect(result).toEqual({ error: false, statusCode: 200, user: [] });
+        expect(userRepository.getByName).toHaveBeenCalledWith(userName);
+    });
+
+    it('should handle error when getting user by name', async () => {
+        const userName = 'TestUser';
+        userRepository.getByName.mockRejectedValue({ error: true, message: 'Server error', statusCode: 500 });
+
+        const result = await userService.getByName(userName);
+
+        expect(result).toEqual('Server error');
+        expect(userRepository.getByName).toHaveBeenCalledWith(userName);
+    });
 });

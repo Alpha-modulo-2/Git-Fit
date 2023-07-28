@@ -16,18 +16,27 @@ export default class CardController {
         this.getOne = this.getOne.bind(this);
         this.addTask = this.addTask.bind(this);
         this.addMeal = this.addMeal.bind(this);
+        this.updateTrainingCardChecked = this.updateTrainingCardChecked.bind(this);
+        this.updateMealsCardChecked = this.updateMealsCardChecked.bind(this);
         this.updateTask = this.updateTask.bind(this);
         this.updateMeal = this.updateMeal.bind(this);
-        //this.update = this.update.bind(this);
-        //this.delete = this.delete.bind(this);
+        this.delTask = this.delTask.bind(this);
+        this.delMeal = this.delMeal.bind(this);
     }
 
     async insert(req: Request, res: Response) {
         const { userId } = req.params
 
+        if (!userId || userId.length !== 24 || !(/^[0-9a-fA-F]+$/).test(userId)) {
+            return res.status(400).json({
+                error: true,
+                statusCode: 400,
+                message: "ID do usuário inválido"
+            });
+        }
+
         try {
             const result = await this.service.insert(userId);
-            console.log(TAG, result);
             
             return res.status(result.statusCode || 500).json(result.card || result.message);
         } catch (error: any) {
@@ -43,7 +52,6 @@ export default class CardController {
     async get(req: Request, res: Response) {
         try {
             const result = await this.service.get();
-            console.log(TAG, result);
 
             return res.status(result.statusCode || 500).json(result.card || result.message);
         } catch (error: any) {
@@ -59,13 +67,88 @@ export default class CardController {
     async getOne(req: Request, res: Response) {
         const { cardId } = req.params
 
+        if (!cardId || cardId.length !== 24 || !(/^[0-9a-fA-F]+$/).test(cardId)) {
+            return res.status(400).json({
+                error: true,
+                statusCode: 400,
+                message: "ID do card inválido"
+            });
+        }
+
         try {
             const result = await this.service.getOne(cardId);
-            console.log(TAG, result);
 
             return res.status(result.statusCode || 500).json(result.card || result.message);
         } catch (error: any) {
             console.log("Erro ao solicitar o card:", error.message);
+            return res.status(500).json({
+                error: true,
+                statusCode: 500,
+                message: error.message
+            });
+        }
+    }
+
+    async updateTrainingCardChecked(req: Request, res: Response) {
+        const { cardId } = req.params;
+        const { checked } = req.body;
+
+        if (!cardId || cardId.length !== 24 || !(/^[0-9a-fA-F]+$/).test(cardId)) {
+            return res.status(400).json({
+                error: true,
+                statusCode: 400,
+                message: "ID do card inválido"
+            });
+        }
+    
+        if (typeof checked !== 'boolean') {
+            return res.status(400).json({
+                error: true,
+                statusCode: 400,
+                message: "O campo checked precisa ser booleano"
+            });
+        }
+    
+        try {
+            const result = await this.service.updateTrainingCardChecked(cardId, checked);
+    
+            return res.status(result.statusCode || 500).json(result.card || result.message);
+        } catch (error: any) {
+            console.log("Erro ao atualizar o campo checked da TrainingCard", error.message);
+            return res.status(500).json({
+                error: true,
+                statusCode: 500,
+                message: error.message
+            });
+        }
+    }
+
+    async updateMealsCardChecked(req: Request, res: Response) {
+        const { cardId } = req.params;
+        const { checked } = req.body;
+
+        if (!cardId || cardId.length !== 24 || !(/^[0-9a-fA-F]+$/).test(cardId)) {
+            return res.status(400).json({
+                error: true,
+                statusCode: 400,
+                message: "ID do card inválido"
+            });
+        }
+    
+        if (typeof checked !== 'boolean') {
+            return res.status(400).json({
+                error: true,
+                statusCode: 400,
+                message: "O campo checked precisa ser booleano"
+            });
+        }
+    
+        try {
+            const result = await this.service.updateMealsCardChecked(cardId, checked);
+
+            return res.status(result.statusCode || 500).json(result.card || result.message);
+        } catch (error: any) {
+            console.log("Erro ao atualizar o campo checked da MealsCard", error.message);
             return res.status(500).json({
                 error: true,
                 statusCode: 500,
@@ -80,9 +163,24 @@ export default class CardController {
             description: req.body.description
         }
 
+        if (!cardId || cardId.length !== 24 || !(/^[0-9a-fA-F]+$/).test(cardId)) {
+            return res.status(400).json({
+                error: true,
+                statusCode: 400,
+                message: "ID do card inválido"
+            });
+        }
+
+        if (!task.description || task.description.trim().length === 0) {
+            return res.status(400).json({
+                error: true,
+                statusCode: 400,
+                message: "Descrição da tarefa inválida"
+            });
+        }
+
         try {
             const result = await this.service.addTask(cardId, task);
-            console.log(TAG, result);
 
             return res.status(result.statusCode || 500).json(result.card || result.message);
         } catch (error: any) {
@@ -101,9 +199,24 @@ export default class CardController {
             description: req.body.description
         }
 
+        if (!cardId || cardId.length !== 24 || !(/^[0-9a-fA-F]+$/).test(cardId)) {
+            return res.status(400).json({
+                error: true,
+                statusCode: 400,
+                message: "ID do card inválido"
+            });
+        }
+
+        if (!meal.description || meal.description.trim().length === 0) {
+            return res.status(400).json({
+                error: true,
+                statusCode: 400,
+                message: "Descrição de refeição inválida"
+            });
+        }
+
         try {
             const result = await this.service.addMeal(cardId, meal);
-            console.log(TAG, result);
 
             return res.status(result.statusCode || 500).json(result.card || result.message);
         } catch (error: any) {
@@ -122,9 +235,24 @@ export default class CardController {
             description: req.body.description
         }
 
+        if (!cardId || cardId.length !== 24 || !(/^[0-9a-fA-F]+$/).test(cardId)) {
+            return res.status(400).json({
+                error: true,
+                statusCode: 400,
+                message: "ID do card inválido"
+            });
+        }
+
+        if (!task.description || task.description.trim().length === 0) {
+            return res.status(400).json({
+                error: true,
+                statusCode: 400,
+                message: "Descrição da tarefa inválida"
+            });
+        }
+
         try {
             const result = await this.service.updateTask(cardId, taskId, task);
-            console.log(TAG, result);
 
             return res.status(result.statusCode || 500).json(result.card || result.message);
         } catch (error: any) {
@@ -142,14 +270,63 @@ export default class CardController {
         const meal: IMeal = {
             description: req.body.description
         }
+
+        if (!cardId || cardId.length !== 24 || !(/^[0-9a-fA-F]+$/).test(cardId)) {
+            return res.status(400).json({
+                error: true,
+                statusCode: 400,
+                message: "ID do card inválido"
+            });
+        }
+
+        if (!meal.description || meal.description.trim().length === 0) {
+            return res.status(400).json({
+                error: true,
+                statusCode: 400,
+                message: "Descrição de refeição inválida"
+            });
+        }
     
         try {
             const result = await this.service.updateMeal(cardId, mealId, meal);
-            console.log(TAG, result);
     
             return res.status(result.statusCode || 500).json(result.card || result.message);
         } catch (error: any) {
             console.log("Erro ao atualizar a refeição:", error.message);
+            return res.status(500).json({
+                error: true,
+                statusCode: 500,
+                message: error.message
+            });
+        }
+    }
+
+    async delTask(req: Request, res: Response) {
+        const { cardId, taskId } = req.params;
+
+        try {
+            const result = await this.service.delTask(cardId, taskId);
+
+            return res.status(result.statusCode).json(result.card || result.message);
+        } catch (error: any) {
+            console.log("Erro ao deletar a task:", error.message);
+            return res.status(500).json({
+                error: true,
+                statusCode: 500,
+                message: error.message
+            });
+        }
+    }
+
+    async delMeal(req: Request, res: Response) {
+        const { cardId, mealId } = req.params;
+
+        try {
+            const result = await this.service.delMeal(cardId, mealId);
+            
+            return res.status(result.statusCode).json(result.card || result.message);
+        } catch (error: any) {
+            console.log("Erro ao deletar a refeição:", error.message);
             return res.status(500).json({
                 error: true,
                 statusCode: 500,

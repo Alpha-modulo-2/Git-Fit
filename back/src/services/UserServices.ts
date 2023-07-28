@@ -72,11 +72,26 @@ export default class UserService {
 
     }
 
-
     async delete(id: string): Promise<IResult> {
 
         try {
             const result = await this.repository.delete(id);
+
+            if (result.error) {
+                throw new Error(result.message)
+            }
+
+            return result
+        } catch (error: any) {
+            return error.message;
+        }
+
+    }
+
+    async getByName(name: string): Promise<IResult> {
+        try {
+
+            const result = await this.repository.getByName(name);
 
             if (result.error) {
                 throw new Error(result.message)

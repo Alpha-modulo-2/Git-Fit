@@ -24,29 +24,30 @@ export const Register = () => {
               <br />
               <input type="text" className="input-register" placeholder="Idade" />
               <br />
-              <input type="text" className="input-register" placeholder="Profissão" />
+              <input type="text" className="input-register" placeholder="Gênero" />
             </div>
 
             <div className="container-second-content-register">
-              <input type="text" className="input-register" placeholder="Gênero" />
-              <br />
+
               <div className="weightHight-register">
-                <input type="text" className="input-weightHight-register" placeholder="Peso" />
-                <input type="text" className="input-weightHight-register" placeholder="Altura" />
+                <input type="text" className="input-weight-register" placeholder="Peso" />
+                <input type="text" className="input-hight-register" placeholder="Altura" />
               </div>
               <br />
               <input type="text" className="input-register" placeholder="Senha" />
               <br />
               <input type="text" className="input-register" placeholder="Confirme a senha" />
               <br />
-              <div className="divprofessionalProfile">
-                <label className="professionalProfile">Perfil Profissional?</label>
+              <div className="divregisterprofessionalProfile">
+                <label className="registerprofessionalProfile">Perfil Profissional?</label>
                 <br />
                 <label className="switch">
                   <input type="checkbox" />
                   <span className="slider round"></span>
                 </label>
               </div>
+              <br />
+              <input type="text" className="input-register" placeholder="Profissão" />
             </div>
           </div>
 

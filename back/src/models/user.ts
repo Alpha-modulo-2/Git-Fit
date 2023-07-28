@@ -38,8 +38,7 @@ const userSchema = new Schema<IUser>({
     weight: String,
     height: String,
     occupation: {
-        type: String,
-        required: true
+        type: String
     },
     age: Number,
     id: SchemaTypes.ObjectId,

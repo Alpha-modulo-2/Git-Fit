@@ -98,4 +98,57 @@ describe('UserRepository', () => {
         expect(userModel.findById).toHaveBeenCalledWith(id);
         expect(result).toEqual({ error: false, statusCode: 204 });
     });
+
+    it('should handle failure when inserting a user', async () => {
+        userModel.create = jest.fn().mockRejectedValue(new Error('Database error'));
+
+        const userRepository = new UserRepository();
+        const result = await userRepository.insert(mockUser)
+        expect(userModel.create).toHaveBeenCalledWith(mockUser);
+
+        expect(result).toEqual({ "error": true, "message": "Database error", "statusCode": 500 });
+    });
+
+    it('should get a user by name', async () => {
+        userModel.find = jest.fn().mockReturnValue({
+            populate: jest.fn().mockResolvedValue(mockUser),
+            exec: jest.fn().mockResolvedValue({ error: false, statusCode: 200, user: mockUser })
+        })
+
+        const userRepository = new UserRepository();
+        const result = await userRepository.getByName(mockUser.userName);
+
+        expect(userModel.find).toHaveBeenCalledWith({ userName: { $regex: '.*' + mockUser.userName + '.*', $options: 'i' } });
+        expect(result).toEqual({ error: false, statusCode: 200, user: mockUser });
+    });
+
+    it('should return when user is not found', async () => {
+        userModel.find = jest.fn().mockReturnValue({
+            populate: jest.fn().mockResolvedValue([]),
+            exec: jest.fn().mockResolvedValue({ error: false, statusCode: 200, user: [] })
+        })
+
+        const userRepository = new UserRepository();
+        const result = await userRepository.getByName(mockUser.userName);
+
+        expect(userModel.find).toHaveBeenCalledWith({ userName: { $regex: '.*' + mockUser.userName + '.*', $options: 'i' } });
+        expect(result).toEqual({ error: false, statusCode: 200, user: [] });
+    });
+
+    it('should handle failure when getting a user by name', async () => {
+        userModel.find = jest.fn().mockReturnValue({
+            populate: jest.fn().mockRejectedValue({ message: "Server error" }),
+            exec: jest.fn().mockRejectedValue({ message: 'Server error' })
+        })
+
+        const userRepository = new UserRepository();
+        const result = await userRepository.getByName(mockUser.userName);
+
+        expect(userModel.find).toHaveBeenCalledWith({ userName: { $regex: '.*' + mockUser.userName + '.*', $options: 'i' } });
+        expect(result).toEqual({
+            error: true,
+            message: 'Server error',
+            statusCode: 500,
+        });
+    });
 });

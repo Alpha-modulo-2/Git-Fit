@@ -1,12 +1,12 @@
-import { Route, Routes } from 'react-router-dom';
-import { LandingPage } from '../pages/LandingPage';
-import { Register } from '../pages/Register';
+import { Route, Routes } from "react-router-dom";
+import { LandingPage } from "../pages/LandingPage";
+import { Register } from "../pages/Register";
+import { Profile } from "../pages/Profile";
 import { PerfilEdit } from '../pages/PerfilEdit';
 import { Login } from '../pages/Login';
 import { SeeMore } from '../pages/SeeMore';
 import { Contacts } from '../pages/ContactsAndRequests';
-import { Profile } from '../pages/Profile';
-import { FullCard } from '../pages/FullCards';
+
 // import { Catalog } from '../pages/Catalog';
 // import { Error404 } from '../pages/Error404';
 // import { Home } from '../pages/Home';
@@ -14,7 +14,7 @@ import { FullCard } from '../pages/FullCards';
 export const Router = () => {
   return (
     <Routes>
-      <Route path="/landing-page" element={<LandingPage />} />
+      <Route path="/landing_page" element={<LandingPage />} />
       <Route path="/register" element={<Register />} />
       <Route path="/edit" element={<PerfilEdit/>} />
       <Route path="/login" element={<Login/>} />

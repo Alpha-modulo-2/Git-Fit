@@ -24,29 +24,30 @@ export const PerfilEdit = () => {
               <br />
               <input type="text" className="input-edit" placeholder="Idade" />
               <br />
-              <input type="text" className="input-edit" placeholder="Profissão" />
+              <input type="text" className="input-edit" placeholder="Gênero" />
+              <br />
             </div>
 
             <div className="container-second-content-edit">
-              <input type="text" className="input-edit" placeholder="Gênero" />
-              <br />
               <div className="weightHight-edit">
-                <input type="text" className="input-weightHight-edit" placeholder="Peso" />
-                <input type="text" className="input-weightHight-edit" placeholder="Altura" />
+                <input type="text" className="input-weight-edit" placeholder="Peso" />
+                <input type="text" className="input-hight-edit" placeholder="Altura" />
               </div>
               <br />
               <input type="text" className="input-edit" placeholder="Senha" />
-              <br />
+
               <input type="text" className="input-edit" placeholder="Confirme a senha" />
               <br />
-              <div className="divprofessionalProfile">
-                <label className="professionalProfile">Perfil Profissional?</label>
+              <div className="diveditprofessionalProfile">
+                <label className="editprofessionalProfile">Perfil Profissional?</label>
                 <br />
                 <label className="switch">
                   <input type="checkbox" />
                   <span className="slider round"></span>
                 </label>
+                <br />
               </div>
+              <input type="text" className="input-edit" placeholder="Profissão" />
             </div>
 
 
