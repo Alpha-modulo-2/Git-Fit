@@ -2,9 +2,6 @@ import IResult from "../interfaces/IResult";
 import CardRepository from "../repositories/CardRepository";
 import ITask from "../interfaces/ITask";
 import IMeal from "../interfaces/IMeal";
-
-const TAG = "Card Service "
-
 export default class CardService {
     private repository: CardRepository;
 
@@ -23,13 +20,17 @@ export default class CardService {
 
             return result
         } catch (error: any) {
-            return error.message;
+            return {
+                error: true,
+                statusCode: 500,
+                message: error.message
+            };
         }
     }
 
-    async get(): Promise<IResult> {
+    async getAllCardsByUser(userId: string): Promise<IResult> {
         try {
-            const result = await this.repository.get();
+            const result = await this.repository.getAllCardsByUser(userId);
 
             if (result.error) {
                 throw new Error(result.message)
@@ -37,7 +38,11 @@ export default class CardService {
 
             return result
         } catch (error: any) {
-            return error.message;
+            return {
+                error: true,
+                statusCode: 500,
+                message: error.message
+            };
         }
     }
 
@@ -51,7 +56,11 @@ export default class CardService {
 
             return result
         } catch (error: any) {
-            return error.message;
+            return {
+                error: true,
+                statusCode: 500,
+                message: error.message
+            };
         }
     }
 
@@ -101,7 +110,11 @@ export default class CardService {
 
             return result
         } catch (error: any) {
-            return error.message;
+            return {
+                error: true,
+                statusCode: 500,
+                message: error.message
+            }
         }
     }
 
