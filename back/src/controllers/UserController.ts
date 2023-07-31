@@ -162,6 +162,7 @@ export default class UserController {
             }
 
             const result = await this.service.removeFriend(friendId, userId);
+
             return res.status(result.statusCode || 500).json(result.user || result.message);
         } catch (error: any) {
             return res.status(500).json({

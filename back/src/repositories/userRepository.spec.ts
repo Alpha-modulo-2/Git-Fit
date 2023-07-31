@@ -1,25 +1,43 @@
 import UserRepository from './UserRepository';
 import { userModel } from '../models/user';
-import IUser from '../interfaces/IUser';
-
-const id = "123"
-
-const mockUser: IUser = {
-    "userName": "teste",
-    "password": "teste",
-    "email": "teste@teste.com",
-    "friends": [""],
-    "created_at": new Date,
-    "updated_at": new Date,
-    "photo": "url",
-    "gender": "M",
-    "weight": "90kg",
-    "height": "180cm",
-    "occupation": "none",
-    "age": 25
-}
+import mongoose from 'mongoose';
 
 describe('UserRepository', () => {
+    const mockFriendID = new mongoose.Types.ObjectId().toString()
+    const mockUserId = new mongoose.Types.ObjectId().toString()
+
+    const id = "123"
+
+    const mockUser = {
+        _id: mockUserId,
+        "userName": "teste",
+        "password": "teste",
+        "email": "teste@teste.com",
+        "friends": [mockFriendID,],
+        "created_at": new Date,
+        "updated_at": new Date,
+        "photo": "url",
+        "gender": "M",
+        "weight": "90kg",
+        "height": "180cm",
+        "occupation": "none",
+        "age": 25
+    }
+    const mockFriend = {
+        _id: mockFriendID,
+        "userName": "teste",
+        "password": "teste",
+        "email": "teste@teste.com",
+        "friends": [mockUserId,],
+        "created_at": new Date,
+        "updated_at": new Date,
+        "photo": "url",
+        "gender": "M",
+        "weight": "90kg",
+        "height": "180cm",
+        "occupation": "none",
+        "age": 25
+    }
 
     beforeEach(() => {
         jest.clearAllMocks();
@@ -102,9 +120,11 @@ describe('UserRepository', () => {
     it('should handle failure when inserting a user', async () => {
         userModel.create = jest.fn().mockRejectedValue(new Error('Database error'));
 
+        const { _id, ...restOfUser } = mockUser
+
         const userRepository = new UserRepository();
-        const result = await userRepository.insert(mockUser)
-        expect(userModel.create).toHaveBeenCalledWith(mockUser);
+        const result = await userRepository.insert(restOfUser)
+        expect(userModel.create).toHaveBeenCalledWith(restOfUser);
 
         expect(result).toEqual({ "error": true, "message": "Database error", "statusCode": 500 });
     });
@@ -151,4 +171,62 @@ describe('UserRepository', () => {
             statusCode: 500,
         });
     });
+
+    it('should remove a friend', async () => {
+        userModel.findById = jest.fn()
+            .mockReturnValueOnce(Promise.resolve(mockUser))
+            .mockReturnValueOnce(Promise.resolve(mockFriend));
+
+        userModel.findByIdAndUpdate = jest.fn().mockResolvedValue({});
+
+        const userRepository = new UserRepository();
+        const result = await userRepository.removeFriend(mockFriendID.toString(), mockUserId.toString());
+
+        expect(userModel.findById).toHaveBeenNthCalledWith(1, mockUserId);
+        expect(userModel.findById).toHaveBeenNthCalledWith(2, mockFriendID);
+        expect(userModel.findByIdAndUpdate).toHaveBeenNthCalledWith(1, mockUserId, { $pull: { friends: mockFriendID } });
+        expect(userModel.findByIdAndUpdate).toHaveBeenNthCalledWith(2, mockFriendID, { $pull: { friends: mockUserId } });
+
+        expect(result).toEqual({ error: false, statusCode: 200 });
+    });
+
+    it('should throw an error when the user or friend does not exist', async () => {
+        userModel.findById = jest.fn()
+            .mockReturnValueOnce(Promise.resolve(null))
+            .mockReturnValueOnce(Promise.resolve(null));
+
+        const userRepository = new UserRepository();
+        const result = await userRepository.removeFriend(mockFriendID, mockUserId);
+
+        expect(userModel.findById).toHaveBeenNthCalledWith(1, mockUserId);
+        expect(userModel.findById).toHaveBeenNthCalledWith(2, mockFriendID);
+        expect(result).toEqual({
+            error: true,
+            message: "Usuário não encontrado.",
+            statusCode: 500,
+        });
+    });
+
+    it('should throw an error when the user is not a friend of the friend', async () => {
+        const mockUserWithoutFriend = {
+            ...mockUser,
+            friends: [],
+        };
+
+        userModel.findById = jest.fn()
+            .mockReturnValueOnce(Promise.resolve(mockUserWithoutFriend))
+            .mockReturnValueOnce(Promise.resolve(mockFriend));
+
+        const userRepository = new UserRepository();
+        const result = await userRepository.removeFriend(mockFriendID, mockUserId);
+
+        expect(userModel.findById).toHaveBeenNthCalledWith(1, mockUserId);
+        expect(userModel.findById).toHaveBeenNthCalledWith(2, mockFriendID);
+        expect(result).toEqual({
+            error: true,
+            message: "Este usuário não é seu amigo.",
+            statusCode: 500,
+        });
+    });
+
 });
