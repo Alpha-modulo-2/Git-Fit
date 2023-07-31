@@ -54,15 +54,15 @@ export default class CardRepository {
         }
     }
     
-    async get(): Promise<IResult> {
+    async getAllCardsByUser(userId: string): Promise<IResult> {
         try {
-            const cards = await cardModel.find().populate("userId");
+            const cards = await cardModel.find({userId: userId}).populate("userId");
 
-            if (!cards) {
+            if (!cards || cards.length === 0) {
                 return {
                     error: true,
                     statusCode: 404,
-                    message: "Card não encontrado"
+                    message: "Cards não encontrados"
                 };
             }
 
