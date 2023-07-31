@@ -85,7 +85,7 @@ describe('UserService', () => {
 
         const result = await userService.insert(user);
 
-        expect(result).toEqual('Server error');
+        expect(result).toEqual({ error: true, message: "Server error", statusCode: 500 });
         expect(userRepository.insert).toHaveBeenCalledWith(user);
     });
 
@@ -95,7 +95,7 @@ describe('UserService', () => {
 
         const result = await userService.insert(newUser);
 
-        expect(result).toEqual('userName is required');
+        expect(result).toEqual({ error: true, message: 'userName is required', statusCode: 500 });
         expect(userRepository.insert).toHaveBeenCalledWith(newUser);
     });
 
@@ -104,17 +104,17 @@ describe('UserService', () => {
 
         const result = await userService.get();
 
-        expect(result).toEqual('Server error');
+        expect(result).toEqual({ error: true, message: 'Server error', statusCode: 500 });
         expect(userRepository.get).toHaveBeenCalled();
     });
 
     it('should handle user not found', async () => {
         const id = '123';
-        userRepository.getOne.mockRejectedValue({ error: true, message: 'user not found', statusCode: 404 });
+        userRepository.getOne.mockResolvedValue({ error: true, message: 'user not found', statusCode: 404 });
 
         const result = await userService.getOne(id);
 
-        expect(result).toEqual('user not found');
+        expect(result).toEqual({ error: true, message: 'user not found', statusCode: 404 });
         expect(userRepository.getOne).toHaveBeenCalledWith(id);
     });
 
@@ -125,7 +125,7 @@ describe('UserService', () => {
 
         const result = await userService.update(id, updateData);
 
-        expect(result).toEqual('userName is required');
+        expect(result).toEqual({ error: true, message: 'userName is required', statusCode: 400 });
         expect(userRepository.update).toHaveBeenCalledWith(id, updateData);
     });
 
@@ -136,7 +136,7 @@ describe('UserService', () => {
 
         const result = await userService.update(id, updateData);
 
-        expect(result).toEqual('Server error');
+        expect(result).toEqual({ error: true, message: 'Server error', statusCode: 500 });
         expect(userRepository.update).toHaveBeenCalledWith(id, updateData);
     });
 
@@ -146,7 +146,7 @@ describe('UserService', () => {
 
         const result = await userService.delete(id);
 
-        expect(result).toEqual('Server error');
+        expect(result).toEqual({ error: true, message: 'Server error', statusCode: 500 });
         expect(userRepository.delete).toHaveBeenCalledWith(id);
     });
 
@@ -156,7 +156,7 @@ describe('UserService', () => {
 
         const result = await userService.delete(id);
 
-        expect(result).toEqual('user not found');
+        expect(result).toEqual({ error: true, message: 'user not found', statusCode: 404 });
         expect(userRepository.delete).toHaveBeenCalledWith(id);
     });
 
@@ -186,7 +186,7 @@ describe('UserService', () => {
 
         const result = await userService.getByName(userName);
 
-        expect(result).toEqual('Server error');
+        expect(result).toEqual({ error: true, message: 'Server error', statusCode: 500 });
         expect(userRepository.getByName).toHaveBeenCalledWith(userName);
     });
 });

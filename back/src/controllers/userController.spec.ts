@@ -152,7 +152,7 @@ describe('UserController', () => {
 
     it('should get user by name', async () => {
         const req = {
-            params: {
+            query: {
                 name: mockUser.userName,
             },
         };
@@ -168,7 +168,7 @@ describe('UserController', () => {
 
     it('should return error if userService.getByName returns error message', async () => {
         const req = {
-            params: {
+            query: {
                 name: mockUser.userName,
             },
         };
@@ -184,7 +184,7 @@ describe('UserController', () => {
 
     it('should return 500 if userService.getByName throws an error', async () => {
         const req = {
-            params: {
+            query: {
                 name: mockUser.userName,
             },
         };
@@ -202,8 +202,8 @@ describe('UserController', () => {
         });
     });
 
-    it('should return error if required name is missing in request params', async () => {
-        const req = { params: {} };
+    it('should return error if required name is missing in request query', async () => {
+        const req = { query: {} };
         const error = new Error('Nome nao encontrado');
 
 

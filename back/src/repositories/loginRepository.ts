@@ -10,7 +10,6 @@ export default class LoginRepository {
 
             const user = await userModel.findOne({ userName: data.userName });
 
-
             if (user) {
                 const userData: IUser = {
                     id: user._id.toString(),

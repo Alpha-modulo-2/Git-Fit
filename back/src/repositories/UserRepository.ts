@@ -184,8 +184,8 @@ export default class UserRepository {
                 throw new Error("Este usuário não é seu amigo.");
             }
 
-            // await userModel.findByIdAndUpdate(userId, { $pull: { friends: friendId } });
-            // await userModel.findByIdAndUpdate(friendId, { $pull: { friends: userId } });
+            await userModel.findByIdAndUpdate(userId, { $pull: { friends: friendId } });
+            await userModel.findByIdAndUpdate(friendId, { $pull: { friends: userId } });
 
             return {
                 error: false,

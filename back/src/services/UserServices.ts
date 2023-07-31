@@ -28,7 +28,7 @@ export default class UserService {
             return {
                 error: true,
                 message: error.message,
-                statusCode: error.code
+                statusCode: error.code || 500
             };
         }
 
@@ -51,7 +51,7 @@ export default class UserService {
             return {
                 error: true,
                 message: error.message,
-                statusCode: error.code
+                statusCode: error.code || 500
             };
         }
     }
@@ -74,7 +74,7 @@ export default class UserService {
             return {
                 error: true,
                 message: error.message,
-                statusCode: error.code
+                statusCode: error.code || 500
             };
         }
 
@@ -98,7 +98,7 @@ export default class UserService {
             return {
                 error: true,
                 message: error.message,
-                statusCode: error.code
+                statusCode: error.code || 500
             };
         }
     }
@@ -121,7 +121,7 @@ export default class UserService {
             return {
                 error: true,
                 message: error.message,
-                statusCode: error.code
+                statusCode: error.code || 500
             };
         }
 
@@ -145,7 +145,7 @@ export default class UserService {
             return {
                 error: true,
                 message: error.message,
-                statusCode: error.code
+                statusCode: error.code || 500
             };
         }
     }
@@ -168,7 +168,7 @@ export default class UserService {
             return {
                 error: true,
                 message: error.message,
-                statusCode: error.code
+                statusCode: error.code || 500
             };
         }
     }
