@@ -1,4 +1,4 @@
-import { Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 import { LandingPage } from "../pages/LandingPage";
 import { Register } from "../pages/Register";
 import { Profile } from "../pages/Profile";
@@ -6,6 +6,10 @@ import { PerfilEdit } from '../pages/PerfilEdit';
 import { Login } from '../pages/Login';
 import { SeeMore } from '../pages/SeeMore';
 import { Contacts } from '../pages/ContactsAndRequests';
+import { useContext } from "react";
+import AuthContext from "../auth/AuthContextProvider";
+import Auth from "../components/auth/auth";
+
 // import { Catalog } from '../pages/Catalog';
 // import { Error404 } from '../pages/Error404';
 // import { Home } from '../pages/Home';
@@ -15,7 +19,7 @@ export const Router = () => {
     <Routes>
       <Route path="/landing_page" element={<LandingPage />} />
       <Route path="/register" element={<Register />} />
-      <Route path="/edit" element={<PerfilEdit/>} />
+      <Route path="/edit/:id" element={<PerfilEdit/>} />
       <Route path="/login" element={<Login/>} />
       <Route path="/see-more" element={<SeeMore/>} />
       <Route path="/contacts" element={<Contacts/>} />

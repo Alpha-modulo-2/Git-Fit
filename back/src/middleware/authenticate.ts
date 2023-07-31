@@ -18,6 +18,6 @@ export default async function authenticate(
         next();
 
     } catch (error: any) {
-        res.status(401).json({ errors: error.message });
+        res.status(401).json({ errors: error.message + "to aqui" });
     }
 }

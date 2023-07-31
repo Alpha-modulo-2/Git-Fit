@@ -76,6 +76,7 @@ export default class UserController {
 
     async update(req: Request, res: Response) {
         const { id } = req.params
+        console.log("to aqui")
 
         const validationErrors = UserValidator(req.body);
 

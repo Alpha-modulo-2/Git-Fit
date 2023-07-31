@@ -57,7 +57,6 @@ export default class UserService {
     }
 
     async update(id: string, updateData: IUpdateData): Promise<IResult> {
-
         try {
             const result = await this.repository.update(id, updateData);
 

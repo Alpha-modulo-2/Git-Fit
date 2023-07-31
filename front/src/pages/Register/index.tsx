@@ -2,12 +2,19 @@ import "./styles.css";
 import { Header } from "../../components/Header";
 import { NavigateFunction, useNavigate } from "react-router-dom";
 import { Button } from "../../components/Button";
+import { FormEventHandler } from "react";
 
-export const Register = () => {
+type Props = {
+  onSubmit: FormEventHandler<HTMLFormElement>;
+};
+export const Register = (props: Props) => {
+  const { onSubmit } = props;
   const navigate: NavigateFunction = useNavigate();
+
   return (
     <div className="Register">
-      <Header isLoggedIn={true} />
+      {/* <Header isLoggedIn={false} /> */}
+      <form onSubmit={onSubmit}>
       <div className="All-content-register">
         <div className="container-register-content">
           <div className="menu-register">
@@ -52,11 +59,12 @@ export const Register = () => {
           </div>
 
           <div className="divButton">
-            <Button category="primary" label="Cadastrar" onClick={() => navigate("/")} />
+            <button type="submit">Cadastrar</button>
           </div>
           
         </div>
       </div>
+    </form>
     </div>
   );
 };

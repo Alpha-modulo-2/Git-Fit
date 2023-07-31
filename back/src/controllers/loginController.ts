@@ -30,8 +30,9 @@ export default class LoginController {
                 process.env.JWTSECRET
             );
             res.cookie("session", jwt);
-
-            return res.status(result.statusCode || 500).json(
+                console.log(result.statusCode);
+                res.statusCode = 200;
+            return res.json(
                 {
                     message:
                         `Usuário '${credentials.userName}' logado com sucesso.`
