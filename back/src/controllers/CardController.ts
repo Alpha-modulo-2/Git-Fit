@@ -1,18 +1,14 @@
 import { Request, Response } from "express";
 import CardService from "../services/CardServices";
-import ICard from "../interfaces/ICard";
 import ITask from "../interfaces/ITask";
 import IMeal from "../interfaces/IMeal";
-
-const TAG = "Card Controller "
-
 export default class CardController {
     private service: CardService;
 
-    constructor() {
-        this.service = new CardService();
+    constructor(service?: CardService) {
+        this.service = service || new CardService();
         this.insert = this.insert.bind(this);
-        this.get = this.get.bind(this);
+        this.getAllCardsByUser = this.getAllCardsByUser.bind(this);
         this.getOne = this.getOne.bind(this);
         this.addTask = this.addTask.bind(this);
         this.addMeal = this.addMeal.bind(this);
@@ -49,9 +45,19 @@ export default class CardController {
         }
     }
 
-    async get(req: Request, res: Response) {
+    async getAllCardsByUser(req: Request, res: Response) {
         try {
-            const result = await this.service.get();
+            const { userId } = req.params
+
+            if (!userId || userId.length !== 24 || !(/^[0-9a-fA-F]+$/).test(userId)) {
+                return res.status(400).json({
+                    error: true,
+                    statusCode: 400,
+                    message: "ID do usuário inválido"
+                });
+            }
+
+            const result = await this.service.getAllCardsByUser(userId);
 
             return res.status(result.statusCode || 500).json(result.card || result.message);
         } catch (error: any) {

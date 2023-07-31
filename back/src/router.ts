@@ -4,6 +4,7 @@ import CardController from "./controllers/CardController";
 import path from "path";
 import LoginController from "./controllers/loginController";
 import authenticate from "./middleware/authenticate";
+import FriendRequestsController from "./controllers/FriendRequestsController";
 
 const router: Router = Router();
 
@@ -22,7 +23,7 @@ const cardController = new CardController();
 
 //Card Routes
 router.post("/cards/:userId", cardController.insert);
-router.get("/allcards/:userId", cardController.get);
+router.get("/allcards/:userId", cardController.getAllCardsByUser);
 router.get("/card/:cardId", cardController.getOne);
 router.post("/card/:cardId/task", cardController.addTask);
 router.post("/card/:cardId/meal", cardController.addMeal);
@@ -34,8 +35,18 @@ router.delete("/card/:cardId/task/:taskId", cardController.delTask);
 router.delete("/card/:cardId/meal/:mealId", cardController.delMeal);
 
 
+const friendRequestsController = new FriendRequestsController();
+
+//FriendRequests Routes
+router.post("/solicitation", friendRequestsController.insert);
+router.get("/friendRequests/:userId", friendRequestsController.friendRequestsByUser);
+router.patch("/acceptFriend", friendRequestsController.acceptFriend);
+router.delete("/rejectFriend/:requestId", friendRequestsController.rejectFriend);
+
+
 const loginController = new LoginController();
 
+//Login Routes
 router.post("/login", loginController.login);
 // router.delete("/logout", loginController.logout);
 
