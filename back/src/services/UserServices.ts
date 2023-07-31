@@ -16,12 +16,20 @@ export default class UserService {
             const result = await this.repository.insert(user);
 
             if (result.error) {
-                throw new Error(result.message)
+                const error = {
+                    message: result.message,
+                    code: result.statusCode
+                }
+                throw error
             }
 
             return result
         } catch (error: any) {
-            return error.message;
+            return {
+                error: true,
+                message: error.message,
+                statusCode: error.code
+            };
         }
 
     }
@@ -31,12 +39,20 @@ export default class UserService {
             const result = await this.repository.get();
 
             if (result.error) {
-                throw new Error(result.message)
+                const error = {
+                    message: result.message,
+                    code: result.statusCode
+                }
+                throw error
             }
 
             return result
         } catch (error: any) {
-            return error.message;
+            return {
+                error: true,
+                message: error.message,
+                statusCode: error.code
+            };
         }
     }
 
@@ -46,12 +62,20 @@ export default class UserService {
             const result = await this.repository.getOne(id);
 
             if (result.error) {
-                throw new Error(result.message)
+                const error = {
+                    message: result.message,
+                    code: result.statusCode
+                }
+                throw error
             }
 
             return result
         } catch (error: any) {
-            return error.message;
+            return {
+                error: true,
+                message: error.message,
+                statusCode: error.code
+            };
         }
 
     }
@@ -62,14 +86,21 @@ export default class UserService {
             const result = await this.repository.update(id, updateData);
 
             if (result.error) {
-                throw new Error(result.message)
+                const error = {
+                    message: result.message,
+                    code: result.statusCode
+                }
+                throw error
             }
 
             return result
         } catch (error: any) {
-            return error.message;
+            return {
+                error: true,
+                message: error.message,
+                statusCode: error.code
+            };
         }
-
     }
 
     async delete(id: string): Promise<IResult> {
@@ -78,12 +109,20 @@ export default class UserService {
             const result = await this.repository.delete(id);
 
             if (result.error) {
-                throw new Error(result.message)
+                const error = {
+                    message: result.message,
+                    code: result.statusCode
+                }
+                throw error
             }
 
             return result
         } catch (error: any) {
-            return error.message;
+            return {
+                error: true,
+                message: error.message,
+                statusCode: error.code
+            };
         }
 
     }
@@ -94,13 +133,43 @@ export default class UserService {
             const result = await this.repository.getByName(name);
 
             if (result.error) {
-                throw new Error(result.message)
+                const error = {
+                    message: result.message,
+                    code: result.statusCode
+                }
+                throw error
             }
 
             return result
         } catch (error: any) {
-            return error.message;
+            return {
+                error: true,
+                message: error.message,
+                statusCode: error.code
+            };
         }
+    }
 
+    async removeFriend(friendId: string, userId: string): Promise<IResult> {
+        try {
+
+            const result = await this.repository.removeFriend(friendId, userId);
+
+            if (result.error) {
+                const error = {
+                    message: result.message,
+                    code: result.statusCode
+                }
+                throw error
+            }
+
+            return result
+        } catch (error: any) {
+            return {
+                error: true,
+                message: error.message,
+                statusCode: error.code
+            };
+        }
     }
 }
