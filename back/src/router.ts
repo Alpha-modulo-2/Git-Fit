@@ -11,12 +11,12 @@ const router: Router = Router();
 const userController = new UserController();
 
 //User Routes
-router.post("/users/", authenticate, userController.insert);
-router.get("/users/:id", authenticate, userController.getOne);
-router.get("/users/", authenticate, userController.get);
-router.patch("/users/:id", authenticate, userController.update);
-router.delete("/users/:id", authenticate, userController.delete);
-router.get("/users/search/:name", authenticate, userController.getByName);
+router.post("/users/", userController.insert);
+router.get("/users/:id", userController.getOne);
+router.get("/users/", userController.get);
+router.patch("/users/:id", userController.update);
+router.delete("/users/:id", userController.delete);
+router.get("/users/search/:name", userController.getByName);
 
 
 const cardController = new CardController();

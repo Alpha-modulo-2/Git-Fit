@@ -6,7 +6,7 @@ import { PerfilEdit } from '../pages/PerfilEdit';
 import { Login } from '../pages/Login';
 import { SeeMore } from '../pages/SeeMore';
 import { Contacts } from '../pages/ContactsAndRequests';
-
+import { FullCard } from "../pages/FullCards";
 // import { Catalog } from '../pages/Catalog';
 // import { Error404 } from '../pages/Error404';
 // import { Home } from '../pages/Home';

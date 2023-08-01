@@ -1,7 +1,22 @@
 // import React from 'react';
 import { MouseEventHandler } from 'react';
-import data from '../../data.json';
+import { useEffect, useState } from 'react';
+// import data from '../../data.json';
+import currentuser from '../../currentuser.json'
 import "./styles.css"
+
+interface CardData {
+  trainingCard: {
+    checked: boolean;
+    title: string;
+    tasks: { _id: string; description: string }[];
+  };
+  mealsCard: {
+    checked: boolean;
+    meals: { _id: string; description: string }[];
+  };
+  name: string;
+}
 
 interface PropTypes {
   week_number: number;
@@ -10,27 +25,44 @@ interface PropTypes {
 
 const weekDays = [
   { id: 0, name: 'Domingo' },
-  { id: 1, name: 'Segunda-Feira' },
-  { id: 2, name: 'Terça-Feira' },
-  { id: 3, name: 'Quarta-Feira' },
-  { id: 4, name: 'Quinta-Feira' },
-  { id: 5, name: 'Sexta-Feira' },
+  { id: 1, name: 'Segunda-feira' },
+  { id: 2, name: 'Terça-feira' },
+  { id: 3, name: 'Quarta-feira' },
+  { id: 4, name: 'Quinta-feira' },
+  { id: 5, name: 'Sexta-feira' },
   { id: 6, name: 'Sábado' },
 ];
 
 export const DailyCard = ({ week_number, onClick }: PropTypes) => {
-  const selectedDay = weekDays.find(day => day.id === week_number);
-  const trainingIndex = data.training.findIndex(training => training._id === week_number.toString());
-  const mealIndex = data.meals.findIndex(meal => meal._id === week_number.toString());
 
-  const daily_theme = data.training[trainingIndex].title;
+  let userId = currentuser.id;
+    const [cardData, setCardData] = useState<CardData[]>([]);
 
-  const daily_food = data.meals[mealIndex].meals.map(meal => meal.description).join(', ');
+    useEffect(() => {
+        const fetchCardsData = async () => {
+          try {
+            const response = await fetch(`http://localhost:3000/allcards/${userId}`);
+            const data = await response.json();
+            setCardData(data);
+          } catch (error) {
+            console.error('Erro ao buscar dados dos cards', error);
+          }
+        };
+        fetchCardsData();
+      }, []);
+
+  const currentCard = cardData.find((card) => card.name === weekDays[week_number].name);
+  if (!currentCard) {
+    return <div className="structure-daily-card">Card não encontrado para a semana selecionada.</div>;
+  }
+  
+  const daily_theme = currentCard.trainingCard.title;
+  const daily_food = currentCard.mealsCard.meals.map((meal) => meal.description).join(', ');
 
   return (
     <div className="structure-daily-card" onClick={onClick}>
       <div className="header-card">
-        <h2>{selectedDay?.name}</h2>
+        <h2>{weekDays[week_number].name}</h2>
       </div>
       <div className="body-card">
         <div className="training-day-card">

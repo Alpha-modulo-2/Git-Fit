@@ -36,7 +36,7 @@ export const Header = ({ isLoggedIn }: PropTypes) => {
             <>
               <div className='header-menu'>
                 <nav className='header-menu-items'>
-                    <Link to="/fullcard/:id" className='menu-items'>Cards</Link>
+                    <Link to="/fullcard/0" className='menu-items'>Cards</Link>
                     <Link to="/contacts" className='menu-items'>Contatos</Link>
                     <Link to="/profile" className='menu-items'>Perfil</Link>
                 </nav>
