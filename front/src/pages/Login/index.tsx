@@ -24,7 +24,7 @@ export const Login = () => {
       body: JSON.stringify( user ),
     }).then((response) => {
       console.log(response);
-      if (response.status == 500) {
+      if (response.ok) {
         setIsLoggedIn(true);
         console.log(isLoggedIn);
       } else {
