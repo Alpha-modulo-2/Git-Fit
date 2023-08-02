@@ -1,7 +1,7 @@
 import LoginRepository from "../repositories/loginRepository";
 import { userModel } from "../models/user";
 import ILogin from "../interfaces/ILogin";
-import IUser from "../interfaces/IUser";
+import mongoose from "mongoose";
 
 jest.mock('../models/user');
 
@@ -11,8 +11,8 @@ describe('LoginRepository', () => {
         password: "password"
     };
 
-    const mockUser: IUser = {
-        "id": "123456789101112131415161",
+    const mockUser = {
+        _id: new mongoose.Types.ObjectId(),
         "userName": mockCredentials.userName,
         "password": '$2a$10$yH.C8uIjC.O9F5/RLKmKMu9JqG2tUzBLpLuJ.bfO6ZJ5V7oQ.tolC', // bcrypt hashed version of "password"
         "email": "teste@teste.com",
@@ -37,8 +37,10 @@ describe('LoginRepository', () => {
 
         const result = await loginRepository.login(mockCredentials);
 
+        const { _id, ...restOfMockUser } = mockUser
+
         expect(userModel.findOne).toHaveBeenCalledWith({ userName: mockCredentials.userName });
-        expect(result).toEqual({ error: false, statusCode: 200, user: mockUser });
+        expect(result).toEqual({ error: false, statusCode: 200, user: { ...restOfMockUser, id: _id.toString() } });
     });
 
     it('should fail to login when user is not found', async () => {

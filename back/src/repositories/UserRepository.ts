@@ -171,4 +171,33 @@ export default class UserRepository {
         }
     }
 
+    async removeFriend(friendId: string, userId: string): Promise<IResult> {
+        try {
+            const user = await userModel.findById(userId);
+            const friend = await userModel.findById(friendId);
+
+            if (!user || !friend) {
+                throw new Error("Usuário não encontrado.");
+            }
+
+            if (!user.friends.includes(friend._id.toString())) {
+                throw new Error("Este usuário não é seu amigo.");
+            }
+
+            await userModel.findByIdAndUpdate(userId, { $pull: { friends: friendId } });
+            await userModel.findByIdAndUpdate(friendId, { $pull: { friends: userId } });
+
+            return {
+                error: false,
+                statusCode: 200,
+            };
+        } catch (error: any) {
+            return {
+                error: true,
+                message: error.message,
+                statusCode: 500,
+            };
+        }
+    }
+
 }

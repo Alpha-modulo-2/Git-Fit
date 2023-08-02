@@ -37,20 +37,7 @@ export default class LoginService {
                 if (user.password) {
                     const login = await bcrypt.compare(credentials.password, user.password);
 
-                    const restOfUser = {
-                        userName: user.userName,
-                        id: user.id,
-                        email: user.email,
-                        photo: user.photo,
-                        gender: user.gender,
-                        weight: user.weight,
-                        height: user.height,
-                        occupation: user.occupation,
-                        age: user.age,
-                        created_at: user.created_at,
-                        updated_at: user.updated_at,
-                        friends: user.friends
-                    };
+                    const { password, ...restOfUser } = user
 
                     if (login) {
 
