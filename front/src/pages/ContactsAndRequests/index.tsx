@@ -1,8 +1,10 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import "./styles.css"
 import { Header } from "../../components/Header";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ContactCard from "../../components/ContactCard";
+import {Modal} from "../../components/Modal";
 import { Chat } from "../../components/Chat";
 
 interface FriendRequest {
@@ -18,6 +20,7 @@ interface FriendRequest {
   interface ApiResponseRequests {
     error: boolean;
     statusCode: number;
+    message?: string;
     friendRequests: FriendRequest[];
   }
 
@@ -59,126 +62,155 @@ export const Contacts = () => {
     const [contacts, setContacts] = useState<Friend[]>();
     const [requests, setRequests] = useState<FriendRequest[] | null>(null);
     const [showRequests, setShowRequests] = useState(false); // Estado para controlar exibição das solicitações
+    const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
+    const [messageModal, setMessageModal] = useState<string>('');
     const [error, setError] = useState('');
 
+    function openModal() {
+        setModalIsOpen(true);
+    }
+    function closeModal() {
+        setModalIsOpen(false);
+    }
+
+
+    async function getContacts() {
+        try {
+            const userId= 	'64c9a35f4cfe8a8f5b6a4d49';
     
-    
-    
-    const handleShowContacts = () => {
-        console.log('caiu')
+            const response = await fetch(`https://localhost:443/users/${userId}`);
+            if (response.ok) {
+                const data = await response.json() as User;
+                setContacts(data.friends); 
+
+                console.log(data, 'contatct')
+                return;
+            } else {
+                setError('Erro ao obter os contatos.');
+                console.error('Erro ao obter os contatos', error);
+
+            }
+        }catch (error) {
+            console.error('Erro na requisição:', error);
+            // setError('Erro na requisição');
+        }
+    }
+
+
+    async function getRequests() {
+        try {
+            const userId= 	'64c9a35f4cfe8a8f5b6a4d49';
+                
+            const response = await fetch(`https://localhost:443/friendRequests/${userId}`);
+            if (response.ok) {
+                const data = await response.json() as ApiResponseRequests;
+                setRequests(data.friendRequests); 
+
+
+                // getting information about every requester
+                const requesterIds = data.friendRequests.map((request) => request.requester);
+                const requesterDetails = await Promise.all(requesterIds.map((requesterId) => fetch(`https://localhost:443/users/${requesterId}`)));
+                const requesterData = await Promise.all(requesterDetails.map((response) => response.json()));
+                
+                // updating friendRequests with the information accquired
+                const updatedRequests:  FriendRequest[] = data.friendRequests.map((request, index) => ({
+                    ...request,
+                    requesterInfo: requesterData[index] as User, 
+                    // Adding the users' info in 'requesterInfo' field
+                }));
+                
+                setRequests(updatedRequests);
+                
+                console.log(updatedRequests)
+            } else {
+                console.error('Erro ao obter as solicitações');
+                setError('Erro ao obter as solicitações.');
+            }
+        }catch (error) {
+            console.error('Erro na requisição:', error);
+            // setError('Erro na requisição');
+        }
+    }
+        
+    useEffect(() => {
         getContacts().catch((error) => {
             console.error('Erro ao obter as solicitações:', error);
-          });
+        });
 
-        async function getContacts() {
-            try {
-                const userId= 	'64bd4cc8e86446a01cb52ee7';
-    
-                    
-                const response = await fetch(`https://localhost:443/users/${userId}`);
-                if (response.ok) {
-                    const data = await response.json() as User;
-                    setContacts(data.friends); 
-    
-                    console.log(data.friends, 'friendss')
-                    return;
-                } else {
-                    console.error('Erro ao obter as solicitações');
-                    console.log(error)
-                    setError('Erro ao obter as solicitações.');
-                }
-            }catch (error) {
-                console.error('Erro na requisição:', error);
-                // setError('Erro na requisição');
-            }
-        }
-        setShowRequests(false);
-    };
-
-    const handleShowRequests = () => {
-        console.log('caiu')
         getRequests().catch((error) => {
             console.error('Erro ao obter as solicitações:', error);
-          });
-
-        async function getRequests() {
-            try {
-                const userId= 	'64bd4cc8e86446a01cb52ee7';
-    
-                    
-                const response = await fetch(`https://localhost:443/friendRequests/${userId}`);
-                if (response.ok) {
-                    const data = await response.json() as ApiResponseRequests;
-                    setRequests(data.friendRequests); 
-    
-                    // obtendo informações sobre cada requester
-                    const requesterIds = data.friendRequests.map((request) => request.requester);
-                    const requesterDetails = await Promise.all(requesterIds.map((requesterId) => fetch(`https://localhost:443/users/${requesterId}`)));
-                    const requesterData = await Promise.all(requesterDetails.map((response) => response.json()));
-                    
-                    // atualizando os friendRequests com as informações obtidas
-                    const updatedRequests:  FriendRequest[] = data.friendRequests.map((request, index) => ({
-                        ...request,
-                        requesterInfo: requesterData[index] as User, 
-                        // Adicionandp as informações do usuário em um campo chamado 'requesterInfo'
-                    }));
-                    
-                    setRequests(updatedRequests);
-                    return;
-                } else {
-                    console.error('Erro ao obter as solicitações');
-                    setError('Erro ao obter as solicitações.');
-                }
-            }catch (error) {
-                console.error('Erro na requisição:', error);
-                // setError('Erro na requisição');
-            }
-        }
-        setShowRequests(true);
-    };
-    
-    const updateFriends = (userId: string, friendId: string) => {
-        console.log(userId, friendId)
-        fetch(`/friends/${userId}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ friendId }),
-        })
-        .then((response) => {
-            if (response.ok) {
-                return response.json();
-            } else {
-                console.error('Erro ao atualizar os contatos');
-                // setError('Failed to update contacts.');
-            }
-        })
-        .then((data) => {
-            if (data) {
-                //setContacts(data);
-            }
-        })
-        .catch((error) => {
-            console.error('Erro na requisição:', error);
-            // setError('An error occurred while updating the contacts.');
         });
-    };
-
-   
+    }, []);
     
-      // useEffect com a função getContacts
-//   useEffect(() => {
-//     getRequests();
-    
-//   }, []);
+    function updateFriends(requestId: string): void {
+        try {
+            console.log(requestId);
+            fetch(`https://localhost:443/acceptFriend`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ requestId }),
+            }).then(response => {
+                if (response.ok) {
+                    return response.json() as Promise<ApiResponseRequests>;
+                } else {
+                    setError('Erro ao obter as solicitações.');
+                    throw new Error('Failed to update contacts.');
+                }
+            }).then(data => {
+                console.log(data.message);
+                if(data.message){
+                    setMessageModal(data.message)
+                    openModal()
+                    return getContacts();
+                }
+            }).then(() => {
+                return getRequests(); // Retornando a promessa da função getRequests
+            })
+            .catch(error => {
+                console.error('Erro na requisição:', error);
+                // Lidar com o erro aqui
+            });
+        } catch (error) {
+            console.error('Erro geral:', error);
+            // Lidar com o erro aqui
+        }
+    }
+    function removeFriends(requestId: string): void {
+        try {
+            console.log(requestId);
+            fetch(`https://localhost:443/rejectFriend/${requestId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            }).then(response => {
+                if (response.ok) {
+                    return response.json() as Promise<ApiResponseRequests>;
+                } else {
+                    setError('Erro ao obter as solicitações.');
+                    throw new Error('Failed to update contacts.');
+                }
+            }).then(data => {
+                console.log(data, 'data');
+                if(data.message){
+                    setMessageModal(data.message)
+                    openModal()
+                    return getContacts();
+                }
+            }).then(() => {
+                return getRequests(); // Retornando a promessa da função getRequests
+            })
+            .catch(error => {
+                console.error('Erro na requisição:', error);
+                // Lidar com o erro aqui
+            });
+        } catch (error) {
+            console.error('Erro geral:', error);
+        }
+    }
 
-  // Se você precisar que o useEffect seja executado apenas uma vez ao montar o componente,
-    // deixe o segundo argumento do useEffect vazio (ou seja, uma array vazia []).
-    // Se precisar que o useEffect seja executado toda vez que uma dependência mudar,
-    // coloque a dependência dentro da array (por exemplo, [contacts]).
-
-    // const navigate: NavigateFunction = useNavigate();
     return (
       
         <div className="contacts-page">
@@ -190,9 +222,9 @@ export const Contacts = () => {
                 </div>
                 <div className="content-contacts">
                     <div className="container-titles-contacts">
-                        <p className={`title-contacts title-content-left ${!showRequests ? 'active' : ''}`} onClick={handleShowContacts}
+                        <p className={`title-contacts title-content-left ${!showRequests ? 'active' : ''}`} onClick={() => setShowRequests(false)}
                         >Contatos</p>
-                        <p className={`title-contacts title-content-right ${showRequests ? 'active' : ''}`} onClick={handleShowRequests}             
+                        <p className={`title-contacts title-content-right ${showRequests ? 'active' : ''}`} onClick={() => setShowRequests(true)}             
                         >Solicitações</p>
                     </div>
                     <p className="contacts-line"></p>
@@ -201,24 +233,26 @@ export const Contacts = () => {
                     <div className="container-contact-cards">
                     {showRequests ? requests?.map((requester) => (
                         <ContactCard
-                        key={requester._id}
-                        requesterInfo={requester.requesterInfo}
-                        onAddClick={(userId, friendId) => updateFriends(userId, friendId)}
-                        onRemoveClick={(userId) => console.log(userId)
-                        } 
+                            key={requester._id}
+                            requesterInfo={requester.requesterInfo}
+                            requestId={requester._id}
+                            onUpdateFriends={updateFriends}
+                            onRemoveFriends={removeFriends} 
                         // logica para remover contato
                         />
                     )) : contacts?.map((friend) => (
                         <ContactCard
-                        key={friend._id}
-                        requesterInfo={friend}
-                        onAddClick={(userId, friendId) => updateFriends(userId, friendId)}
-                        onRemoveClick={undefined}
+                            key={friend._id}
+                            requesterInfo={friend}
+                            requestId={friend._id}
+                            onAddFriend={(friend) => updateFriends(friend)}
                         />
                     ))}
                     </div>
                 </div>
-                
+                {modalIsOpen && (
+                    <Modal children={messageModal} onClick={closeModal} />
+                )}
             </div>
         </div>
       
