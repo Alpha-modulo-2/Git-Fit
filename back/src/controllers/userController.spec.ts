@@ -1,5 +1,6 @@
+import mongoose from 'mongoose';
 import UserController from '../controllers/UserController';
-import IUser from '../interfaces/IUser';
+import jwt from "jsonwebtoken"
 import UserService from '../services/UserServices';
 import UserValidator from '../validators/UserValidator';
 import bcrypt from 'bcrypt';
@@ -14,19 +15,28 @@ interface MockUserService extends UserService {
     update: jest.Mock;
     delete: jest.Mock;
     getByName: jest.Mock;
+    removeFriend: jest.Mock;
 }
 
 describe('UserController', () => {
+
+    beforeAll(() => {
+        process.env.JWTSECRET = 'your-test-secret';
+    });
+
     let req: any, res: any, next: any;
     let userController: any;
     let userService: MockUserService;
 
-    const mockUser: IUser = {
-        "id": "123456789101112131415161",
+    const mockFriendID = new mongoose.Types.ObjectId().toString()
+    const mockUserId = new mongoose.Types.ObjectId().toString()
+
+    const mockUser = {
+        _id: mockUserId,
         "userName": "teste",
-        "password": "teste123",
+        "password": "teste",
         "email": "teste@teste.com",
-        "friends": [""],
+        "friends": [mockFriendID,],
         "created_at": new Date,
         "updated_at": new Date,
         "photo": "url",
@@ -35,10 +45,13 @@ describe('UserController', () => {
         "height": "180cm",
         "occupation": "none",
         "age": 25
-    };
+    }
 
     beforeEach(() => {
-        req = { body: { ...mockUser }, params: {} };
+        req = {
+            body: { ...mockUser },
+            params: { userId: mockUserId, friendId: mockFriendID }
+        };
         res = {
             json: jest.fn(() => res),
             status: jest.fn(() => res),
@@ -52,6 +65,7 @@ describe('UserController', () => {
             update: jest.fn(),
             delete: jest.fn(),
             getByName: jest.fn(),
+            removeFriend: jest.fn(),
         } as MockUserService;
 
         userController = new UserController(userService);
@@ -91,10 +105,10 @@ describe('UserController', () => {
     });
 
     it('should update a user', async () => {
-        const { id, ...restOfUser } = mockUser
+        const { _id, ...restOfUser } = mockUser
         const req = {
             params: {
-                id: id,
+                id: _id,
             },
             body: { ...restOfUser }
         }
@@ -152,7 +166,7 @@ describe('UserController', () => {
 
     it('should get user by name', async () => {
         const req = {
-            params: {
+            query: {
                 name: mockUser.userName,
             },
         };
@@ -168,7 +182,7 @@ describe('UserController', () => {
 
     it('should return error if userService.getByName returns error message', async () => {
         const req = {
-            params: {
+            query: {
                 name: mockUser.userName,
             },
         };
@@ -184,7 +198,7 @@ describe('UserController', () => {
 
     it('should return 500 if userService.getByName throws an error', async () => {
         const req = {
-            params: {
+            query: {
                 name: mockUser.userName,
             },
         };
@@ -202,8 +216,8 @@ describe('UserController', () => {
         });
     });
 
-    it('should return error if required name is missing in request params', async () => {
-        const req = { params: {} };
+    it('should return error if required name is missing in request query', async () => {
+        const req = { query: {} };
         const error = new Error('Nome nao encontrado');
 
 
@@ -230,6 +244,43 @@ describe('UserController', () => {
             error: true,
             statusCode: 500,
             message: `Erro ao atualizar a conta 1 ${error.message}`,
+        });
+    });
+
+    it('should remove a friend', async () => {
+        const req = {
+            params: {
+                userId: mockUserId,
+                friendId: mockFriendID
+            },
+            cookies: { "session": jwt.sign({ user: { id: mockUserId } }, process.env.JWTSECRET!) }
+        }
+        userService.removeFriend.mockResolvedValue({ error: false, statusCode: 200, user: mockUser });
+
+        await userController.removeFriend(req, res);
+
+        expect(userService.removeFriend).toHaveBeenCalledWith(mockFriendID, mockUserId);
+        expect(res.status).toHaveBeenCalledWith(200);
+        expect(res.json).toHaveBeenCalledWith(mockUser);
+    });
+
+    it('should return error if JWTSECRET is not defined', async () => {
+        const req = {
+            params: {
+                userId: mockUserId,
+                friendId: mockFriendID
+            },
+            cookies: { "session": jwt.sign({ user: { id: mockUserId } }, process.env.JWTSECRET!) }
+        }
+        process.env.JWTSECRET = "";
+
+        await userController.removeFriend(req, res);
+
+        expect(res.status).toHaveBeenCalledWith(500);
+        expect(res.json).toHaveBeenCalledWith({
+            error: true,
+            statusCode: 500,
+            message: 'Erro ao remover amizade: JWTSECRET nao definido'
         });
     });
 });
