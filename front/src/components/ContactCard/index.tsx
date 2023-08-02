@@ -1,6 +1,6 @@
 // ContactCard.tsx
 import React from 'react';
-import { XCircle, Check, UserCirclePlus } from "@phosphor-icons/react";
+import { XCircle, Check } from "@phosphor-icons/react";
 
 interface User {
   _id: string;
@@ -41,7 +41,7 @@ interface ContactCardProps {
   onAddFriend?: (requestId: string) => void;
 }
 
-const ContactCard: React.FC<ContactCardProps> = ({ requesterInfo, requestId, onUpdateFriends, onRemoveFriends, onAddFriend }) => {
+const ContactCard: React.FC<ContactCardProps> = ({ requesterInfo, requestId, onUpdateFriends, onRemoveFriends }) => {
   return (
     <div className="contact-card">
       <div className="img-card-contacts">

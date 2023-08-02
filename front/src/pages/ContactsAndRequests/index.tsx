@@ -245,7 +245,7 @@ export const Contacts = () => {
                             key={friend._id}
                             requesterInfo={friend}
                             requestId={friend._id}
-                            onAddFriend={(friend) => updateFriends(friend)}
+                            // onAddFriend={(friend) => updateFriends(friend)}
                         />
                     ))}
                     </div>
