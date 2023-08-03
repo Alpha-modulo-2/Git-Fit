@@ -1,4 +1,3 @@
-import UserValidator from "../validators/UserValidator";
 import { Request, Response } from "express";
 import bcrypt from "bcrypt";
 import UserService from "../services/UserServices";
@@ -22,15 +21,6 @@ export default class UserController {
     async insert(req: Request, res: Response) {
         try {
 
-            const validationErrors = UserValidator(req.body);
-
-            if (Object.keys(validationErrors).length > 0) {
-                res.status(400).json({
-                    error: true,
-                    message: validationErrors,
-                });
-                return;
-            }
             const { password } = req.body
 
             const passwordHash = await bcrypt.hash(password, 10);
