@@ -4,6 +4,7 @@ import CardController from "./controllers/CardController";
 import path from "path";
 import LoginController from "./controllers/loginController";
 import authenticate from "./middleware/authenticate";
+import { validateInsert, validateLogin, validateUpdate } from "./middleware/validators";
 import FriendRequestsController from "./controllers/FriendRequestsController";
 
 const router: Router = Router();
@@ -11,11 +12,11 @@ const router: Router = Router();
 const userController = new UserController();
 
 //User Routes
-router.post("/users/", authenticate, userController.insert);
+router.post("/users/", authenticate, validateInsert, userController.insert);
 router.get("/users/search", authenticate, userController.getByName);
 router.get("/users/:id", authenticate, userController.getOne);
 router.get("/users/", authenticate, userController.get);
-router.patch("/users/:id", userController.update);
+router.patch("/users/:id", authenticate, validateUpdate, userController.update);
 router.delete("/users/:id", authenticate, userController.delete);
 router.delete("/user/:userId/friend/:friendId", authenticate, userController.removeFriend)
 
@@ -48,7 +49,7 @@ router.delete("/rejectFriend/:requestId", friendRequestsController.rejectFriend)
 const loginController = new LoginController();
 
 //Login Routes
-router.post("/login", loginController.login);
+router.post("/login", validateLogin, loginController.login);
 // router.delete("/logout", loginController.logout);
 
 router.get('*', (req, res) => {

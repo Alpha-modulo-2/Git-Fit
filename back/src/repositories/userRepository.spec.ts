@@ -45,6 +45,10 @@ describe('UserRepository', () => {
         jest.clearAllMocks();
     });
 
+    afterEach(() => {
+        global.Date = Date;
+    });
+
     it('should insert a user', async () => {
         userModel.create = jest.fn().mockResolvedValue(mockUser);
 
@@ -88,27 +92,30 @@ describe('UserRepository', () => {
     });
 
     it('should update a user', async () => {
+
+        userModel.findByIdAndUpdate = jest.fn().mockImplementationOnce(() => ({
+            select: jest.fn().mockImplementationOnce(() => ({
+                populate: jest.fn().mockResolvedValueOnce(
+                    { ...updatedUser }
+                )
+            }))
+        }));
+
         const fixedDate = new Date('2024-01-01T00:00:00');
+        jest.spyOn(global, 'Date').mockImplementation(() => fixedDate);
 
         const advanceDateByOneMinute = () => {
             fixedDate.setMinutes(fixedDate.getMinutes() + 1);
             return new Date(fixedDate);
         }
 
-        const updatedUser = { ...mockUser, userName: 'updated' };
-
-        userModel.findById = jest.fn().mockResolvedValue({
-            ...mockUser,
-            updated_at: advanceDateByOneMinute(),
-            save: jest.fn().mockResolvedValue({ ...updatedUser }),
-            populate: jest.fn().mockReturnThis(),
-        });
+        const updatedUser = { ...mockUser, userName: 'updated', updated_at: advanceDateByOneMinute(), };
 
         const userRepository = new UserRepository();
         const user = await userRepository.update(id, { userName: 'updated' });
 
 
-        expect(userModel.findById).toHaveBeenCalledWith(id);
+        expect(userModel.findByIdAndUpdate).toHaveBeenCalledWith(id, { $set: { userName: "updated" }, updated_at: fixedDate });
         expect(user).toEqual({ error: false, statusCode: 200, user: { ...user.user } });
     });
 

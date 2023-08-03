@@ -36,6 +36,7 @@
     "https": "^1.0.0",
     "jsonwebtoken": "^9.0.0",
     "mongodb": "^5.7.0",
-    "mongoose": "^7.3.4"
+    "mongoose": "^7.3.4",
+    "yup": "^1.2.0"
   }
 }

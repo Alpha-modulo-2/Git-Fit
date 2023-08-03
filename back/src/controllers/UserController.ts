@@ -79,7 +79,6 @@ export default class UserController {
 
     async update(req: Request, res: Response) {
         const { id } = req.params
-        const { password } = req.body
 
         try {
 
@@ -91,7 +90,8 @@ export default class UserController {
                 throw new Error("Id nao encontrada")
             }
 
-            if (password) {
+            if (req.body.password) {
+                const { password } = req.body
                 const passwordHash = await bcrypt.hash(password, 10);
                 reqData = { ...req.body, password: passwordHash }
             }

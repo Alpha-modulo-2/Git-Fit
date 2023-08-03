@@ -20,7 +20,7 @@ describe('LoginController', () => {
     };
 
     beforeEach(() => {
-        req = { body: { username: mockCredentials.userName, password: mockCredentials.password } };
+        req = { body: { userName: mockCredentials.userName, password: mockCredentials.password } };
         res = {
             json: jest.fn(() => res),
             status: jest.fn(() => res),

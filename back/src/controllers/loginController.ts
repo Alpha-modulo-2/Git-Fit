@@ -13,7 +13,7 @@ export default class LoginController {
 
     async login(req: Request, res: Response) {
         try {
-            if (!req.body.username) {
+            if (!req.body.userName) {
                 throw new Error('Usuário é obrigatório');
             }
 
@@ -22,7 +22,7 @@ export default class LoginController {
             }
 
             const credentials: ILogin = {
-                userName: req.body.username,
+                userName: req.body.userName,
                 password: req.body.password,
             };
 

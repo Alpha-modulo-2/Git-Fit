@@ -87,7 +87,7 @@ export default class UserRepository {
 
         try {
 
-            const user = await userModel.findById(id)
+            const user = await userModel.findByIdAndUpdate(id, { $set: updateData, updated_at: new Date }).select("-password")
 
             if (!user) {
                 const error = {
@@ -98,19 +98,6 @@ export default class UserRepository {
 
                 throw error
             }
-
-            user.userName = updateData.userName || user.userName
-            user.email = updateData.email || user.email
-            user.password = updateData.password || user.password
-            user.photo = updateData.photo || user.photo
-            user.gender = updateData.gender || user.gender
-            user.weight = updateData.weight || user.weight
-            user.height = updateData.height || user.height
-            user.occupation = updateData.occupation || user.occupation
-            user.age = updateData.age || user.age
-            user.updated_at = new Date
-
-            await user.save()
 
             return {
                 error: false,

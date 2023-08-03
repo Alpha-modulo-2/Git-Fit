@@ -2,11 +2,9 @@ import mongoose from 'mongoose';
 import UserController from '../controllers/UserController';
 import jwt from "jsonwebtoken"
 import UserService from '../services/UserServices';
-import UserValidator from '../validators/UserValidator';
 import bcrypt from 'bcrypt';
 
 jest.mock('bcrypt');
-jest.mock('../validators/UserValidator'); // Mock UserValidator
 
 interface MockUserService extends UserService {
     insert: jest.Mock;
@@ -33,18 +31,18 @@ describe('UserController', () => {
 
     const mockUser = {
         _id: mockUserId,
-        "userName": "teste",
-        "password": "teste",
-        "email": "teste@teste.com",
-        "friends": [mockFriendID,],
-        "created_at": new Date,
-        "updated_at": new Date,
-        "photo": "url",
-        "gender": "M",
-        "weight": "90kg",
-        "height": "180cm",
-        "occupation": "none",
-        "age": 25
+        userName: "teste",
+        password: "teste",
+        email: "teste@teste.com",
+        friends: [mockFriendID,],
+        created_at: new Date,
+        updated_at: new Date,
+        photo: "url",
+        gender: "M",
+        weight: "90kg",
+        height: "180cm",
+        occupation: "none",
+        age: 25
     }
 
     beforeEach(() => {
@@ -69,7 +67,6 @@ describe('UserController', () => {
         } as MockUserService;
 
         userController = new UserController(userService);
-        (UserValidator as jest.Mock).mockReturnValue({});
         (bcrypt.hash as jest.Mock).mockReturnValue('hashedPassword');
     });
 
@@ -78,7 +75,6 @@ describe('UserController', () => {
 
         await userController.insert(req, res);
 
-        expect(UserValidator).toHaveBeenCalledWith(mockUser);
         expect(bcrypt.hash).toHaveBeenCalledWith(mockUser.password, 10);
         expect(userService.insert).toHaveBeenCalledWith({ ...mockUser, password: 'hashedPassword' });
         expect(res.status).toHaveBeenCalledWith(200);
@@ -138,17 +134,6 @@ describe('UserController', () => {
         expect(res.json).toHaveBeenCalled();
     });
 
-    it('should return error if validator throws', async () => {
-        const error = new Error('Validation error');
-        (UserValidator as jest.Mock).mockImplementation(() => { throw error; });
-
-        await userController.insert(req, res);
-
-        expect(UserValidator).toHaveBeenCalledWith(mockUser);
-        expect(res.status).toHaveBeenCalledWith(500);
-        expect(res.json).toHaveBeenCalledWith({ error: true, message: `Erro ao inserir a conta ${error.message}`, statusCode: 500 });
-    });
-
     it('should return error if userService throws', async () => {
         const error = new Error('Insertion error');
         userService.insert.mockRejectedValue(error);
@@ -158,19 +143,6 @@ describe('UserController', () => {
         expect(userService.insert).toHaveBeenCalledWith({ ...mockUser, password: 'hashedPassword' });
         expect(res.status).toHaveBeenCalledWith(500);
         expect(res.json).toHaveBeenCalledWith({ error: true, message: `Erro ao inserir a conta ${error.message}`, statusCode: 500 });
-    });
-
-    it('should return error if request body is invalid', async () => {
-        const req = { body: {} };
-        const error = new Error('Request body is invalid');
-        (UserValidator as jest.Mock).mockReturnValue({ error: error });
-
-
-        await userController.insert(req, res);
-
-        expect(userService.insert).not.toHaveBeenCalled();
-        expect(res.status).toHaveBeenCalledWith(400);
-        expect(res.json).toHaveBeenCalledWith({ error: true, message: { error: error } });
     });
 
     it('should get user by name', async () => {
