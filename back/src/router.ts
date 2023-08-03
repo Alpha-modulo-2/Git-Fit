@@ -15,7 +15,7 @@ router.post("/users/", authenticate, userController.insert);
 router.get("/users/search", authenticate, userController.getByName);
 router.get("/users/:id", authenticate, userController.getOne);
 router.get("/users/", authenticate, userController.get);
-router.patch("/users/:id", authenticate, userController.update);
+router.patch("/users/:id", userController.update);
 router.delete("/users/:id", authenticate, userController.delete);
 router.delete("/user/:userId/friend/:friendId", authenticate, userController.removeFriend)
 

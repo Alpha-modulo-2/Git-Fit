@@ -7,12 +7,12 @@ export default class LoginRepository {
     async login(data: ILogin): Promise<IResult> {
 
         try {
-
             const user = await userModel.findOne({ userName: data.userName });
 
             if (user) {
                 const userData: IUser = {
                     id: user._id.toString(),
+                    name: user.name,
                     userName: user.userName,
                     password: user.password as string,
                     email: user.email,
@@ -34,7 +34,12 @@ export default class LoginRepository {
                 }
             }
 
-            throw new Error("Usuario nao encontrado")
+            const error = {
+                message: "Usuário ou senha incorretos.",
+                code: 401
+            }
+            throw error
+
 
         } catch (error: any) {
             return {

@@ -10,33 +10,35 @@ describe('UserRepository', () => {
 
     const mockUser = {
         _id: mockUserId,
-        "userName": "teste",
-        "password": "teste",
-        "email": "teste@teste.com",
-        "friends": [mockFriendID,],
-        "created_at": new Date,
-        "updated_at": new Date,
-        "photo": "url",
-        "gender": "M",
-        "weight": "90kg",
-        "height": "180cm",
-        "occupation": "none",
-        "age": 25
+        userName: "teste",
+        name: "teste",
+        password: "teste",
+        email: "teste@teste.com",
+        friends: [mockFriendID,],
+        created_at: new Date,
+        updated_at: new Date,
+        photo: "url",
+        gender: "M",
+        weight: "90kg",
+        height: "180cm",
+        occupation: "none",
+        age: 25
     }
     const mockFriend = {
         _id: mockFriendID,
-        "userName": "teste",
-        "password": "teste",
-        "email": "teste@teste.com",
-        "friends": [mockUserId,],
-        "created_at": new Date,
-        "updated_at": new Date,
-        "photo": "url",
-        "gender": "M",
-        "weight": "90kg",
-        "height": "180cm",
-        "occupation": "none",
-        "age": 25
+        userName: "teste",
+        name: "teste",
+        password: "teste",
+        email: "teste@teste.com",
+        friends: [mockUserId,],
+        created_at: new Date,
+        updated_at: new Date,
+        photo: "url",
+        gender: "M",
+        weight: "90kg",
+        height: "180cm",
+        occupation: "none",
+        age: 25
     }
 
     beforeEach(() => {
@@ -54,10 +56,13 @@ describe('UserRepository', () => {
     });
 
     it('should get users', async () => {
-        userModel.find = jest.fn().mockReturnValue({
-            populate: jest.fn().mockResolvedValue([mockUser, mockUser]),
-            exec: jest.fn().mockResolvedValue({ error: false, statusCode: 200, user: [mockUser, mockUser] })
-        });
+        userModel.find = jest.fn().mockImplementationOnce(() => ({
+            select: jest.fn().mockImplementationOnce(() => ({
+                populate: jest.fn().mockResolvedValueOnce(
+                    [mockUser, mockUser]
+                )
+            }))
+        }));
 
         const userRepository = new UserRepository();
         const users = await userRepository.get();
@@ -67,10 +72,13 @@ describe('UserRepository', () => {
     });
 
     it('should get one user', async () => {
-        userModel.findById = jest.fn().mockReturnValue({
-            populate: jest.fn().mockResolvedValue(mockUser),
-            exec: jest.fn().mockResolvedValue({ error: false, statusCode: 200, user: mockUser })
-        })
+        userModel.findById = jest.fn().mockImplementationOnce(() => ({
+            select: jest.fn().mockImplementationOnce(() => ({
+                populate: jest.fn().mockResolvedValueOnce(
+                    mockUser
+                )
+            }))
+        }));
 
         const userRepository = new UserRepository();
         const user = await userRepository.getOne(id);
@@ -130,10 +138,13 @@ describe('UserRepository', () => {
     });
 
     it('should get a user by name', async () => {
-        userModel.find = jest.fn().mockReturnValue({
-            populate: jest.fn().mockResolvedValue(mockUser),
-            exec: jest.fn().mockResolvedValue({ error: false, statusCode: 200, user: mockUser })
-        })
+        userModel.find = jest.fn().mockImplementationOnce(() => ({
+            select: jest.fn().mockImplementationOnce(() => ({
+                populate: jest.fn().mockResolvedValueOnce(
+                    mockUser
+                )
+            }))
+        }));
 
         const userRepository = new UserRepository();
         const result = await userRepository.getByName(mockUser.userName);
@@ -143,10 +154,13 @@ describe('UserRepository', () => {
     });
 
     it('should return when user is not found', async () => {
-        userModel.find = jest.fn().mockReturnValue({
-            populate: jest.fn().mockResolvedValue([]),
-            exec: jest.fn().mockResolvedValue({ error: false, statusCode: 200, user: [] })
-        })
+        userModel.find = jest.fn().mockImplementationOnce(() => ({
+            select: jest.fn().mockImplementationOnce(() => ({
+                populate: jest.fn().mockResolvedValueOnce(
+                    []
+                )
+            }))
+        }));
 
         const userRepository = new UserRepository();
         const result = await userRepository.getByName(mockUser.userName);
@@ -156,10 +170,9 @@ describe('UserRepository', () => {
     });
 
     it('should handle failure when getting a user by name', async () => {
-        userModel.find = jest.fn().mockReturnValue({
-            populate: jest.fn().mockRejectedValue({ message: "Server error" }),
-            exec: jest.fn().mockRejectedValue({ message: 'Server error' })
-        })
+        userModel.find = jest.fn().mockImplementationOnce(() => {
+            throw new Error("Server error");
+        });
 
         const userRepository = new UserRepository();
         const result = await userRepository.getByName(mockUser.userName);
@@ -187,7 +200,7 @@ describe('UserRepository', () => {
         expect(userModel.findByIdAndUpdate).toHaveBeenNthCalledWith(1, mockUserId, { $pull: { friends: mockFriendID } });
         expect(userModel.findByIdAndUpdate).toHaveBeenNthCalledWith(2, mockFriendID, { $pull: { friends: mockUserId } });
 
-        expect(result).toEqual({ error: false, statusCode: 200 });
+        expect(result).toEqual({ error: false, statusCode: 204 });
     });
 
     it('should throw an error when the user or friend does not exist', async () => {

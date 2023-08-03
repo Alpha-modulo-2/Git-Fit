@@ -20,7 +20,7 @@ interface MockUserService extends UserService {
 
 describe('UserController', () => {
 
-    beforeAll(() => {
+    beforeEach(() => {
         process.env.JWTSECRET = 'your-test-secret';
     });
 
@@ -88,6 +88,8 @@ describe('UserController', () => {
     it('should get one user', async () => {
         userService.getOne.mockResolvedValue({ error: false, statusCode: 200, user: mockUser });
 
+        req.params.id = mockUserId
+
         await userController.getOne(req, res);
 
         expect(res.status).toHaveBeenCalledWith(200);
@@ -122,6 +124,13 @@ describe('UserController', () => {
 
     it('should delete a user', async () => {
         userService.delete.mockResolvedValue({ error: false, statusCode: 204 });
+
+        const req = {
+            params: {
+                id: mockUserId
+            },
+            cookies: { "session": jwt.sign({ user: { id: mockUserId } }, process.env.JWTSECRET!) }
+        }
 
         await userController.delete(req, res);
 
@@ -212,7 +221,7 @@ describe('UserController', () => {
         expect(res.json).toHaveBeenCalledWith({
             error: true,
             statusCode: 500,
-            message: `Erro ao inserir a conta ${error.message}`,
+            message: `Erro ao procurar usuários: ${error.message}`,
         });
     });
 
@@ -228,7 +237,7 @@ describe('UserController', () => {
         expect(res.json).toHaveBeenCalledWith({
             error: true,
             statusCode: 500,
-            message: `Erro ao inserir a conta ${error.message}`,
+            message: `Erro ao procurar usuários: ${error.message}`,
         });
     });
 
@@ -243,7 +252,7 @@ describe('UserController', () => {
         expect(res.json).toHaveBeenCalledWith({
             error: true,
             statusCode: 500,
-            message: `Erro ao atualizar a conta 1 ${error.message}`,
+            message: `Erro ao atualizar a conta: ${error.message}`,
         });
     });
 

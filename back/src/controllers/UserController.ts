@@ -36,7 +36,15 @@ export default class UserController {
             const passwordHash = await bcrypt.hash(password, 10);
 
             const result = await this.service.insert({ ...req.body, password: passwordHash });
-            return res.status(result.statusCode || 500).json(result.user || result.message);
+
+            if (result.error) {
+                const message = result.message as string
+                if (message.includes("E11000")) {
+                    return res.status(500).json("Username já esta sendo utilizado");
+                }
+            }
+
+            return res.status(result.statusCode).json(result.statusCode >= 300 ? result.message : result.user);
         } catch (error: any) {
             return res.status(500).json({
                 error: true,
@@ -50,13 +58,18 @@ export default class UserController {
         const { id } = req.params
 
         try {
+
+            if (!id) {
+                throw new Error("Id nao encontrada")
+            }
+
             const result = await this.service.getOne(id);
-            return res.status(result.statusCode || 500).json(result.user || result.message);
+            return res.status(result.statusCode).json(result.statusCode >= 300 ? result.message : result.user);
         } catch (error: any) {
             return res.status(500).json({
                 error: true,
                 statusCode: 500,
-                message: `Erro ao inserir a conta ${error.message}`
+                message: `Erro ao buscar usuário: ${error.message}`
             });
         }
     }
@@ -64,41 +77,42 @@ export default class UserController {
     async get(req: Request, res: Response) {
         try {
             const result = await this.service.get();
-            return res.status(result.statusCode || 500).json(result.user || result.message);
+            return res.status(result.statusCode).json(result.statusCode >= 300 ? result.message : result.user);
         } catch (error: any) {
             return res.status(500).json({
                 error: true,
                 statusCode: 500,
-                message: `Erro no login ${error.message}`
+                message: `Erro ao buscar usuários: ${error.message}`
             });
         }
     }
 
     async update(req: Request, res: Response) {
         const { id } = req.params
-
-        const validationErrors = UserValidator(req.body);
-
-        if (Object.keys(validationErrors).length > 0) {
-            res.status(400).json({
-                error: true,
-                message: validationErrors,
-            });
-            return;
-        }
+        const { password } = req.body
 
         try {
+
+            let reqData = {
+                ...req.body
+            }
+
             if (!id) {
                 throw new Error("Id nao encontrada")
             }
 
-            const result = await this.service.update(id, req.body);
-            return res.status(result.statusCode || 500).json(result.user || result.message);
+            if (password) {
+                const passwordHash = await bcrypt.hash(password, 10);
+                reqData = { ...req.body, password: passwordHash }
+            }
+
+            const result = await this.service.update(id, reqData);
+            return res.status(result.statusCode).json(result.statusCode >= 300 ? result.message : result.user);
         } catch (error: any) {
             return res.status(500).json({
                 error: true,
                 statusCode: 500,
-                message: `Erro ao atualizar a conta 1 ${error.message}`
+                message: `Erro ao atualizar a conta: ${error.message}`
             });
         }
     }
@@ -107,8 +121,23 @@ export default class UserController {
         const { id } = req.params
 
         try {
+            if (!id) {
+                throw new Error("Id nao encontrada")
+            }
+
+            if (!process.env.JWTSECRET) {
+                throw new Error('JWTSECRET nao definido');
+            }
+
+            const data = jwt.verify(req.cookies["session"], process.env.JWTSECRET);
+            const cookieId = (data as IToken).user.id
+
+            if (cookieId != id) {
+                throw new Error("Você não pode remover uma conta de outra pessoa.")
+            }
+
             const result = await this.service.delete(id);
-            return res.status(result.statusCode || 500).json("" || result.message);
+            return res.status(result.statusCode).json(result.statusCode >= 300 ? result.message : "Usuário deletado com sucesso!");
         } catch (error: any) {
             return res.status(500).json({
                 error: true,
@@ -127,12 +156,12 @@ export default class UserController {
             }
 
             const result = await this.service.getByName(name);
-            return res.status(result.statusCode || 500).json(result.user || result.message);
+            return res.status(result.statusCode).json(result.statusCode >= 300 ? result.message : result.user);
         } catch (error: any) {
             return res.status(500).json({
                 error: true,
                 statusCode: 500,
-                message: `Erro ao inserir a conta ${error.message}`
+                message: `Erro ao procurar usuários: ${error.message}`
             });
         }
     }
@@ -145,6 +174,10 @@ export default class UserController {
                 throw new Error('JWTSECRET nao definido');
             }
 
+            if (!userId || !friendId) {
+                throw new Error("Ambas as Ids são obrigatórias")
+            }
+
             const data = jwt.verify(req.cookies["session"], process.env.JWTSECRET);
 
             const cookieId = (data as IToken).user.id
@@ -153,17 +186,9 @@ export default class UserController {
                 throw new Error("Você não pode remover um amigo de outra pessoa.")
             }
 
-            if (!userId) {
-                throw new Error("Usuário nao encontrado")
-            }
-
-            if (!friendId) {
-                throw new Error("Amigo nao encontrado")
-            }
-
             const result = await this.service.removeFriend(friendId, userId);
 
-            return res.status(result.statusCode || 500).json(result.user || result.message);
+            return res.status(result.statusCode).json(result.statusCode >= 300 ? result.message : result.user);
         } catch (error: any) {
             return res.status(500).json({
                 error: true,
