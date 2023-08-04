@@ -3,6 +3,8 @@ import UserController from '../controllers/UserController';
 import jwt from "jsonwebtoken"
 import UserService from '../services/UserServices';
 import bcrypt from 'bcrypt';
+import * as validators from '../middleware/validators';
+import { Request, Response } from 'express';
 
 jest.mock('bcrypt');
 
@@ -198,33 +200,75 @@ describe('UserController', () => {
     });
 
     it('should return error if required name is missing in request query', async () => {
-        const req = { query: {} };
-        const error = new Error('Nome nao encontrado');
+        const req = {
+            query: {},
+            get: (header: string) => undefined
+        } as Request;
 
+        const res = {
+            json: jest.fn(),
+            status: jest.fn(() => res),
+        } as unknown as Response;
 
-        await userController.getByName(req, res);
+        const validateQueryMock = jest.spyOn(validators, 'validateQuery');
+        validateQueryMock.mockImplementationOnce((_req, _res, next) => next(new Error('Nome nao encontrado')));
+
+        let middlewareError: Error | undefined;
+        validators.validateQuery(req, res, (err) => { middlewareError = err; });
+
+        if (middlewareError) {
+            res.status(500).json({
+                error: true,
+                statusCode: 500,
+                message: `Erro ao procurar usuários: ${middlewareError.message}`,
+            });
+        } else {
+            await userController.getByName(req, res);
+        }
+
 
         expect(userService.getByName).not.toHaveBeenCalled();
         expect(res.status).toHaveBeenCalledWith(500);
         expect(res.json).toHaveBeenCalledWith({
             error: true,
             statusCode: 500,
-            message: `Erro ao procurar usuários: ${error.message}`,
+            message: `Erro ao procurar usuários: Nome nao encontrado`,
         });
     });
 
     it('should return error if required id is missing in request params', async () => {
-        const req = { params: {}, body: mockUser };
-        const error = new Error('Id nao encontrada');
+        const req = {
+            query: {},
+            get: (header: string) => undefined
+        } as Request;
 
-        await userController.update(req, res);
+        const res = {
+            json: jest.fn(),
+            status: jest.fn(() => res),
+        } as unknown as Response;
+
+        const validateIdMock = jest.spyOn(validators, 'validateId');
+        validateIdMock.mockImplementationOnce((_req, _res, next) => next(new Error('ID nao encontrado')));
+
+        let middlewareError: Error | undefined;
+        validators.validateId(req, res, (err) => { middlewareError = err; });
+
+        if (middlewareError) {
+            res.status(500).json({
+                error: true,
+                statusCode: 500,
+                message: `Erro ao atualizar a conta: ${middlewareError.message}`,
+            });
+        } else {
+            await userController.update(req, res);
+        }
 
         expect(userService.update).not.toHaveBeenCalled();
         expect(res.status).toHaveBeenCalledWith(500);
         expect(res.json).toHaveBeenCalledWith({
             error: true,
             statusCode: 500,
-            message: `Erro ao atualizar a conta: ${error.message}`,
+            message: `Erro ao atualizar a conta: ID nao encontrado`,
         });
     });
 

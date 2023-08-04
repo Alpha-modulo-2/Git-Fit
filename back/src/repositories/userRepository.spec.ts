@@ -156,7 +156,12 @@ describe('UserRepository', () => {
         const userRepository = new UserRepository();
         const result = await userRepository.getByName(mockUser.userName);
 
-        expect(userModel.find).toHaveBeenCalledWith({ userName: { $regex: '.*' + mockUser.userName + '.*', $options: 'i' } });
+        expect(userModel.find).toHaveBeenCalledWith({
+            $or: [
+                { userName: { $regex: '.*' + mockUser.userName + '.*', $options: 'i' } },
+                { name: { $regex: '.*' + mockUser.name + '.*', $options: 'i' } }
+            ]
+        });
         expect(result).toEqual({ error: false, statusCode: 200, user: mockUser });
     });
 
@@ -172,7 +177,12 @@ describe('UserRepository', () => {
         const userRepository = new UserRepository();
         const result = await userRepository.getByName(mockUser.userName);
 
-        expect(userModel.find).toHaveBeenCalledWith({ userName: { $regex: '.*' + mockUser.userName + '.*', $options: 'i' } });
+        expect(userModel.find).toHaveBeenCalledWith({
+            $or: [
+                { userName: { $regex: '.*' + mockUser.userName + '.*', $options: 'i' } },
+                { name: { $regex: '.*' + mockUser.name + '.*', $options: 'i' } }
+            ]
+        });
         expect(result).toEqual({ error: false, statusCode: 200, user: [] });
     });
 
@@ -184,7 +194,12 @@ describe('UserRepository', () => {
         const userRepository = new UserRepository();
         const result = await userRepository.getByName(mockUser.userName);
 
-        expect(userModel.find).toHaveBeenCalledWith({ userName: { $regex: '.*' + mockUser.userName + '.*', $options: 'i' } });
+        expect(userModel.find).toHaveBeenCalledWith({
+            $or: [
+                { userName: { $regex: '.*' + mockUser.userName + '.*', $options: 'i' } },
+                { name: { $regex: '.*' + mockUser.name + '.*', $options: 'i' } }
+            ]
+        });
         expect(result).toEqual({
             error: true,
             message: 'Server error',

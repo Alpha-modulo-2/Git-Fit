@@ -4,7 +4,7 @@ import CardController from "./controllers/CardController";
 import path from "path";
 import LoginController from "./controllers/loginController";
 import authenticate from "./middleware/authenticate";
-import { validateInsert, validateLogin, validateUpdate } from "./middleware/validators";
+import { validateInsert, validateLogin, validateUpdate, validateId, validateRemoveFriend, validateQuery } from "./middleware/validators";
 import FriendRequestsController from "./controllers/FriendRequestsController";
 
 const router: Router = Router();
@@ -13,12 +13,12 @@ const userController = new UserController();
 
 //User Routes
 router.post("/users/", authenticate, validateInsert, userController.insert);
-router.get("/users/search", authenticate, userController.getByName);
-router.get("/users/:id", authenticate, userController.getOne);
+router.get("/users/search", authenticate, validateQuery, userController.getByName);
+router.get("/users/:id", authenticate, validateId, userController.getOne);
 router.get("/users/", authenticate, userController.get);
-router.patch("/users/:id", authenticate, validateUpdate, userController.update);
-router.delete("/users/:id", authenticate, userController.delete);
-router.delete("/user/:userId/friend/:friendId", authenticate, userController.removeFriend)
+router.patch("/users/:id", authenticate, validateUpdate, validateId, userController.update);
+router.delete("/users/:id", authenticate, validateId, userController.delete);
+router.delete("/user/:userId/friend/:friendId", authenticate, validateRemoveFriend, userController.removeFriend)
 
 
 const cardController = new CardController();

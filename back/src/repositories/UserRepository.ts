@@ -149,7 +149,12 @@ export default class UserRepository {
     async getByName(name: string): Promise<IResult> {
 
         try {
-            const user = await userModel.find({ userName: { $regex: '.*' + name + '.*', $options: 'i' } }).select("-password").populate("friends", { userName: 1, name: 1, photo: 1, occupation: 1, id: 1 });
+            const user = await userModel.find({
+                $or: [
+                    { userName: { $regex: '.*' + name + '.*', $options: 'i' } },
+                    { name: { $regex: '.*' + name + '.*', $options: 'i' } }
+                ]
+            }).select("-password").populate("friends", { userName: 1, name: 1, photo: 1, occupation: 1, id: 1 });
 
             if (!user) {
                 const error = {

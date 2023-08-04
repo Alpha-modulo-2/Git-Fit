@@ -48,13 +48,9 @@ export default class UserController {
         const { id } = req.params
 
         try {
-
-            if (!id) {
-                throw new Error("Id nao encontrada")
-            }
-
             const result = await this.service.getOne(id);
             return res.status(result.statusCode).json(result.statusCode >= 300 ? result.message : result.user);
+
         } catch (error: any) {
             return res.status(500).json({
                 error: true,
@@ -86,10 +82,6 @@ export default class UserController {
                 ...req.body
             }
 
-            if (!id) {
-                throw new Error("Id nao encontrada")
-            }
-
             if (req.body.password) {
                 const { password } = req.body
                 const passwordHash = await bcrypt.hash(password, 10);
@@ -111,9 +103,6 @@ export default class UserController {
         const { id } = req.params
 
         try {
-            if (!id) {
-                throw new Error("Id nao encontrada")
-            }
 
             if (!process.env.JWTSECRET) {
                 throw new Error('JWTSECRET nao definido');
@@ -141,11 +130,8 @@ export default class UserController {
         const name = req.query.name as string;
 
         try {
-            if (!name) {
-                throw new Error("Nome nao encontrado")
-            }
-
             const result = await this.service.getByName(name);
+
             return res.status(result.statusCode).json(result.statusCode >= 300 ? result.message : result.user);
         } catch (error: any) {
             return res.status(500).json({
@@ -162,10 +148,6 @@ export default class UserController {
         try {
             if (!process.env.JWTSECRET) {
                 throw new Error('JWTSECRET nao definido');
-            }
-
-            if (!userId || !friendId) {
-                throw new Error("Ambas as Ids são obrigatórias")
             }
 
             const data = jwt.verify(req.cookies["session"], process.env.JWTSECRET);
