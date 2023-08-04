@@ -42,7 +42,10 @@ export default class LoginController {
             return res.status(result.statusCode).json(
                 result.statusCode >= 300 ?
                     result.message :
-                    { message: `Usuário '${credentials.userName}' logado com sucesso.` }
+                    {
+                        message: `Usuário '${credentials.userName}' logado com sucesso.`,
+                        user: result.user
+                    },
 
             );
 
