@@ -157,6 +157,9 @@
 .icon-remove-contact:hover {
   scale: 1.2;
 }
+.icon-add-friend:hover {
+  scale: 1.2;
+}
 
 /* Estilizando a barra de rolagem */
 ::-webkit-scrollbar {

@@ -15,16 +15,16 @@ interface FriendRequest {
     created_at: string;
     __v: number;
     requesterInfo?: User
-  }
+}
   
-  interface ApiResponseRequests {
+interface ApiResponseRequests {
     error: boolean;
     statusCode: number;
     message?: string;
     friendRequests: FriendRequest[];
-  }
+}
 
-  interface Friend {
+interface Friend {
     _id: string;
     userName: string;
     password: string;
@@ -38,14 +38,15 @@ interface FriendRequest {
     created_at: string;
     updated_at: string;
     __v: number;
-  }
-  
-  interface User {
+}
+
+interface User {
     _id: string;
     userName: string;
     password: string;
     email: string;
     friends: Friend[];
+    photo?: string;
     gender: string;
     weight: string;
     height: string;
@@ -54,9 +55,21 @@ interface FriendRequest {
     created_at: string;
     updated_at: string;
     __v: number;
-  }
+}
 
+interface SuccessResponse {
+    error: false;
+    statusCode: number;
+    users: User[];
+}
 
+interface ErrorResponse {
+    error: true;
+    message: string;
+    statusCode: number;
+}
+
+type SearchUsersResponse = SuccessResponse | ErrorResponse;
 
 export const Contacts = () => {
     const [contacts, setContacts] = useState<Friend[]>();
@@ -65,7 +78,12 @@ export const Contacts = () => {
     const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
     const [messageModal, setMessageModal] = useState<string>('');
     const [error, setError] = useState('');
+    const [searchQuery, setSearchQuery] = useState('');
+    const [usersFromSearch, setUsersFromSearch] = useState<User[] | null>();
 
+
+
+    /***************    MODAL    ********************/
     function openModal() {
         setModalIsOpen(true);
     }
@@ -74,11 +92,72 @@ export const Contacts = () => {
     }
 
 
+    
+    /***************    GET USERS FROM SEARCH    ********************/
+    async function searchUsers(query: string){
+        try {        
+            const response = await fetch(`http://localhost:3000/users/search?name=${query}`);
+            if (response.ok) {
+                const data = await response.json() as SuccessResponse;
+                setUsersFromSearch(data.users)
+
+                console.log(data, 'searchusers')
+                return
+            } else {
+                setUsersFromSearch(null)
+                setError('Erro ao fazer pesquisa.');
+                console.error( error);
+
+            }
+        }catch (error) {
+            setError('Erro ao fazer pesquisa');
+            console.error(error);
+        }
+    }
+    
+  
+        
+    useEffect(() => {
+        let searchTimer: NodeJS.Timeout | null = null;
+
+        // Clear the previous timeout to start a new one
+        if (searchTimer) {
+            clearTimeout(searchTimer);
+        }
+
+        // Set a new timeout for the search after 5 seconds
+        searchTimer = setTimeout(() => {
+            if (searchQuery) {
+                searchUsers(searchQuery).catch((error) => {
+                    console.error('Erro ao obter as solicitações:', error);
+                });
+            }
+        }, 3000); // 5000 milliseconds (5 seconds)
+
+        return () => {
+            // Clean up by clearing the timer if the component unmounts or the searchQuery changes
+            if (searchTimer) {
+                clearTimeout(searchTimer);
+            }
+        };
+ 
+    }, [searchQuery]);
+
+
+   
+    
+    const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const newValue = event.target.value;
+
+        setSearchQuery(newValue);
+    };
+
+    /***************    GET USER'S FRIENDS    ********************/
     async function getContacts() {
         try {
             const userId= 	'64c9a35f4cfe8a8f5b6a4d49';
     
-            const response = await fetch(`https://localhost:443/users/${userId}`);
+            const response = await fetch(`http://localhost:3000/users/${userId}`);
             if (response.ok) {
                 const data = await response.json() as User;
                 setContacts(data.friends); 
@@ -97,19 +176,21 @@ export const Contacts = () => {
     }
 
 
+    /***************    GET THE FRIEND REQUESTS    ********************/
     async function getRequests() {
         try {
             const userId= 	'64c9a35f4cfe8a8f5b6a4d49';
                 
-            const response = await fetch(`https://localhost:443/friendRequests/${userId}`);
+            const response = await fetch(`http://localhost:3000/friendRequests/${userId}`);
             if (response.ok) {
                 const data = await response.json() as ApiResponseRequests;
-                setRequests(data.friendRequests); 
 
+
+                setRequests(data.friendRequests); 
 
                 // getting information about every requester
                 const requesterIds = data.friendRequests.map((request) => request.requester);
-                const requesterDetails = await Promise.all(requesterIds.map((requesterId) => fetch(`https://localhost:443/users/${requesterId}`)));
+                const requesterDetails = await Promise.all(requesterIds.map((requesterId) => fetch(`http://localhost:3000/users/${requesterId}`)));
                 const requesterData = await Promise.all(requesterDetails.map((response) => response.json()));
                 
                 // updating friendRequests with the information accquired
@@ -120,8 +201,10 @@ export const Contacts = () => {
                 }));
                 
                 setRequests(updatedRequests);
+                console.log(updatedRequests, 'requests')
+
                 
-                console.log(updatedRequests)
+                
             } else {
                 console.error('Erro ao obter as solicitações');
                 setError('Erro ao obter as solicitações.');
@@ -141,11 +224,13 @@ export const Contacts = () => {
             console.error('Erro ao obter as solicitações:', error);
         });
     }, []);
+
     
+    /***************    ACCEPT A FRIEND REQUEST     ********************/
     function updateFriends(requestId: string): void {
         try {
             console.log(requestId);
-            fetch(`https://localhost:443/acceptFriend`, {
+            fetch(`http://localhost:3000/acceptFriend`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
@@ -177,10 +262,11 @@ export const Contacts = () => {
             // Lidar com o erro aqui
         }
     }
+    /***************    REFUSE A FRIEND REQUEST     ********************/
     function removeFriends(requestId: string): void {
         try {
             console.log(requestId);
-            fetch(`https://localhost:443/rejectFriend/${requestId}`, {
+            fetch(`http://localhost:3000/rejectFriend/${requestId}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
@@ -210,6 +296,44 @@ export const Contacts = () => {
             console.error('Erro geral:', error);
         }
     }
+     
+    /***************    MAKE A FRIEND REQUEST     ********************/
+    function addFriends(requestId: string, recipientId: string): void {
+        try {
+            console.log(requestId);
+            console.log(usersFromSearch, 'usersfromsearch')
+            fetch(`http://localhost:3000/solicitation`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ requestId, recipientId }),
+            }).then(response => {
+                if (response.ok) {
+                    return response.json() as Promise<ApiResponseRequests>;
+                } else {
+                    setError('Erro ao adicionar amizade.');
+                    throw new Error('Failed to update contacts.');
+                }
+            }).then(data => {
+                console.log(data.message);
+                if(data.message){
+                    setMessageModal(data.message)
+                    openModal()
+                    return getContacts();
+                }
+            }).then(() => {
+                return getRequests(); // Retornando a promessa da função getRequests
+            })
+            .catch(error => {
+                console.error('Erro na requisição:', error);
+                // Lidar com o erro aqui
+            });
+        } catch (error) {
+            console.error('Erro geral:', error);
+            // Lidar com o erro aqui
+        }
+    }
 
     return (
       
@@ -218,7 +342,7 @@ export const Contacts = () => {
             <div className="container-contacts-request">
                 <Chat/>
                 <div className="search-box">
-                    <input type="text" className="search-text" placeholder="Pesquisar"/>
+                    <input type="text" className="search-text" placeholder="Pesquisar" value={searchQuery} onChange={handleInputChange}/>
                 </div>
                 <div className="content-contacts">
                     <div className="container-titles-contacts">
@@ -231,23 +355,36 @@ export const Contacts = () => {
 
                     {/* div dos cards */}
                     <div className="container-contact-cards">
-                    {showRequests ? requests?.map((requester) => (
-                        <ContactCard
-                            key={requester._id}
-                            requesterInfo={requester.requesterInfo}
-                            requestId={requester._id}
-                            onUpdateFriends={updateFriends}
-                            onRemoveFriends={removeFriends} 
-                        // logica para remover contato
-                        />
-                    )) : contacts?.map((friend) => (
-                        <ContactCard
-                            key={friend._id}
-                            requesterInfo={friend}
-                            requestId={friend._id}
-                            // onAddFriend={(friend) => updateFriends(friend)}
-                        />
-                    ))}
+                        {(usersFromSearch && usersFromSearch !== null && usersFromSearch.length > 0) ? (
+                            usersFromSearch?.map((user) => (
+                                <ContactCard
+                                    key={user._id}
+                                    requesterInfo={user}
+                                    recipientId={'64c9a35f4cfe8a8f5b6a4d49'}
+                                    onAddFriend={addFriends}
+                                />
+                            ))
+                        ) : (
+                            showRequests ? (
+                                requests?.map((requester) => (
+                                    <ContactCard
+                                        key={requester._id}
+                                        requesterInfo={requester.requesterInfo}
+                                        requestId={requester._id}
+                                        onUpdateFriends={updateFriends}
+                                        onRemoveFriends={removeFriends} 
+                                    />
+                                ))
+                            ) : (
+                                contacts?.map((friend) => (
+                                    <ContactCard
+                                        key={friend._id}
+                                        requesterInfo={friend}
+                                        requestId={friend._id}
+                                    />
+                                ))
+                            )
+                        )}
                     </div>
                 </div>
                 {modalIsOpen && (

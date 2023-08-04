@@ -1,6 +1,6 @@
 // ContactCard.tsx
 import React from 'react';
-import { XCircle, Check } from "@phosphor-icons/react";
+import { XCircle, Check, UserCirclePlus } from "@phosphor-icons/react";
 
 interface User {
   _id: string;
@@ -35,13 +35,14 @@ interface Friend {
 
 interface ContactCardProps {
   requesterInfo?: User;
-  requestId: string; // Recebe o request._id da página principal
+  requestId?: string; // Recebe o request._id da página principal
+  recipientId?: string;
   onUpdateFriends?: (requestId: string) => void;
   onRemoveFriends?: (requestId: string) => void;
-  onAddFriend?: (requestId: string) => void;
+  onAddFriend?: (requestId: string, recipientId: string) => void; //id do usuário a ser adicionado e de quem tá solicitando
 }
 
-const ContactCard: React.FC<ContactCardProps> = ({ requesterInfo, requestId, onUpdateFriends, onRemoveFriends }) => {
+const ContactCard: React.FC<ContactCardProps> = ({ requesterInfo, requestId, onUpdateFriends, onRemoveFriends, onAddFriend, recipientId }) => {
   return (
     <div className="contact-card">
       <div className="img-card-contacts">
@@ -62,22 +63,30 @@ const ContactCard: React.FC<ContactCardProps> = ({ requesterInfo, requestId, onU
       </div>
 
 
-        {onUpdateFriends || onRemoveFriends ? (
+        {(onUpdateFriends || onRemoveFriends) && !onAddFriend ? (
           <div className="container-icon-contact">
             <Check
               size={20}
               color="black"
               className="icon-add-contact"
-              onClick={() => onUpdateFriends && onUpdateFriends(requestId)}
+              onClick={() => (onUpdateFriends && requestId)  && onUpdateFriends(requestId)}
             />
             <XCircle
               size={20}
               color="black"
               className="icon-remove-contact"
-              onClick={() => onRemoveFriends && onRemoveFriends(requestId)}
+              onClick={() => (onRemoveFriends && requestId) && onRemoveFriends(requestId)}
             />
           </div>
-        ) : <span className="container-icon-contact"></span>}      
+        ) : <div className="container-icon-contact">
+            
+              <UserCirclePlus
+                size={20}
+                color="black"
+                className="icon-add-friend"
+                onClick={() =>(onAddFriend && recipientId && requestId) && onAddFriend(requestId, recipientId)}
+              />
+          </div>}      
     </div>
   );
 };
