@@ -63,6 +63,24 @@ export const Button = styled('button', {
           padding: '6px 15px',
         },
       },
+      edit_cards: {
+        backgroundColor: '#7353BA',
+        borderRadius: '1rem',
+        border: '0.2px solid',
+        fontFamily: 'Poppins',
+        fontStyle: 'normal',
+        fontWeight: 600,
+        fontSize: '8px',
+        lineHeight: '8px',
+        letterSpacing: '0.11em',
+        color: '#FFFFFF',
+        '&:hover': {
+          backgroundColor: '#c93030',
+        },
+        '@bp1': {
+          padding: '6px 15px',
+        },
+      },
     },
   },
 });

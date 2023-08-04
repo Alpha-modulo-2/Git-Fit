@@ -12,11 +12,11 @@ interface CardData {
     trainingCard: {
         checked: boolean;
         title: string;
-        tasks: { description: string }[];
+        tasks: { description: string; _id: string }[];
     };
     mealsCard: {
         checked: boolean;
-        meals: { description: string; ingredients: string[] }[];
+        meals: { description: string; ingredients: string[]; _id: string }[];
     };
     name: string;
 }
@@ -113,20 +113,220 @@ export const FullCard = () => {
         }
     };
 
+    const handleAddMealSubmit = async () => {
+        if (newMealDescription.trim() === '') {
+            return;
+        }
+        const newMeal = {
+            description: newMealDescription,
+            ingredients: [],
+        };
+
+        try {
+            const response = await fetch(`http://localhost:3000/card/${currently_card?._id}/meal`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(newMeal),
+            });
+
+            if (response.ok) {
+                const updatedCardResponse = await fetch(`http://localhost:3000/allcards/${userId}`);
+                const updatedData: CardData[] = await updatedCardResponse.json();
+                const updatedCard = updatedData.find((card) => card.name === selectedDay?.name);
+
+                if (updatedCard) {
+                    setMealsCard(updatedCard.mealsCard);
+                }
+            } else {
+                console.error('Erro ao adicionar nova refeição', response);
+            }
+        } catch (error) {
+            console.error('Erro ao adicionar nova refeição', error);
+        }
+
+        setNewMealDescription('');
+        setIsAddMeal(false);
+    };
+
+    const handleAddTrainingSubmit = async () => {
+        if (newTrainingDescription.trim() === '') {
+            return;
+        }
+        const newTraining = {
+            description: newTrainingDescription,
+        };
+        try {
+            const response = await fetch(`http://localhost:3000/card/${currently_card?._id}/task`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(newTraining),
+            });
+            if (response.ok) {
+                const updatedCardResponse = await fetch(`http://localhost:3000/allcards/${userId}`);
+                const updatedData: CardData[] = await updatedCardResponse.json();
+                const updatedCard = updatedData.find((card) => card.name === selectedDay?.name);
+
+                if (updatedCard) {
+                    setTrainingCard(updatedCard.trainingCard);
+                }
+            } else {
+                console.error('Erro ao adicionar nova tarefa', response);
+            }
+        } catch (error) {
+            console.error('Erro ao adicionar novo treino', error);
+        }
+        setNewTrainingDescription('');
+        setIsAddTraining(false);
+    };
+    const handleEditTrainingClick = (index: number) => {
+        const description = trainingCard.tasks[index].description;
+        setEditedTaskDescription(description); 
+        setIsEditingTraining(true);
+        setShowEditButtons(true);
+        setEditingTaskIndex(index);
+    };
+
+
+    const handleEditMealClick = (index: number) => {
+        const description = mealsCard.meals[index].description;
+        setEditedMealDescription(description); 
+        setIsEditingMeal(true);
+        setShowEditMealButtons(true);
+        setEditingMealIndex(index);
+    };
+
+    const handleDeleteTrainingClick = async (index: number) => {
+        const taskId = trainingCard.tasks[index]._id;
+
+        try {
+            await fetch(`http://localhost:3000/card/${currently_card?._id}/task/${taskId}`, {
+                method: 'DELETE',
+            });
+
+            const updatedCardResponse = await fetch(`http://localhost:3000/allcards/${userId}`);
+            const updatedData: CardData[] = await updatedCardResponse.json();
+            const updatedCard = updatedData.find((card) => card.name === selectedDay?.name);
+
+            if (updatedCard) {
+                setTrainingCard(updatedCard.trainingCard);
+            }
+        } catch (error) {
+            console.error('Erro ao excluir treino', error);
+        }
+    };
+
+    const handleDeleteMealClick = async (index: number) => {
+        const mealId = mealsCard.meals[index]._id;
+
+        try {
+            await fetch(`http://localhost:3000/card/${currently_card?._id}/meal/${mealId}`, {
+                method: 'DELETE',
+            });
+
+            const updatedCardResponse = await fetch(`http://localhost:3000/allcards/${userId}`);
+            const updatedData: CardData[] = await updatedCardResponse.json();
+            const updatedCard = updatedData.find((card) => card.name === selectedDay?.name);
+
+            if (updatedCard) {
+                setMealsCard(updatedCard.mealsCard);
+            }
+        } catch (error) {
+            console.error('Erro ao excluir refeição', error);
+        }
+    };
+
     const [isEditingTraining, setIsEditingTraining] = useState(false);
     const [isEditingMeal, setIsEditingMeal] = useState(false);
+    const [isAddTraining, setIsAddTraining] = useState(false);
+    const [isAddMeal, setIsAddMeal] = useState(false);
 
-    const handleEditCardTrainingSubmit = () => {
+    const [newMealDescription, setNewMealDescription] = useState('');
+    const [newTrainingDescription, setNewTrainingDescription] = useState('');
+
+    const [showEditButtons, setShowEditButtons] = useState(false);
+    const [showEditMealButtons, setShowEditMealButtons] = useState(false);
+
+    const [editingMealIndex, setEditingMealIndex] = useState<number>(-1);
+    const [editingTaskIndex, setEditingTaskIndex] = useState<number>(-1);
+    const [editedTaskDescription, setEditedTaskDescription] = useState('');
+    const [editedMealDescription, setEditedMealDescription] = useState('');
+
+
+    const handleEditCardTrainingSubmit = async () => {
         setIsEditingTraining(false);
+        setShowEditButtons(false);
+
+        const updatedTaskDescription = editedTaskDescription;
+        const editingTaskId = trainingCard.tasks[editingTaskIndex]._id;
+        console.log(editingTaskId)
+        console.log(editingTaskIndex)
+        try {
+            await fetch(`http://localhost:3000/card/${currently_card?._id}/task/${editingTaskId}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    _id: editingTaskId,
+                    description: updatedTaskDescription,
+                }),
+            });
+
+            const updatedCardResponse = await fetch(`http://localhost:3000/allcards/${userId}`);
+            const updatedData: CardData[] = await updatedCardResponse.json();
+            const updatedCard = updatedData.find((card) => card.name === selectedDay?.name);
+
+            if (updatedCard) {
+                setTrainingCard(updatedCard.trainingCard);
+            }
+        } catch (error) {
+            console.error('Erro ao atualizar a tarefa', error);
+        }
     };
+
+    const handleEditCardMealSubmit = async () => {
+        setIsEditingMeal(false);
+        setShowEditMealButtons(false);
+
+        const updatedMealDescription = editedMealDescription; // Use o estado para obter o valor atualizado
+        const editingMealId = mealsCard.meals[editingMealIndex]._id;
+
+        try {
+            await fetch(`http://localhost:3000/card/${currently_card?._id}/meal/${editingMealId}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    _id: editingMealId,
+                    description: updatedMealDescription,
+                }),
+            });
+
+            const updatedCardResponse = await fetch(`http://localhost:3000/allcards/${userId}`);
+            const updatedData: CardData[] = await updatedCardResponse.json();
+            const updatedCard = updatedData.find((card) => card.name === selectedDay?.name);
+
+            if (updatedCard) {
+                setMealsCard(updatedCard.mealsCard);
+            }
+        } catch (error) {
+            console.error('Erro ao atualizar a refeição', error);
+        }
+    };
+
     const EditCardTraining = () => {
         setIsEditingTraining(true);
+        setShowEditButtons(true);
     };
-    const handleEditCardMealSubmit = () => {
-        setIsEditingMeal(false);
-    };
+
     const EditCardMeal = () => {
         setIsEditingMeal(true);
+        setShowEditMealButtons(true)
     };
 
     return (
@@ -148,23 +348,42 @@ export const FullCard = () => {
                                 <>
                                     <ul>
                                         {trainingCard.tasks.map((option, index) => (
-                                            <li key={index}>{option.description}</li>
+                                            <li key={index} className="task_line">
+                                                <p>{option.description}</p>
+                                                {isEditingTraining && showEditButtons && (
+                                                    <div className="edit_buttons">
+                                                        <Button category="edit_cards" label="E" onClick={() => handleEditTrainingClick(index)} />
+                                                        <Button category="edit_cards" label="X" onClick={() => handleDeleteTrainingClick(index)} />
+                                                    </div>
+                                                )}
+                                            </li>
                                         ))}
                                     </ul>
                                 </>
                             )}
+
                         </div>
                         {isEditingTraining ? (
                             <div className="edit_form_training">
                                 <input
                                     type="text"
-                                    value={trainingCard.title}
-                                    onChange={(e) => setTrainingCard({ ...trainingCard, title: e.target.value })}
+                                    value={editedTaskDescription}
+                                    onChange={(e) => setEditedTaskDescription(e.target.value)} 
                                 />
                                 <Button category="primary" label="Concluir" onClick={handleEditCardTrainingSubmit} />
                             </div>
+                        ) : isAddTraining ? (
+                            <div className="edit_form_training">
+                                <input
+                                    type="text"
+                                    value={newTrainingDescription}
+                                    onChange={(e) => setNewTrainingDescription(e.target.value)}
+                                />
+                                <Button category="primary" label="Concluir" onClick={handleAddTrainingSubmit} />
+                            </div>
                         ) : (
                             <div className="daily_training_check">
+                                <Button category="primary" label="Adicionar Exercício" onClick={() => setIsAddTraining(true)} />
                                 <input
                                     type="checkbox"
                                     className="daily_training_checkbox"
@@ -182,35 +401,60 @@ export const FullCard = () => {
                             {mealsCard.meals.length === 0 ? (
                                 <p>Nenhuma refeição adicionada</p>
                             ) : (
-                                mealsCard.meals.map((mealOption, index) => (
-                                    <div key={index} className={`ul_meal_0${index + 1}`}>
-                                        <h3>{mealOption.description}</h3>
-                                        <ul>
-                                            {mealOption.ingredients.map((ingredient, i) => (
-                                                <li key={i}>{ingredient}</li>
-                                            ))}
-                                        </ul>
-                                    </div>
-                                ))
+                                <>
+                                    {mealsCard.meals.map((mealOption, index) => (
+                                        <div key={index} className={`ul_meal_0${index + 1}`}>
+                                            <div className="meal_line">
+                                                <h3>{mealOption.description}</h3>
+                                                {isEditingMeal && showEditMealButtons && (
+                                                    <div className="edit_buttons">
+                                                        <Button category="edit_cards" label="E" onClick={() => handleEditMealClick(index)} />
+                                                        <Button category="edit_cards" label="X" onClick={() => handleDeleteMealClick(index)} />
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </>
                             )}
+
                         </div>
+
+
                         {isEditingMeal ? (
                             <div className="edit_form_meal">
                                 <input
                                     type="text"
+                                    value={editedMealDescription} 
+                                    onChange={(e) => setEditedMealDescription(e.target.value)}
                                 />
                                 <Button category="primary" label="Concluir" onClick={handleEditCardMealSubmit} />
                             </div>
+                        ) : isAddMeal ? (
+                            <div className="edit_form_meal">
+                                <input
+                                    type="text"
+                                    value={newMealDescription}
+                                    onChange={(e) => setNewMealDescription(e.target.value)}
+                                />
+                                <Button category="primary" label="Adicionar" onClick={handleAddMealSubmit} />
+                            </div>
                         ) : (
-                        <div className="daily_meal_check">
-                            <input
-                                type="checkbox"
-                                className="daily_meal_checkbox"
-                                checked={mealsCard.checked}
-                                onChange={handleMealCheckboxChange}
-                            />
-                            <p>{mealsCard.checked}</p>
-                        </div>)}
+                            <div className="daily_meal_check">
+                                <Button
+                                    category="primary"
+                                    label="Adicionar Refeição"
+                                    onClick={() => setIsAddMeal(true)}
+                                />
+                                <input
+                                    type="checkbox"
+                                    className="daily_meal_checkbox"
+                                    checked={mealsCard.checked}
+                                    onChange={handleMealCheckboxChange}
+                                />
+                                <p>{mealsCard.checked}</p>
+                            </div>
+                        )}
                     </div>
                 </div>
                 <div className="structure-carrossel">
@@ -226,4 +470,3 @@ export const FullCard = () => {
         </div>
     );
 };
-
