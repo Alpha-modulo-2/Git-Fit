@@ -1,10 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import Redis from "ioredis";
 
-if (!process.env.REDIS_HOST || !process.env.REDIS_PORT) {
-    throw new Error('REDIS_HOST ou REDIS_PORT não definidos');
-}
-
 const redis = new Redis({
     host: process.env.REDIS_HOST,
     port: Number(process.env.REDIS_PORT)
