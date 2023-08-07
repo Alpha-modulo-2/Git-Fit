@@ -12,11 +12,19 @@ services:
       - ./back/.env
     links:
       - mongo
+      - redis
   mongo:
     image: mongo
     volumes:
       - mongo_data:/data/db
     ports:
       - 27017:27017
+  redis:
+    image: redis
+    volumes:
+      - redis_data:/data
+    ports:
+      - 6379:6379
 volumes:
   mongo_data:
+  redis_data:
