@@ -14,7 +14,7 @@
 }
 
 .container-edit-content {
-  margin-top: 8%;
+  margin-top: 3vw;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -27,7 +27,7 @@
   background-color: rgba(240, 248, 255, 0.766);
 }
 
-/* Menu content */
+  /* Menu content */
 .menu-edit {
   display: flex;
   width: 90%;
@@ -36,9 +36,9 @@
 
 .container-first-content-edit,
 .container-second-content-edit {
-  margin-top: 5vw;
   text-align: center;
   width: 50%;
+  margin-left: 5vw;
   height: 100%;
 }
 
@@ -50,7 +50,6 @@
 }
 
 .custom-file-label-edit {
-  margin-top: 1%;
   width: 8vw;
   height: 8vw;
   display: inline-block;
@@ -85,7 +84,7 @@
   font-weight: bold;
   color: rgba(115, 83, 186, 1);
 }
-
+  
 .input-edit {
   width: 70%;
   padding: 2% 5% 3% 5%;
@@ -97,7 +96,7 @@
   background: transparent !important;
   font-size: 0.8vw;
 }
-
+  
 .input-edit::placeholder {
   color: rgb(0, 0, 0);
 }
@@ -149,54 +148,96 @@
   color: rgba(115, 83, 186, 1);
 }
 
-/* Switch */
-.switch {
-  width: 40px;
-  height: 24px;
+  /*switch*/
+  .switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+  }
+  
+  .switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+  
+  .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #919191;
+    -webkit-transition: .4s;
+    transition: .4s;
+  }
+  
+  .slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    -webkit-transition: .4s;
+    transition: .4s;
+  }
+  
+  input:checked + .slider {
+    background-color: rgba(115, 83, 186, 1);
+  }
+
+  input:checked + .slider:before {
+    -webkit-transform: translateX(26px);
+    -ms-transform: translateX(26px);
+    transform: translateX(26px);
+  }
+  
+  .slider.round {
+    border-radius: 34px;
+  }
+  
+  .slider.round:before {
+    border-radius: 50%;
+  }
+  
+ /*button config*/
+  .divButton{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 8vw;
+  }
+  .editprofessionalProfile{
+    font-weight: bold;
+    font-size: 0.8vw;
+  }
+  
+  .professionalProfile {
+    font-size: 0.8vw;
+  }
+  
+
+
+  /* Button config */
+.diveditprofessionalProfile {
+  width: 70%;
+  padding: 8% 5% 3% 5%;
+  background-color: transparent;
+  background: transparent !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
 }
 
-.switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
 
-.slider {
-  position: absolute;
-  cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #919191;
-  transition: .4s;
-}
-
-.slider:before {
-  position: absolute;
-  content: "";
-  height: 16px;
-  width: 16px;
-  left: 2px;
-  bottom: 4px;
-  background-color: white;
-  transition: .4s;
-}
-
-input:checked + .slider {
-  background-color: rgba(115, 83, 186, 1);
-}
-
-input:checked + .slider:before {
-  transform: translateX(18px);
-}
-
-.slider.round {
-  border-radius: 34px;
-}
-
-.slider.round:before {
-  border-radius: 50%;
+.professionalProfile {
+  font-size: 0.8vw;
 }
 
 /* Button config */
@@ -217,34 +258,45 @@ input:checked + .slider:before {
 }
 
 .divButton-edit {
-  margin-top: 5%;
-  width: 100%;
-  height: 8vw;
+
 }
 
-.divDeleteAccount-edit {
-  display: flex;
-  margin-right: 5%;
-  justify-content: flex-end;
-  width: 100%;
-  height: 50px;
-}
 
-.deleteAccount-edit {
-  border-radius: 20px;
-  background-color: rgba(166, 38, 38, 1);
-  color: #ffffff;
-  font-weight: bold;
-  padding: 0.5%;
-  height: 25px;
-  margin-right: 2%;
-  margin-bottom: 6%;
+.buttonSave {
+  background-color: rgba(115, 83, 186, 1);
+  height: 3vw;
+  width: 6vw;
+  border-radius: 10px;
+  padding: '10px 24px';
+  font-family: 'Poppins';
+  font-size: 1vw;
+  font-weight: 800;
+  line-height: '20px';
+  letter-spacing: '0.11em';
+  color: black;
   cursor: pointer;
 }
-
-.deleteAccount-edit:hover {
-  background-color: #ffffff;
-  color: rgba(166, 38, 38, 1);
+.buttonSave:hover {
+  background-color:rgb(83, 39, 180);
+  color: rgb(255, 255, 255);
+  cursor: pointer;
 }
-
-
+.deleteAccount-edit{
+  background-color: #ff00003a;
+  height: 1vw;
+  width: 6vw;
+  border-radius: 5px;
+  padding: '10px 24px';
+  font-family: 'Poppins';
+  font-size: 0.7vw;
+  font-weight: 800;
+  line-height: '20px';
+  letter-spacing: '0.11em';
+  color: black;
+}
+.deleteAccount-edit:hover{
+  background-color: #ff00008f;
+  cursor: pointer;
+}
+  
+  
