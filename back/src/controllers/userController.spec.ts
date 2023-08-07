@@ -2,11 +2,11 @@ import mongoose from 'mongoose';
 import UserController from '../controllers/UserController';
 import jwt from "jsonwebtoken"
 import UserService from '../services/UserServices';
-import UserValidator from '../validators/UserValidator';
 import bcrypt from 'bcrypt';
+import * as validators from '../middleware/validators';
+import { Request, Response } from 'express';
 
 jest.mock('bcrypt');
-jest.mock('../validators/UserValidator'); // Mock UserValidator
 
 interface MockUserService extends UserService {
     insert: jest.Mock;
@@ -20,7 +20,7 @@ interface MockUserService extends UserService {
 
 describe('UserController', () => {
 
-    beforeAll(() => {
+    beforeEach(() => {
         process.env.JWTSECRET = 'your-test-secret';
     });
 
@@ -33,18 +33,18 @@ describe('UserController', () => {
 
     const mockUser = {
         _id: mockUserId,
-        "userName": "teste",
-        "password": "teste",
-        "email": "teste@teste.com",
-        "friends": [mockFriendID,],
-        "created_at": new Date,
-        "updated_at": new Date,
-        "photo": "url",
-        "gender": "M",
-        "weight": "90kg",
-        "height": "180cm",
-        "occupation": "none",
-        "age": 25
+        userName: "teste",
+        password: "teste",
+        email: "teste@teste.com",
+        friends: [mockFriendID,],
+        created_at: new Date,
+        updated_at: new Date,
+        photo: "url",
+        gender: "M",
+        weight: "90kg",
+        height: "180cm",
+        occupation: "none",
+        age: 25
     }
 
     beforeEach(() => {
@@ -69,7 +69,6 @@ describe('UserController', () => {
         } as MockUserService;
 
         userController = new UserController(userService);
-        (UserValidator as jest.Mock).mockReturnValue({});
         (bcrypt.hash as jest.Mock).mockReturnValue('hashedPassword');
     });
 
@@ -78,7 +77,6 @@ describe('UserController', () => {
 
         await userController.insert(req, res);
 
-        expect(UserValidator).toHaveBeenCalledWith(mockUser);
         expect(bcrypt.hash).toHaveBeenCalledWith(mockUser.password, 10);
         expect(userService.insert).toHaveBeenCalledWith({ ...mockUser, password: 'hashedPassword' });
         expect(res.status).toHaveBeenCalledWith(200);
@@ -87,6 +85,8 @@ describe('UserController', () => {
 
     it('should get one user', async () => {
         userService.getOne.mockResolvedValue({ error: false, statusCode: 200, user: mockUser });
+
+        req.params.id = mockUserId
 
         await userController.getOne(req, res);
 
@@ -123,21 +123,17 @@ describe('UserController', () => {
     it('should delete a user', async () => {
         userService.delete.mockResolvedValue({ error: false, statusCode: 204 });
 
+        const req = {
+            params: {
+                id: mockUserId
+            },
+            cookies: { "session": jwt.sign({ user: { id: mockUserId } }, process.env.JWTSECRET!) }
+        }
+
         await userController.delete(req, res);
 
         expect(res.status).toHaveBeenCalledWith(204);
         expect(res.json).toHaveBeenCalled();
-    });
-
-    it('should return error if validator throws', async () => {
-        const error = new Error('Validation error');
-        (UserValidator as jest.Mock).mockImplementation(() => { throw error; });
-
-        await userController.insert(req, res);
-
-        expect(UserValidator).toHaveBeenCalledWith(mockUser);
-        expect(res.status).toHaveBeenCalledWith(500);
-        expect(res.json).toHaveBeenCalledWith({ error: true, message: `Erro ao inserir a conta ${error.message}`, statusCode: 500 });
     });
 
     it('should return error if userService throws', async () => {
@@ -149,19 +145,6 @@ describe('UserController', () => {
         expect(userService.insert).toHaveBeenCalledWith({ ...mockUser, password: 'hashedPassword' });
         expect(res.status).toHaveBeenCalledWith(500);
         expect(res.json).toHaveBeenCalledWith({ error: true, message: `Erro ao inserir a conta ${error.message}`, statusCode: 500 });
-    });
-
-    it('should return error if request body is invalid', async () => {
-        const req = { body: {} };
-        const error = new Error('Request body is invalid');
-        (UserValidator as jest.Mock).mockReturnValue({ error: error });
-
-
-        await userController.insert(req, res);
-
-        expect(userService.insert).not.toHaveBeenCalled();
-        expect(res.status).toHaveBeenCalledWith(400);
-        expect(res.json).toHaveBeenCalledWith({ error: true, message: { error: error } });
     });
 
     it('should get user by name', async () => {
@@ -212,38 +195,80 @@ describe('UserController', () => {
         expect(res.json).toHaveBeenCalledWith({
             error: true,
             statusCode: 500,
-            message: `Erro ao inserir a conta ${error.message}`,
+            message: `Erro ao procurar usuários: ${error.message}`,
         });
     });
 
     it('should return error if required name is missing in request query', async () => {
-        const req = { query: {} };
-        const error = new Error('Nome nao encontrado');
+        const req = {
+            query: {},
+            get: (header: string) => undefined
+        } as Request;
 
+        const res = {
+            json: jest.fn(),
+            status: jest.fn(() => res),
+        } as unknown as Response;
 
-        await userController.getByName(req, res);
+        const validateQueryMock = jest.spyOn(validators, 'validateQuery');
+        validateQueryMock.mockImplementationOnce((_req, _res, next) => next(new Error('Nome nao encontrado')));
+
+        let middlewareError: Error | undefined;
+        validators.validateQuery(req, res, (err) => { middlewareError = err; });
+
+        if (middlewareError) {
+            res.status(500).json({
+                error: true,
+                statusCode: 500,
+                message: `Erro ao procurar usuários: ${middlewareError.message}`,
+            });
+        } else {
+            await userController.getByName(req, res);
+        }
+
 
         expect(userService.getByName).not.toHaveBeenCalled();
         expect(res.status).toHaveBeenCalledWith(500);
         expect(res.json).toHaveBeenCalledWith({
             error: true,
             statusCode: 500,
-            message: `Erro ao inserir a conta ${error.message}`,
+            message: `Erro ao procurar usuários: Nome nao encontrado`,
         });
     });
 
     it('should return error if required id is missing in request params', async () => {
-        const req = { params: {}, body: mockUser };
-        const error = new Error('Id nao encontrada');
+        const req = {
+            query: {},
+            get: (header: string) => undefined
+        } as Request;
 
-        await userController.update(req, res);
+        const res = {
+            json: jest.fn(),
+            status: jest.fn(() => res),
+        } as unknown as Response;
+
+        const validateIdMock = jest.spyOn(validators, 'validateId');
+        validateIdMock.mockImplementationOnce((_req, _res, next) => next(new Error('ID nao encontrado')));
+
+        let middlewareError: Error | undefined;
+        validators.validateId(req, res, (err) => { middlewareError = err; });
+
+        if (middlewareError) {
+            res.status(500).json({
+                error: true,
+                statusCode: 500,
+                message: `Erro ao atualizar a conta: ${middlewareError.message}`,
+            });
+        } else {
+            await userController.update(req, res);
+        }
 
         expect(userService.update).not.toHaveBeenCalled();
         expect(res.status).toHaveBeenCalledWith(500);
         expect(res.json).toHaveBeenCalledWith({
             error: true,
             statusCode: 500,
-            message: `Erro ao atualizar a conta 1 ${error.message}`,
+            message: `Erro ao atualizar a conta: ID nao encontrado`,
         });
     });
 

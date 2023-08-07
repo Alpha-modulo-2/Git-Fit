@@ -12,23 +12,22 @@ describe('UserService', () => {
 
     const mockUser = {
         _id: mockUserId,
-        "userName": "teste",
-        "password": "teste",
-        "email": "teste@teste.com",
-        "friends": [mockFriendID,],
-        "created_at": new Date,
-        "updated_at": new Date,
-        "photo": "url",
-        "gender": "M",
-        "weight": "90kg",
-        "height": "180cm",
-        "occupation": "none",
-        "age": 25
+        userName: "teste",
+        name: "teste",
+        password: "teste",
+        email: "teste@teste.com",
+        friends: [mockFriendID,],
+        created_at: new Date,
+        updated_at: new Date,
+        photo: "url",
+        gender: "M",
+        weight: "90kg",
+        height: "180cm",
+        occupation: "none",
+        age: 25
     }
 
     const users: IUser[] = [mockUser, mockUser, mockUser]
-
-
 
     let userService: UserService;
     let userRepository: jest.Mocked<UserRepository>;

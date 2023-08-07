@@ -20,7 +20,7 @@ describe('LoginController', () => {
     };
 
     beforeEach(() => {
-        req = { body: { username: mockCredentials.userName, password: mockCredentials.password } };
+        req = { body: { userName: mockCredentials.userName, password: mockCredentials.password } };
         res = {
             json: jest.fn(() => res),
             status: jest.fn(() => res),
@@ -46,7 +46,7 @@ describe('LoginController', () => {
         expect(jwt.sign).toHaveBeenCalledWith({ user: { userName: 'test' } }, process.env.JWTSECRET);
         expect(res.cookie).toHaveBeenCalledWith('session', 'token');
         expect(res.status).toHaveBeenCalledWith(200);
-        expect(res.json).toHaveBeenCalledWith({ message: "Usuário 'test' logado com sucesso." });
+        expect(res.json).toHaveBeenCalledWith({ message: "Usuário 'test' logado com sucesso.", user: { userName: "test" } });
     });
 
     it('should fail to login when service throws an error', async () => {
