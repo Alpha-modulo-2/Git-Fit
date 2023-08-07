@@ -4,66 +4,36 @@ import ICard from "../interfaces/ICard";
 import ITask from "../interfaces/ITask";
 import IMeal from "../interfaces/IMeal";
 import { cardModel } from "../models/card";
+import CustomError from "../helpers/CustomError";
 
 const TAG = "Card Repository "
 
 export default class CardRepository {
-    async insert(userId: string): Promise<IResult> {
 
-        const existingCards = await cardModel.findOne({ userId });
-
-        if (existingCards) {
-            return {
-                error: true,
-                message: "Cards já existem para este usuário",
-                statusCode: 400,
-            }
-        }
-
+    async insert(cards: ICard[]): Promise<IResult> {
         try {
-            const days = ['Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado', 'Domingo'];
-            const cards: ICard[] = days.map((day) => ({
-                userId,
-                name: day,
-                created_at: new Date(),
-                updated_at: new Date(),
-                trainingCard: {
-                    checked: false,
-                    title: `Treino de ${day}`,
-                    tasks: [],
-                },
-                mealsCard: {
-                    checked: false,
-                    meals: [],
-                },
-            }));
-
             const result = await cardModel.insertMany(cards);
-
+    
             return {
                 error: false,
                 statusCode: 201,
                 card: result,
-            }
+            };
         } catch (error: any) {
             return {
                 error: true,
-                message: error.message,
+                message: error.message || "Erro interno do servidor",
                 statusCode: 500,
-            }
+            };
         }
     }
     
     async getAllCardsByUser(userId: string): Promise<IResult> {
         try {
-            const cards = await cardModel.find({userId: userId}).populate("userId");
+            const cards = await cardModel.find({userId: userId})
 
             if (!cards || cards.length === 0) {
-                return {
-                    error: true,
-                    statusCode: 404,
-                    message: "Cards não encontrados"
-                };
+                throw new CustomError("Cards não encontrados.", 404);
             }
 
             return {
@@ -72,9 +42,17 @@ export default class CardRepository {
                 card: cards,
             }
         } catch (error: any) {
+            if (error instanceof CustomError) {
+                return {
+                    error: true,
+                    statusCode: error.statusCode,
+                    message: error.message,
+                };
+            }
+            
             return {
                 error: true,
-                message: error.message,
+                message: error.message || "Erro interno do servidor",
                 statusCode: 500,
             }
         }
@@ -82,25 +60,29 @@ export default class CardRepository {
 
     async getOne(cardId: string): Promise<IResult> {
         try {
-            const card = await cardModel.findById(cardId).populate("userId")
+            const card = await cardModel.findById(cardId)
 
-            if (card) {
-                return {
-                    error: false,
-                    statusCode: 200,
-                    card: card,
-                }
-            } else {
-                return {
-                    error: true,
-                    statusCode: 404,
-                    message: "Card não encontrado"
-                }
+            if (!card) {
+                throw new CustomError("Card não encontrado.", 404);
+            } 
+
+            return {
+                error: false,
+                statusCode: 200,
+                card: card
             }
         } catch (error: any) {
+            if (error instanceof CustomError) {
+                return {
+                    error: true,
+                    statusCode: error.statusCode,
+                    message: error.message,
+                };
+            }
+            
             return {
                 error: true,
-                message: error.message,
+                message: error.message || "Erro interno do servidor",
                 statusCode: 500,
             }
         }
@@ -111,11 +93,7 @@ export default class CardRepository {
             const card = await cardModel.findById(cardId);
     
             if (!card) {
-                return {
-                    error: true,
-                    message: "Card não encontrado",
-                    statusCode: 404,
-                };
+                throw new CustomError("Card não encontrado.", 404);
             }
     
             card.trainingCard.checked = checked;
@@ -127,11 +105,19 @@ export default class CardRepository {
                 card: updatedCard,
             };
         } catch (error: any) {
+            if (error instanceof CustomError) {
+                return {
+                    error: true,
+                    statusCode: error.statusCode,
+                    message: error.message,
+                };
+            }
+            
             return {
                 error: true,
-                message: error.message,
+                message: error.message || "Erro interno do servidor",
                 statusCode: 500,
-            };
+            }
         }
     }
 
@@ -140,11 +126,7 @@ export default class CardRepository {
             const card = await cardModel.findById(cardId);
     
             if (!card) {
-                return {
-                    error: true,
-                    message: "Card não encontrado",
-                    statusCode: 404,
-                };
+                throw new CustomError("Card não encontrado.", 404);
             }
     
             card.mealsCard.checked = checked;
@@ -156,19 +138,29 @@ export default class CardRepository {
                 card: updatedCard,
             };
         } catch (error: any) {
+            if (error instanceof CustomError) {
+                return {
+                    error: true,
+                    statusCode: error.statusCode,
+                    message: error.message,
+                };
+            }
+            
             return {
                 error: true,
-                message: error.message,
+                message: error.message || "Erro interno do servidor",
                 statusCode: 500,
-            };
+            }
         }
     }
 
     async addTask(cardId: string, task: ITask): Promise<IResult> {
         try {
+            // Creates Id, ensuring that every task in has a unique identifier and don't change or duplicate
             if (!task._id) {
                 task._id = new Types.ObjectId();
             }
+
             const card = await cardModel.findByIdAndUpdate(
                 cardId,
                 { $push: { "trainingCard.tasks": task } },
@@ -176,11 +168,7 @@ export default class CardRepository {
             );
     
             if (!card) {
-                return {
-                    error: true,
-                    statusCode: 404,
-                    message: "Card não encontrado"
-                };
+                throw new CustomError("Card não encontrado.", 404);
             }
     
             return {
@@ -189,11 +177,19 @@ export default class CardRepository {
                 card: card,
             };
         } catch (error: any) {
+            if (error instanceof CustomError) {
+                return {
+                    error: true,
+                    statusCode: error.statusCode,
+                    message: error.message,
+                };
+            }
+            
             return {
                 error: true,
-                message: error.message,
+                message: error.message || "Erro interno do servidor",
                 statusCode: 500,
-            };
+            }
         }
     }
 
@@ -202,6 +198,7 @@ export default class CardRepository {
             if (!meal._id) {
                 meal._id = new Types.ObjectId();
             }
+
             const card = await cardModel.findByIdAndUpdate(
                 cardId,
                 { $push: { "mealsCard.meals": meal } },
@@ -209,11 +206,7 @@ export default class CardRepository {
             );
 
             if (!card) {
-                return {
-                    error: true,
-                    message: "Card não encontrado",
-                    statusCode: 404
-                }
+                throw new CustomError("Card não encontrado.", 404);
             }
 
             return {
@@ -222,131 +215,219 @@ export default class CardRepository {
                 card: card,
             }
         } catch (error: any) {
-            return {
-                error: true,
-                message: error.message,
-                statusCode: 500,
-            }
-        }
-    }
-
-    async updateTask(cardId: string, taskId: string, task: ITask): Promise<IResult> {
-        try {
-            const card = await cardModel.findOneAndUpdate(
-                { _id: cardId, "trainingCard.tasks._id": taskId },
-                { $set: { "trainingCard.tasks.$": task } },
-                { new: true }
-            );
-
-            if (!card) {
+            if (error instanceof CustomError) {
                 return {
                     error: true,
-                    message: "Card ou Task não encontrado",
-                    statusCode: 404
-                }
-            }
-
-            return {
-                error: false,
-                statusCode: 200,
-                card: card,
-            }
-        } catch (error: any) {
-            return {
-                error: true,
-                message: error.message,
-                statusCode: 500,
-            }
-        }
-    }
-
-    async updateMeal(cardId: string, mealId: string, meal: IMeal): Promise<IResult> {
-        try {
-            const card = await cardModel.findOneAndUpdate(
-                { "_id": cardId, "mealsCard.meals._id": mealId },
-                { $set: { "mealsCard.meals.$": meal } },
-                { new: true } 
-            );
-    
-            if (!card) {
-                return {
-                    error: true,
-                    message: "Card ou Meal não encontrado",
-                    statusCode: 404
-                }
-            }
-    
-            return {
-                error: false,
-                statusCode: 200,
-                card: card
-            }
-        } catch (error: any) {
-            return {
-                error: true,
-                message: error.message,
-                statusCode: 500
-            }
-        }
-    }
-
-    async delTask(cardId: string, taskId: string): Promise<IResult> {
-        try {
-            const card = await cardModel.findOneAndUpdate(
-                { _id: cardId },
-                { $pull: { 'trainingCard.tasks': { _id: taskId } } },
-                { new: true }
-            );
-
-            if (!card) {
-                return {
-                    error: true,
-                    message: "Card ou Task não encontrado",
-                    statusCode: 404,
+                    statusCode: error.statusCode,
+                    message: error.message,
                 };
             }
+            
+            return {
+                error: true,
+                message: error.message || "Erro interno do servidor",
+                statusCode: 500,
+            }
+        }
+    }
 
+    async updateTitle(cardId: string, title: string): Promise<IResult> {
+        try {
+            const card = await cardModel.findOneAndUpdate(
+                { _id: cardId },
+                { 'trainingCard.title': title },
+                { new: true }
+            );
+    
+            if (!card) {
+                throw new CustomError("Card não encontrado.", 404);
+            }
+    
             return {
                 error: false,
                 statusCode: 200,
-                card,
+                card: card,
             };
         } catch (error: any) {
+            if (error instanceof CustomError) {
+                return {
+                    error: true,
+                    statusCode: error.statusCode,
+                    message: error.message,
+                };
+            }
             return {
                 error: true,
-                message: error.message,
                 statusCode: 500,
+                message: "Erro interno do servidor.",
             };
         }
     }
 
-    async delMeal(cardId: string, mealId: string): Promise<IResult> {
+    async updateTask(taskId: string, description: string): Promise<IResult> {
         try {
-            const card = await cardModel.findOneAndUpdate(
-                { _id: cardId },
+            const card = await cardModel.findOne({ "trainingCard.tasks._id": taskId });
+
+            if (!card) {
+                throw new CustomError("Task não encontrado.", 404);
+            }
+    
+            const updatedCard = await cardModel.findOneAndUpdate(
+                { _id: card._id, "trainingCard.tasks._id": taskId },
+                { $set: { "trainingCard.tasks.$.description": description } },
+                { new: true }
+            );
+
+            if (!updatedCard) {
+                throw new CustomError("Task não atualizado.", 404);
+            }
+
+            return {
+                error: false,
+                statusCode: 200,
+                card: updatedCard ,
+            }
+        } catch (error: any) {
+            if (error instanceof CustomError) {
+                return {
+                    error: true,
+                    statusCode: error.statusCode,
+                    message: error.message,
+                };
+            }
+            
+            return {
+                error: true,
+                message: error.message || "Erro interno do servidor",
+                statusCode: 500,
+            }
+        }
+    }
+
+    async updateMeal(mealId: string, description: string): Promise<IResult> {
+        try {
+
+            const card = await cardModel.findOne({ "mealsCard.meals._id": mealId });
+
+            if (!card) {
+                throw new CustomError("Refeição não encontrada.", 404);
+            }
+    
+            const updatedCard = await cardModel.findOneAndUpdate(
+                { _id: card._id, "mealsCard.meals._id": mealId },
+                { $set: { "mealsCard.meals.$.description": description } },
+                { new: true }
+            );
+
+            if (!updatedCard) {
+                throw new CustomError("Refeição não atualizada.", 404);
+            }
+
+            return {
+                error: false,
+                statusCode: 200,
+                card: updatedCard
+            }
+        } catch (error: any) {
+            if (error instanceof CustomError) {
+                return {
+                    error: true,
+                    statusCode: error.statusCode,
+                    message: error.message,
+                };
+            }
+            
+            return {
+                error: true,
+                message: error.message || "Erro interno do servidor",
+                statusCode: 500,
+            }
+        }
+    }
+
+    async delTask(taskId: string): Promise<IResult> {
+        try {
+
+            const card = await cardModel.findOne({ "trainingCard.tasks._id": taskId });
+
+            if (!card) {
+                throw new CustomError("Task não encontrada.", 404);
+            }
+
+            const updatedCard = await cardModel.findOneAndUpdate(
+                { _id: card._id },
+                { $pull: { 'trainingCard.tasks': { _id: taskId } } },	
+                { new: true }
+            );
+
+            if (!updatedCard) {
+                throw new CustomError("Task não deletada.", 404);
+            }
+
+            return {
+                error: false,
+                statusCode: 200,
+                message: "Task deletada."
+            };
+        } catch (error: any) {
+            if (error instanceof CustomError) {
+                return {
+                    error: true,
+                    statusCode: error.statusCode,
+                    message: error.message,
+                };
+            }
+            
+            return {
+                error: true,
+                message: error.message || "Erro interno do servidor",
+                statusCode: 500,
+            }
+        }
+    }
+
+    async delMeal(mealId: string): Promise<IResult> {
+        try {
+            const card = await cardModel.findOne({ "mealsCard.meals._id": mealId });
+
+            if (!card) {
+                throw new CustomError("Refeição não encontrada.", 404);
+            }
+
+            const updatedCard = await cardModel.findOneAndUpdate(
+                { _id: card._id },
                 { $pull: { 'mealsCard.meals': { _id: mealId } } },
                 { new: true }
             );
 
-            if (!card) {
-                return {
-                    error: true,
-                    message: "Card ou Meal não encontrado",
-                    statusCode: 404,
-                };
+            if (!updatedCard) {
+                throw new CustomError("Refeição não deletada.", 404);
             }
 
             return {
                 error: false,
                 statusCode: 200,
-                card,
+                message: "Refeição deletada."
             };
         } catch (error: any) {
+            if (error instanceof CustomError) {
+                return {
+                    error: true,
+                    statusCode: error.statusCode,
+                    message: error.message,
+                };
+            }
+            
             return {
                 error: true,
-                message: error.message,
+                message: error.message || "Erro interno do servidor",
                 statusCode: 500,
-            };
+            }
         }
+    }
+
+    async hasCards(userId: string): Promise<boolean> {
+        const existingCards = await cardModel.findOne({ userId });
+        return !!existingCards;
     }
 }

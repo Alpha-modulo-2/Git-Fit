@@ -23,17 +23,18 @@ router.delete("/user/:userId/friend/:friendId", authenticate, userController.rem
 const cardController = new CardController();
 
 //Card Routes
-router.post("/cards/:userId", cardController.insert);
-router.get("/allcards/:userId", cardController.getAllCardsByUser);
-router.get("/card/:cardId", cardController.getOne);
-router.post("/card/:cardId/task", cardController.addTask);
-router.post("/card/:cardId/meal", cardController.addMeal);
-router.patch("/card/:cardId/trainingCard/check", cardController.updateTrainingCardChecked);
-router.patch("/card/:cardId/mealsCard/check", cardController.updateMealsCardChecked);
-router.patch("/card/:cardId/task/:taskId", cardController.updateTask);
-router.patch("/card/:cardId/meal/:mealId", cardController.updateMeal);
-router.delete("/card/:cardId/task/:taskId", cardController.delTask);
-router.delete("/card/:cardId/meal/:mealId", cardController.delMeal);
+router.post("/cards/:userId", authenticate, cardController.insert);
+router.get("/allcards/:userId", authenticate, cardController.getAllCardsByUser);
+router.get("/card/:cardId", authenticate, cardController.getOne);
+router.post("/card/:cardId/task", authenticate, cardController.addTask);
+router.post("/card/:cardId/meal", authenticate, cardController.addMeal);
+router.patch('/card/updateTitle', authenticate, cardController.updateTitle);
+router.patch("/trainingCard/check", authenticate, cardController.updateTrainingCardChecked);
+router.patch("/mealsCard/check", authenticate, cardController.updateMealsCardChecked);
+router.patch("/updateTask", authenticate, cardController.updateTask);
+router.patch("/updateMeal", authenticate, cardController.updateMeal);
+router.delete("/task/:taskId", authenticate, cardController.delTask);
+router.delete("/meal/:mealId", authenticate, cardController.delMeal);
 
 
 const friendRequestsController = new FriendRequestsController();
