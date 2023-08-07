@@ -10,37 +10,43 @@ describe('UserRepository', () => {
 
     const mockUser = {
         _id: mockUserId,
-        "userName": "teste",
-        "password": "teste",
-        "email": "teste@teste.com",
-        "friends": [mockFriendID,],
-        "created_at": new Date,
-        "updated_at": new Date,
-        "photo": "url",
-        "gender": "M",
-        "weight": "90kg",
-        "height": "180cm",
-        "occupation": "none",
-        "age": 25
+        userName: "teste",
+        name: "teste",
+        password: "teste",
+        email: "teste@teste.com",
+        friends: [mockFriendID,],
+        created_at: new Date,
+        updated_at: new Date,
+        photo: "url",
+        gender: "M",
+        weight: "90kg",
+        height: "180cm",
+        occupation: "none",
+        age: 25
     }
     const mockFriend = {
         _id: mockFriendID,
-        "userName": "teste",
-        "password": "teste",
-        "email": "teste@teste.com",
-        "friends": [mockUserId,],
-        "created_at": new Date,
-        "updated_at": new Date,
-        "photo": "url",
-        "gender": "M",
-        "weight": "90kg",
-        "height": "180cm",
-        "occupation": "none",
-        "age": 25
+        userName: "teste",
+        name: "teste",
+        password: "teste",
+        email: "teste@teste.com",
+        friends: [mockUserId,],
+        created_at: new Date,
+        updated_at: new Date,
+        photo: "url",
+        gender: "M",
+        weight: "90kg",
+        height: "180cm",
+        occupation: "none",
+        age: 25
     }
 
     beforeEach(() => {
         jest.clearAllMocks();
+    });
+
+    afterEach(() => {
+        global.Date = Date;
     });
 
     it('should insert a user', async () => {
@@ -54,10 +60,13 @@ describe('UserRepository', () => {
     });
 
     it('should get users', async () => {
-        userModel.find = jest.fn().mockReturnValue({
-            populate: jest.fn().mockResolvedValue([mockUser, mockUser]),
-            exec: jest.fn().mockResolvedValue({ error: false, statusCode: 200, user: [mockUser, mockUser] })
-        });
+        userModel.find = jest.fn().mockImplementationOnce(() => ({
+            select: jest.fn().mockImplementationOnce(() => ({
+                populate: jest.fn().mockResolvedValueOnce(
+                    [mockUser, mockUser]
+                )
+            }))
+        }));
 
         const userRepository = new UserRepository();
         const users = await userRepository.get();
@@ -67,10 +76,13 @@ describe('UserRepository', () => {
     });
 
     it('should get one user', async () => {
-        userModel.findById = jest.fn().mockReturnValue({
-            populate: jest.fn().mockResolvedValue(mockUser),
-            exec: jest.fn().mockResolvedValue({ error: false, statusCode: 200, user: mockUser })
-        })
+        userModel.findById = jest.fn().mockImplementationOnce(() => ({
+            select: jest.fn().mockImplementationOnce(() => ({
+                populate: jest.fn().mockResolvedValueOnce(
+                    mockUser
+                )
+            }))
+        }));
 
         const userRepository = new UserRepository();
         const user = await userRepository.getOne(id);
@@ -80,27 +92,30 @@ describe('UserRepository', () => {
     });
 
     it('should update a user', async () => {
+
+        userModel.findByIdAndUpdate = jest.fn().mockImplementationOnce(() => ({
+            select: jest.fn().mockImplementationOnce(() => ({
+                populate: jest.fn().mockResolvedValueOnce(
+                    { ...updatedUser }
+                )
+            }))
+        }));
+
         const fixedDate = new Date('2024-01-01T00:00:00');
+        jest.spyOn(global, 'Date').mockImplementation(() => fixedDate);
 
         const advanceDateByOneMinute = () => {
             fixedDate.setMinutes(fixedDate.getMinutes() + 1);
             return new Date(fixedDate);
         }
 
-        const updatedUser = { ...mockUser, userName: 'updated' };
-
-        userModel.findById = jest.fn().mockResolvedValue({
-            ...mockUser,
-            updated_at: advanceDateByOneMinute(),
-            save: jest.fn().mockResolvedValue({ ...updatedUser }),
-            populate: jest.fn().mockReturnThis(),
-        });
+        const updatedUser = { ...mockUser, userName: 'updated', updated_at: advanceDateByOneMinute(), };
 
         const userRepository = new UserRepository();
         const user = await userRepository.update(id, { userName: 'updated' });
 
 
-        expect(userModel.findById).toHaveBeenCalledWith(id);
+        expect(userModel.findByIdAndUpdate).toHaveBeenCalledWith(id, { $set: { userName: "updated" }, updated_at: fixedDate });
         expect(user).toEqual({ error: false, statusCode: 200, user: { ...user.user } });
     });
 
@@ -130,41 +145,61 @@ describe('UserRepository', () => {
     });
 
     it('should get a user by name', async () => {
-        userModel.find = jest.fn().mockReturnValue({
-            populate: jest.fn().mockResolvedValue(mockUser),
-            exec: jest.fn().mockResolvedValue({ error: false, statusCode: 200, user: mockUser })
-        })
+        userModel.find = jest.fn().mockImplementationOnce(() => ({
+            select: jest.fn().mockImplementationOnce(() => ({
+                populate: jest.fn().mockResolvedValueOnce(
+                    mockUser
+                )
+            }))
+        }));
 
         const userRepository = new UserRepository();
         const result = await userRepository.getByName(mockUser.userName);
 
-        expect(userModel.find).toHaveBeenCalledWith({ userName: { $regex: '.*' + mockUser.userName + '.*', $options: 'i' } });
+        expect(userModel.find).toHaveBeenCalledWith({
+            $or: [
+                { userName: { $regex: '.*' + mockUser.userName + '.*', $options: 'i' } },
+                { name: { $regex: '.*' + mockUser.name + '.*', $options: 'i' } }
+            ]
+        });
         expect(result).toEqual({ error: false, statusCode: 200, user: mockUser });
     });
 
     it('should return when user is not found', async () => {
-        userModel.find = jest.fn().mockReturnValue({
-            populate: jest.fn().mockResolvedValue([]),
-            exec: jest.fn().mockResolvedValue({ error: false, statusCode: 200, user: [] })
-        })
+        userModel.find = jest.fn().mockImplementationOnce(() => ({
+            select: jest.fn().mockImplementationOnce(() => ({
+                populate: jest.fn().mockResolvedValueOnce(
+                    []
+                )
+            }))
+        }));
 
         const userRepository = new UserRepository();
         const result = await userRepository.getByName(mockUser.userName);
 
-        expect(userModel.find).toHaveBeenCalledWith({ userName: { $regex: '.*' + mockUser.userName + '.*', $options: 'i' } });
+        expect(userModel.find).toHaveBeenCalledWith({
+            $or: [
+                { userName: { $regex: '.*' + mockUser.userName + '.*', $options: 'i' } },
+                { name: { $regex: '.*' + mockUser.name + '.*', $options: 'i' } }
+            ]
+        });
         expect(result).toEqual({ error: false, statusCode: 200, user: [] });
     });
 
     it('should handle failure when getting a user by name', async () => {
-        userModel.find = jest.fn().mockReturnValue({
-            populate: jest.fn().mockRejectedValue({ message: "Server error" }),
-            exec: jest.fn().mockRejectedValue({ message: 'Server error' })
-        })
+        userModel.find = jest.fn().mockImplementationOnce(() => {
+            throw new Error("Server error");
+        });
 
         const userRepository = new UserRepository();
         const result = await userRepository.getByName(mockUser.userName);
 
-        expect(userModel.find).toHaveBeenCalledWith({ userName: { $regex: '.*' + mockUser.userName + '.*', $options: 'i' } });
+        expect(userModel.find).toHaveBeenCalledWith({
+            $or: [
+                { userName: { $regex: '.*' + mockUser.userName + '.*', $options: 'i' } },
+                { name: { $regex: '.*' + mockUser.name + '.*', $options: 'i' } }
+            ]
+        });
         expect(result).toEqual({
             error: true,
             message: 'Server error',
@@ -187,7 +222,7 @@ describe('UserRepository', () => {
         expect(userModel.findByIdAndUpdate).toHaveBeenNthCalledWith(1, mockUserId, { $pull: { friends: mockFriendID } });
         expect(userModel.findByIdAndUpdate).toHaveBeenNthCalledWith(2, mockFriendID, { $pull: { friends: mockUserId } });
 
-        expect(result).toEqual({ error: false, statusCode: 200 });
+        expect(result).toEqual({ error: false, statusCode: 204 });
     });
 
     it('should throw an error when the user or friend does not exist', async () => {
