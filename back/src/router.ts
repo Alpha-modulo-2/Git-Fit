@@ -5,6 +5,7 @@ import path from "path";
 import LoginController from "./controllers/loginController";
 import authenticate from "./middleware/authenticate";
 import FriendRequestsController from "./controllers/FriendRequestsController";
+import cacheMiddleware from './middleware/cacheMiddleware';
 
 const router: Router = Router();
 
@@ -12,19 +13,18 @@ const userController = new UserController();
 
 //User Routes
 router.post("/users/", authenticate, userController.insert);
-router.get("/users/search", authenticate, userController.getByName);
-router.get("/users/:id", authenticate, userController.getOne);
-router.get("/users/", authenticate, userController.get);
+router.get("/users/search", authenticate, cacheMiddleware, userController.getByName);
+router.get("/users/:id", authenticate, cacheMiddleware, userController.getOne);
+router.get("/users/", authenticate, cacheMiddleware, userController.get);
 router.patch("/users/:id", authenticate, userController.update);
 router.delete("/users/:id", authenticate, userController.delete);
 router.delete("/user/:userId/friend/:friendId", authenticate, userController.removeFriend)
-
 
 const cardController = new CardController();
 
 //Card Routes
 router.post("/cards/:userId", cardController.insert);
-router.get("/allcards/:userId", cardController.getAllCardsByUser);
+router.get("/allcards/:userId", cacheMiddleware, cardController.getAllCardsByUser);
 router.get("/card/:cardId", cardController.getOne);
 router.post("/card/:cardId/task", cardController.addTask);
 router.post("/card/:cardId/meal", cardController.addMeal);
