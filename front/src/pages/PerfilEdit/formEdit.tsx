@@ -11,7 +11,7 @@ interface FormProps {
   handleHeightChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleOccupationChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleAgeChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  handleDeleteAccount: () => void; // Handler para a exclusão do usuário
+  handleDeleteAccount: () => void;
 
   inputsNameValue: string;
   inputsEmailValue: string;

@@ -1,7 +1,6 @@
 import "./styles.css";
 import { Header } from "../../components/Header";
 import { NavigateFunction, useNavigate } from "react-router-dom";
-import { Button } from "../../components/Button";
 import React, { useState } from "react";
 import ILogin from "../../interfaces/ILogin";
 import Form from "./formLogin";

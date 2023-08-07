@@ -145,7 +145,6 @@ export const PerfilEdit = () => {
             inputsNameValue={userNameValue}
             inputsEmailValue={emailValue}
             inputsPasswordValue={passwordValue}
-            // inputsPhotoValue={photoValue}
             inputsGenderValue={genderValue}
             inputsWeightValue={weightValue}
             inputsHeightValue={heightValue}

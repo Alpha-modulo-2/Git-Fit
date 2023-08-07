@@ -7,5 +7,5 @@ export default interface IUpdateUserData {
   weight: string;
   height: string;
   occupation: string;
-  age: number;
+  age: string;
 }
