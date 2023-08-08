@@ -39,10 +39,7 @@ export default class FriendRequestsRepository {
                 friendRequests: result,
             }
         } catch (error: any) {
-            console.log(error instanceof CustomError, error);
             if (error instanceof CustomError) {
-                console.log('entrou')
-                console.log(error.statusCode)
                 return {
                     error: true,
                     message: error.message,
@@ -64,7 +61,7 @@ export default class FriendRequestsRepository {
                 recipient: userId
             }).populate('requester', '-password -email -created_at -updated_at');
     
-            if (!result || result.length === 0) {
+            if (!result) {
                 throw new CustomError("Nenhuma solicitação de amizade encontrada.", 404);
             }
         

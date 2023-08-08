@@ -9,26 +9,54 @@ export default class FriendRequestsService {
     }
 
     async insert(requesterId: string, recipientId: string): Promise<IResult> {
-        const result = await this.repository.insert(requesterId, recipientId);
-    
-        return result;
+        try {
+            const result = await this.repository.insert(requesterId, recipientId);
+            return result;
+        } catch (error) {
+            return {
+                error: true,
+                statusCode: 500,
+                message: "Erro interno do servidor."
+            };
+        }
     }
 
     async friendRequestsByUser(userId: string): Promise<IResult> {
-        const result = await this.repository.friendRequestsByUser(userId);
-
-        return result;
+        try {
+            const result = await this.repository.friendRequestsByUser(userId);
+            return result;
+        } catch (error) {
+            return {
+                error: true,
+                statusCode: 500,
+                message: "Erro interno do servidor."
+            };
+        }
     }
 
     async acceptFriend(requestId: string): Promise<IResult> {
-        const result = await this.repository.acceptFriend(requestId);
-
-        return result;
+        try {
+            const result = await this.repository.acceptFriend(requestId);
+            return result;
+        } catch (error) {
+            return {
+                error: true,
+                statusCode: 500,
+                message: "Erro interno do servidor."
+            };
+        }
     }
     
     async rejectFriend(requestId: string): Promise<IResult> {
-        const result = await this.repository.rejectFriend(requestId);
-
-        return result
+        try {
+            const result = await this.repository.rejectFriend(requestId);
+            return result
+        } catch (error) {
+            return {
+                error: true,
+                statusCode: 500,
+                message: "Erro interno do servidor."
+            };
+        }
     }
 }

@@ -6,8 +6,6 @@ import IMeal from "../interfaces/IMeal";
 import { cardModel } from "../models/card";
 import CustomError from "../helpers/CustomError";
 
-const TAG = "Card Repository "
-
 export default class CardRepository {
 
     async insert(cards: ICard[]): Promise<IResult> {
