@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { Header } from "../../components/Header";
 import { Button } from "../../components/Button";
 import { DailyCard } from "../../components/DailyCard";
+import { MiniCard } from "../../components/MiniCard";
 import { useNavigate } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
 import currentuser from '../../currentuser.json'
@@ -250,6 +251,8 @@ export const FullCard = () => {
     const [showEditButtons, setShowEditButtons] = useState(false);
     const [showEditMealButtons, setShowEditMealButtons] = useState(false);
 
+    const [showMiniCarrosel, setShowMiniCarrossel] = useState(true);
+
     const [editingMealIndex, setEditingMealIndex] = useState<number>(-1);
     const [editingTaskIndex, setEditingTaskIndex] = useState<number>(-1);
     const [editedTaskDescription, setEditedTaskDescription] = useState('');
@@ -329,10 +332,27 @@ export const FullCard = () => {
         setShowEditMealButtons(true)
     };
 
+    const changeversion = () => {
+        if(showMiniCarrosel){
+            setShowMiniCarrossel(false);
+            console.log(showMiniCarrosel)
+        }else{
+            setShowMiniCarrossel(true);
+            console.log(showMiniCarrosel)
+        }
+    }
+
     return (
         <div className="fullcard">
             <Header isLoggedIn={true} />
             <div className="structure-fullcard">
+            {!showMiniCarrosel ? (
+                <div className="message_box">
+                      <input type="button" className="buttoncarrossel" onClick={changeversion}></input>
+                </div>
+                ):(
+                    <input type="button" className="buttoncarrossel" onClick={changeversion}></input>
+                )}
                 <div className="background-card">
                     <h2>{selectedDay?.name}</h2>
                     <div className="div_training_card">
@@ -457,6 +477,7 @@ export const FullCard = () => {
                         )}
                     </div>
                 </div>
+                {showMiniCarrosel ? (
                 <div className="structure-carrossel">
                     <DailyCard week_number={0} onClick={() => navigate('/fullcard/0')}></DailyCard>
                     <DailyCard week_number={1} onClick={() => navigate('/fullcard/1')}></DailyCard>
@@ -466,6 +487,17 @@ export const FullCard = () => {
                     <DailyCard week_number={5} onClick={() => navigate('/fullcard/5')}></DailyCard>
                     <DailyCard week_number={6} onClick={() => navigate('/fullcard/6')}></DailyCard>
                 </div>
+                ) : (
+                    <div className="structure-minicarrossel">
+                    <MiniCard week_number={0} onClick={() => navigate('/fullcard/0')}></MiniCard>
+                    <MiniCard week_number={1} onClick={() => navigate('/fullcard/1')}></MiniCard>
+                    <MiniCard week_number={2} onClick={() => navigate('/fullcard/2')}></MiniCard>
+                    <MiniCard week_number={3} onClick={() => navigate('/fullcard/3')}></MiniCard>
+                    <MiniCard week_number={4} onClick={() => navigate('/fullcard/4')}></MiniCard>
+                    <MiniCard week_number={5} onClick={() => navigate('/fullcard/5')}></MiniCard>
+                    <MiniCard week_number={6} onClick={() => navigate('/fullcard/6')}></MiniCard>
+                </div>
+                )}
             </div>
         </div>
     );

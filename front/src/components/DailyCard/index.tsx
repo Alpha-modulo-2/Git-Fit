@@ -31,6 +31,7 @@ const weekDays = [
   { id: 4, name: 'Quinta-feira' },
   { id: 5, name: 'Sexta-feira' },
   { id: 6, name: 'Sábado' },
+  { default: 'Adicione um card'}
 ];
 
 export const DailyCard = ({ week_number, onClick }: PropTypes) => {
