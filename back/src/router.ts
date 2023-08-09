@@ -40,10 +40,10 @@ router.delete("/meal/:mealId", authenticate, cardController.delMeal);
 const friendRequestsController = new FriendRequestsController();
 
 //FriendRequests Routes
-router.post("/solicitation", friendRequestsController.insert);
-router.get("/friendRequests/:userId", friendRequestsController.friendRequestsByUser);
-router.patch("/acceptFriend", friendRequestsController.acceptFriend);
-router.delete("/rejectFriend/:requestId", friendRequestsController.rejectFriend);
+router.post("/solicitation", authenticate, friendRequestsController.insert);
+router.get("/friendRequests/:userId", authenticate, friendRequestsController.friendRequestsByUser);
+router.patch("/acceptFriend", authenticate, friendRequestsController.acceptFriend);
+router.delete("/rejectFriend/:requestId", authenticate, friendRequestsController.rejectFriend);
 
 
 const loginController = new LoginController();

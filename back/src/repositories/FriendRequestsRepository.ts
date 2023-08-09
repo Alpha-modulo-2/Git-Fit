@@ -5,7 +5,6 @@ import CustomError from "../helpers/CustomError";
 
 export default class FriendRequestsRepository {
     async insert(requesterId: string, recipientId: string): Promise<IResult> {
-
         try {
             const existingRequest = await friendRequestsModel.findOne({
                 requester: requesterId,
@@ -49,7 +48,7 @@ export default class FriendRequestsRepository {
 
             return {
                 error: true,
-                message: error.message || "Erro interno do servidor",
+                message: error.message,
                 statusCode: 500,
             }
         }
@@ -60,8 +59,8 @@ export default class FriendRequestsRepository {
             const result = await friendRequestsModel.find({
                 recipient: userId
             }).populate('requester', '-password -email -created_at -updated_at');
-    
-            if (!result) {
+            
+            if (!result || result.length === 0) {
                 throw new CustomError("Nenhuma solicitação de amizade encontrada.", 404);
             }
         
