@@ -24,7 +24,7 @@ const options = {
     key: fs.readFileSync(path.resolve(process.env.SSL_KEY_PATH)),
     cert: fs.readFileSync(path.resolve(process.env.SSL_CERT_PATH)),
 };
-https.createServer(options, app).listen(443, ()=>{
+https.createServer(options, app).listen(443, () => {
     console.log(`Server is running on port 443`)
 })
 

@@ -5,6 +5,11 @@ import { Schema, SchemaTypes, model } from "mongoose";
 const userSchema = new Schema<IUser>({
     userName: {
         type: String,
+        required: true,
+        unique: true
+    },
+    name: {
+        type: String,
         required: true
     },
     password: {

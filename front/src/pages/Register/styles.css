@@ -261,8 +261,24 @@
 .divButton-edit {
 
 }
-
-
-  
+  .buttonLogin {
+    background-color: rgba(115, 83, 186, 1);
+    height: 3vw;
+    width: 6vw;
+    border-radius: 10px;
+    padding: '10px 24px';
+    font-family: 'Poppins';
+    font-size: 1vw;
+    font-weight: 800;
+    line-height: '20px';
+    letter-spacing: '0.11em';
+    color: black;
+    cursor: pointer;
+  }
+  .buttonLogin:hover {
+    background-color:rgb(83, 39, 180);
+    color: rgb(255, 255, 255);
+    cursor: pointer;
+  }
   
   

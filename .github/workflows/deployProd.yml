@@ -27,6 +27,8 @@ jobs:
           echo NODE_ENV=${{ secrets.NODE_ENV }} >> ./back/.env
           echo SSL_KEY_PATH=${{ secrets.SSL_KEY_PATH }} >> ./back/.env
           echo SSL_CERT_PATH=${{ secrets.SSL_CERT_PATH }} >> ./back/.env
+          echo REDIS_HOST=${{ secrets.REDIS_HOST }} >> ./back/.env
+          echo REDIS_PORT=${{ secrets.REDIS_PORT }} >> ./back/.env
 
       - name: Run Docker Compose up
         run: docker-compose up --build -d
