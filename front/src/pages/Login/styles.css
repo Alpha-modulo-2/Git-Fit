@@ -48,6 +48,7 @@
 
 /* Menu content */
 .loginTitle {
+  margin-bottom: 2vw;
   color: rgba(115, 83, 186, 1);
   font-size: 2vw;
   font-weight: bold;
@@ -55,7 +56,7 @@
 
 .input-login {
   font-size: 0.8vw;
-  width: 70%;
+  width: 15vw;
   padding: 5%;
   font-weight: bold;
   color: rgba(115, 83, 186, 1);
@@ -94,6 +95,35 @@
   color: rgba(115, 83, 186, 1);
   cursor: pointer;
   animation: brilho 0.5s infinite alternate;
+}
+
+.buttonLogin {
+  justify-content: center;
+  align-items: center;
+  background-color: #7353BA;
+  height: 2vw;
+  width: 4vw;
+  border-radius: 15px;  
+  padding: '10px 24px';
+  font-family: 'Poppins';
+  font-size: 1vw;
+  font-weight: 800;
+  line-height: '20px';
+  letter-spacing: '0.11em';
+  color: '#FFFFFF';
+  
+}
+.buttonLogin:hover {
+  background-color: #ffffff;
+  border-color: #7353BA;
+
+
+}
+form{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
 }
 
 

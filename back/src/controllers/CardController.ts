@@ -12,6 +12,7 @@ export default class CardController {
         this.getOne = this.getOne.bind(this);
         this.addTask = this.addTask.bind(this);
         this.addMeal = this.addMeal.bind(this);
+        this.updateTitle = this.updateTitle.bind(this);
         this.updateTrainingCardChecked = this.updateTrainingCardChecked.bind(this);
         this.updateMealsCardChecked = this.updateMealsCardChecked.bind(this);
         this.updateTask = this.updateTask.bind(this);
@@ -34,7 +35,7 @@ export default class CardController {
         try {
             const result = await this.service.insert(userId);
             
-            return res.status(result.statusCode || 500).json(result.card || result.message);
+            return res.status(result.statusCode).json(result);
         } catch (error: any) {
             console.log("Erro ao inserir os cards", error.message);
             return res.status(500).json({
@@ -59,7 +60,7 @@ export default class CardController {
 
             const result = await this.service.getAllCardsByUser(userId);
 
-            return res.status(result.statusCode || 500).json(result.card || result.message);
+            return res.status(result.statusCode).json(result);
         } catch (error: any) {
             console.log("Erro ao solicitar os cards:", error.message);
             return res.status(500).json({
@@ -84,7 +85,7 @@ export default class CardController {
         try {
             const result = await this.service.getOne(cardId);
 
-            return res.status(result.statusCode || 500).json(result.card || result.message);
+            return res.status(result.statusCode).json(result);
         } catch (error: any) {
             console.log("Erro ao solicitar o card:", error.message);
             return res.status(500).json({
@@ -96,8 +97,7 @@ export default class CardController {
     }
 
     async updateTrainingCardChecked(req: Request, res: Response) {
-        const { cardId } = req.params;
-        const { checked } = req.body;
+        const { cardId, checked } = req.body;
 
         if (!cardId || cardId.length !== 24 || !(/^[0-9a-fA-F]+$/).test(cardId)) {
             return res.status(400).json({
@@ -118,7 +118,7 @@ export default class CardController {
         try {
             const result = await this.service.updateTrainingCardChecked(cardId, checked);
     
-            return res.status(result.statusCode || 500).json(result.card || result.message);
+            return res.status(result.statusCode).json(result);
         } catch (error: any) {
             console.log("Erro ao atualizar o campo checked da TrainingCard", error.message);
             return res.status(500).json({
@@ -130,8 +130,7 @@ export default class CardController {
     }
 
     async updateMealsCardChecked(req: Request, res: Response) {
-        const { cardId } = req.params;
-        const { checked } = req.body;
+        const { cardId, checked } = req.body;
 
         if (!cardId || cardId.length !== 24 || !(/^[0-9a-fA-F]+$/).test(cardId)) {
             return res.status(400).json({
@@ -152,7 +151,7 @@ export default class CardController {
         try {
             const result = await this.service.updateMealsCardChecked(cardId, checked);
 
-            return res.status(result.statusCode || 500).json(result.card || result.message);
+            return res.status(result.statusCode).json(result);
         } catch (error: any) {
             console.log("Erro ao atualizar o campo checked da MealsCard", error.message);
             return res.status(500).json({
@@ -188,7 +187,7 @@ export default class CardController {
         try {
             const result = await this.service.addTask(cardId, task);
 
-            return res.status(result.statusCode || 500).json(result.card || result.message);
+            return res.status(result.statusCode).json(result);
         } catch (error: any) {
             console.log("Erro ao adicionar a tarefa ao card:", error.message);
             return res.status(500).json({
@@ -224,7 +223,7 @@ export default class CardController {
         try {
             const result = await this.service.addMeal(cardId, meal);
 
-            return res.status(result.statusCode || 500).json(result.card || result.message);
+            return res.status(result.statusCode).json(result);
         } catch (error: any) {
             console.log("Erro ao adicionar a refeição ao card:", error.message);
             return res.status(500).json({
@@ -235,11 +234,8 @@ export default class CardController {
         }
     }
 
-    async updateTask(req: Request, res: Response) {
-        const { cardId, taskId } = req.params;
-        const task: ITask = {
-            description: req.body.description
-        }
+    async updateTitle(req: Request, res: Response) {
+        const { cardId, title } = req.body;
 
         if (!cardId || cardId.length !== 24 || !(/^[0-9a-fA-F]+$/).test(cardId)) {
             return res.status(400).json({
@@ -249,7 +245,40 @@ export default class CardController {
             });
         }
 
-        if (!task.description || task.description.trim().length === 0) {
+        if (!title || title.trim().length === 0) {
+            return res.status(400).json({
+                error: true,
+                statusCode: 400,
+                message: "Título inválido"
+            });
+        }
+    
+        try {
+            const result = await this.service.updateTitle(cardId, title);
+    
+            return res.status(result.statusCode).json(result);
+        } catch (error: any) {
+            console.log("Erro ao atualizar o título do cartão", error.message);
+            return res.status(500).json({
+                error: true,
+                statusCode: 500,
+                message: error.message
+            });
+        }
+    }
+
+    async updateTask(req: Request, res: Response) {
+        const { taskId ,description } = req.body;
+
+        if (!taskId || taskId.length !== 24 || !(/^[0-9a-fA-F]+$/).test(taskId)) {
+            return res.status(400).json({
+                error: true,
+                statusCode: 400,
+                message: "ID da tarefa inválido"
+            });
+        }
+
+        if (!description || description.trim().length === 0) {
             return res.status(400).json({
                 error: true,
                 statusCode: 400,
@@ -258,9 +287,9 @@ export default class CardController {
         }
 
         try {
-            const result = await this.service.updateTask(cardId, taskId, task);
-
-            return res.status(result.statusCode || 500).json(result.card || result.message);
+            const result = await this.service.updateTask(taskId, description);
+        
+            return res.status(result.statusCode || 500).json(result);
         } catch (error: any) {
             console.log("Erro ao solicitar o card:", error.message);
             return res.status(500).json({
@@ -272,31 +301,28 @@ export default class CardController {
     }
 
     async updateMeal(req: Request, res: Response) {
-        const { cardId, mealId } = req.params;
-        const meal: IMeal = {
-            description: req.body.description
-        }
+        const { mealId, description } = req.body;
 
-        if (!cardId || cardId.length !== 24 || !(/^[0-9a-fA-F]+$/).test(cardId)) {
+        if (!mealId || mealId.length !== 24 || !(/^[0-9a-fA-F]+$/).test(mealId)) {
             return res.status(400).json({
                 error: true,
                 statusCode: 400,
-                message: "ID do card inválido"
+                message: "ID da tarefa inválido"
             });
         }
 
-        if (!meal.description || meal.description.trim().length === 0) {
+        if (!description || description.trim().length === 0) {
             return res.status(400).json({
                 error: true,
                 statusCode: 400,
-                message: "Descrição de refeição inválida"
+                message: "Descrição da tarefa inválida"
             });
         }
     
         try {
-            const result = await this.service.updateMeal(cardId, mealId, meal);
+            const result = await this.service.updateMeal(mealId, description);
     
-            return res.status(result.statusCode || 500).json(result.card || result.message);
+            return res.status(result.statusCode).json(result);
         } catch (error: any) {
             console.log("Erro ao atualizar a refeição:", error.message);
             return res.status(500).json({
@@ -308,12 +334,12 @@ export default class CardController {
     }
 
     async delTask(req: Request, res: Response) {
-        const { cardId, taskId } = req.params;
+        const { taskId } = req.params;
 
         try {
-            const result = await this.service.delTask(cardId, taskId);
+            const result = await this.service.delTask(taskId);
 
-            return res.status(result.statusCode).json(result.card || result.message);
+            return res.status(result.statusCode).json(result);
         } catch (error: any) {
             console.log("Erro ao deletar a task:", error.message);
             return res.status(500).json({
@@ -325,12 +351,12 @@ export default class CardController {
     }
 
     async delMeal(req: Request, res: Response) {
-        const { cardId, mealId } = req.params;
+        const { mealId } = req.params;
 
         try {
-            const result = await this.service.delMeal(cardId, mealId);
+            const result = await this.service.delMeal(mealId);
             
-            return res.status(result.statusCode).json(result.card || result.message);
+            return res.status(result.statusCode).json(result);
         } catch (error: any) {
             console.log("Erro ao deletar a refeição:", error.message);
             return res.status(500).json({
