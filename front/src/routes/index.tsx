@@ -7,7 +7,7 @@ import { Login } from '../pages/Login';
 import { SeeMore } from '../pages/SeeMore';
 import { Contacts } from '../pages/ContactsAndRequests';
 import { SearchedResults } from "../pages/SearchResults";
-import { SearchedUsersProvider } from "../contexts"; 
+import { SearchedUsersProvider } from "../searchedUsersContext"; 
 // import { Catalog } from '../pages/Catalog';
 // import { Error404 } from '../pages/Error404';
 // import { Home } from '../pages/Home';

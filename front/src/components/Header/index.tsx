@@ -5,7 +5,7 @@ import "./styles.css";
 import { useEffect, useState } from "react";
 import { useNavigate } from 'react-router-dom';
 
-import {  useUsers } from "../../contexts";
+import {  useUsers } from "../../searchedUsersContext";
 import { User } from "../../types/interface";
 
 interface PropTypes {
