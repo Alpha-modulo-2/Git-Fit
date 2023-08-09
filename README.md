@@ -14,5 +14,4 @@ The Git-Fit project is a productivity enhancement application with a mission to 
 https://www.notion.so/carolinaliberato/API-Git-Fit-1606740fef02435aa78db6dae9b9d08e
 
 # Stage
-[Database Integration: Git-Fit harnesses the power of MongoDB for robust data storage and retrieval, ensuring a reliable and scalable foundation for user information and application data.
-Caching with Redis: The app further leverages Redis as a caching layer, enhancing performance and responsiveness, particularly in data-intensive operations.](https://git-fit-front.onrender.com/landing_page)https://git-fit-front.onrender.com/landing_page
+https://git-fit-front.onrender.com/landing_page
