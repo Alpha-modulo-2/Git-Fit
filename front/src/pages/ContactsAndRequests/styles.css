@@ -4,17 +4,17 @@
 .container-contacts-request {
   display: flex;
   flex-direction: column;
-  gap: 1.8rem;
+  /* gap: 1.8rem; */
   /* justify-content: space-evenly; */
   align-items: center;
   color: #000000;
   font-family: "Poppins", sans-serif;
-  height: 85%;
+  padding: 2rem 0rem 0rem 0rem;
 }
 
 .search-box {
-  height: 2.5rem;
-  width: 25rem;
+  height: 1.5rem;
+  width: 8rem;
   background-color: #dcdddf;
   border-radius: 2rem;
   display: flex;
@@ -26,7 +26,7 @@
   border: none;
   background: none;
   outline: none;
-  font-size: 1rem;
+  font-size: 0.8rem;
   width: 100%;
 }
 
@@ -123,6 +123,7 @@
 .img-card-contacts {
   width: 30%;
   height: 100%;
+  flex-shrink: 0;
 }
 .img-card-contacts img {
   width: 100%;
