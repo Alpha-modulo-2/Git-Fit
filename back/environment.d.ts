@@ -5,6 +5,8 @@ declare global {
             PORT: string
             DB_CONN_STRING: string
             JWTSECRET: string
+            REDIS_HOST: string
+            REDIS_PORT: string
         }
     }
 }

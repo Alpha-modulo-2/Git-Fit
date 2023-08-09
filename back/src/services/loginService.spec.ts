@@ -21,23 +21,25 @@ describe('LoginService', () => {
     };
 
     const mockUser: IUser = {
-        "id": "123456789101112131415161",
-        "userName": mockCredentials.userName,
-        "password": '$2a$10$yH.C8uIjC.O9F5/RLKmKMu9JqG2tUzBLpLuJ.bfO6ZJ5V7oQ.tolC', // bcrypt hashed version of "password"
-        "email": "teste@teste.com",
-        "friends": [""],
-        "created_at": new Date,
-        "updated_at": new Date,
-        "photo": "url",
-        "gender": "M",
-        "weight": "90kg",
-        "height": "180cm",
-        "occupation": "none",
-        "age": 25
+        id: "123456789101112131415161",
+        userName: mockCredentials.userName,
+        name: "teste",
+        password: '$2a$10$yH.C8uIjC.O9F5/RLKmKMu9JqG2tUzBLpLuJ.bfO6ZJ5V7oQ.tolC', // bcrypt hashed version of "password"
+        email: "teste@teste.com",
+        friends: [""],
+        created_at: new Date,
+        updated_at: new Date,
+        photo: "url",
+        gender: "M",
+        weight: "90kg",
+        height: "180cm",
+        occupation: "none",
+        age: 25
     };
 
     const restOfUser: IUser = {
         userName: mockUser.userName,
+        name: mockUser.name,
         id: mockUser.id,
         email: mockUser.email,
         photo: mockUser.photo,
@@ -67,7 +69,6 @@ describe('LoginService', () => {
     it('should login a user', async () => {
         loginRepository.login.mockResolvedValue({ error: false, statusCode: 200, user: mockUser });
 
-
         const result = await loginService.login(mockCredentials);
 
         expect(loginRepository.login).toHaveBeenCalledWith(mockCredentials);
@@ -81,20 +82,20 @@ describe('LoginService', () => {
     });
 
     it('should fail to login when repository throws an error', async () => {
-        loginRepository.login.mockRejectedValue(new Error('Repository error'));
+        loginRepository.login.mockRejectedValue(new Error('Usuário ou senha incorretos.'));
 
         const result = await loginService.login(mockCredentials);
 
-        expect(result).toEqual('Repository error');
+        expect(result).toEqual({ error: true, message: "Usuário ou senha incorretos.", statusCode: 500 });
     });
 
     it('should fail to login when bcrypt.compare fails', async () => {
-        loginRepository.login.mockRejectedValue(new Error(''));
+        loginRepository.login.mockRejectedValue(new Error("Usuário ou senha incorretos."));
 
         bcrypt.compare = jest.fn().mockReturnValue(false);  // Passwords do not match
 
         const result = await loginService.login(mockCredentials);
 
-        expect(result).toEqual('');
+        expect(result).toEqual({ error: true, message: "Usuário ou senha incorretos.", statusCode: 500 });
     });
 });

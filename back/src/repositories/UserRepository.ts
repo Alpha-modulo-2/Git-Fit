@@ -9,6 +9,14 @@ export default class UserRepository {
 
             const result = await userModel.create(user)
 
+            if (!result) {
+                const error = {
+                    message: "Usuário não encontrado.",
+                    code: 404
+                }
+                throw error
+            }
+
             return {
                 error: false,
                 statusCode: 201,
@@ -18,7 +26,7 @@ export default class UserRepository {
             return {
                 error: true,
                 message: error.message,
-                statusCode: 500,
+                statusCode: error.code || 500,
             }
         }
     }
@@ -26,7 +34,11 @@ export default class UserRepository {
     async get(): Promise<IResult> {
         try {
 
-            const users = await userModel.find().populate("friends");
+            const users = await userModel.find().select("-password").populate("friends", { userName: 1, name: 1, photo: 1, occupation: 1, id: 1 });
+
+            if (!users) {
+                throw new Error("Erro no servidor")
+            }
 
             return {
                 error: false,
@@ -46,26 +58,27 @@ export default class UserRepository {
 
         try {
 
-            const user = await userModel.findById(id).populate("friends");
+            const user = await userModel.findById(id).select("-password").populate("friends", { userName: 1, name: 1, photo: 1, occupation: 1, id: 1 });
 
-            if (user) {
-                return {
-                    error: false,
-                    statusCode: 200,
-                    user: user,
-                }
-            } else {
-                return {
+            if (!user) {
+                const error = {
                     error: true,
-                    statusCode: 500,
+                    statusCode: 404,
                     message: "Usuário não encontrado"
                 }
+                throw error
+            }
+
+            return {
+                error: false,
+                statusCode: 200,
+                user: user,
             }
         } catch (error: any) {
             return {
                 error: true,
                 message: error.message,
-                statusCode: 500,
+                statusCode: error.code || 500,
             }
         }
     }
@@ -74,41 +87,29 @@ export default class UserRepository {
 
         try {
 
-            const user = await userModel.findById(id)
+            const user = await userModel.findByIdAndUpdate(id, { $set: updateData, updated_at: new Date }).select("-password")
 
-            if (user) {
-
-                user.userName = updateData.userName || user.userName
-                user.email = updateData.email || user.email
-                user.password = updateData.password || user.password
-                user.photo = updateData.photo || user.photo
-                user.gender = updateData.gender || user.gender
-                user.weight = updateData.weight || user.weight
-                user.height = updateData.height || user.height
-                user.occupation = updateData.occupation || user.occupation
-                user.age = updateData.age || user.age
-                user.updated_at = new Date
-
-                await user.save()
-
-                return {
-                    error: false,
-                    statusCode: 200,
-                    user: user
+            if (!user) {
+                const error = {
+                    error: true,
+                    statusCode: 404,
+                    message: "Usuário não encontrado"
                 }
+
+                throw error
             }
 
             return {
-                error: true,
-                statusCode: 404,
-                message: "Usuário não encontrado"
+                error: false,
+                statusCode: 200,
+                user: user
             }
 
         } catch (error: any) {
             return {
                 error: true,
                 message: error.message,
-                statusCode: 500,
+                statusCode: error.code || 500,
             }
         }
     }
@@ -119,27 +120,28 @@ export default class UserRepository {
 
             const user = await userModel.findById(id)
 
-            if (user) {
-
-                user.deleteOne()
-
-                return {
-                    error: false,
-                    statusCode: 204,
+            if (!user) {
+                const error = {
+                    error: true,
+                    statusCode: 404,
+                    message: "Usuário não encontrado."
                 }
+                throw error
             }
+
+            user.deleteOne()
 
             return {
-                error: true,
-                statusCode: 404,
-                message: "Usuário não encontrado"
+                error: false,
+                statusCode: 204,
             }
+
 
         } catch (error: any) {
             return {
                 error: true,
                 message: error.message,
-                statusCode: 500,
+                statusCode: error.code || 500,
             }
         }
     }
@@ -147,27 +149,74 @@ export default class UserRepository {
     async getByName(name: string): Promise<IResult> {
 
         try {
-            const user = await userModel.find({ userName: { $regex: '.*' + name + '.*', $options: 'i' } }).populate("friends");
+            const user = await userModel.find({
+                $or: [
+                    { userName: { $regex: '.*' + name + '.*', $options: 'i' } },
+                    { name: { $regex: '.*' + name + '.*', $options: 'i' } }
+                ]
+            }).select("-password").populate("friends", { userName: 1, name: 1, photo: 1, occupation: 1, id: 1 });
 
-            if (user) {
-                return {
-                    error: false,
-                    statusCode: 200,
-                    user: user,
-                }
-            } else {
-                return {
+            if (!user) {
+                const error = {
                     error: true,
-                    statusCode: 500,
-                    message: "Usuário não encontrado"
+                    statusCode: 404,
+                    message: "Usuário não encontrado."
                 }
+                throw error
             }
+
+            return {
+                error: false,
+                statusCode: 200,
+                user: user,
+            }
+
+
         } catch (error: any) {
             return {
                 error: true,
                 message: error.message,
-                statusCode: 500,
+                statusCode: error.code || 500,
             }
+        }
+    }
+
+    async removeFriend(friendId: string, userId: string): Promise<IResult> {
+        try {
+            const user = await userModel.findById(userId);
+            const friend = await userModel.findById(friendId);
+
+            if (!user || !friend) {
+                const error = {
+                    error: true,
+                    statusCode: 404,
+                    message: "Usuário não encontrado."
+                }
+                throw error
+            }
+
+            if (!user.friends.includes(friend._id.toString())) {
+                const error = {
+                    error: true,
+                    statusCode: 404,
+                    message: "Este usuário não é seu amigo."
+                }
+                throw error
+            }
+
+            await userModel.findByIdAndUpdate(userId, { $pull: { friends: friendId } });
+            await userModel.findByIdAndUpdate(friendId, { $pull: { friends: userId } });
+
+            return {
+                error: false,
+                statusCode: 204,
+            };
+        } catch (error: any) {
+            return {
+                error: true,
+                message: error.message,
+                statusCode: error.code || 500,
+            };
         }
     }
 
