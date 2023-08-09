@@ -1,0 +1,391 @@
+{
+    "users": [
+      {
+        "_id": "1",
+        "username": "João Senna",
+        "password": "senha123",
+        "email": "joao123@example.com",
+        "created_at": "2023-07-24T10:00:00Z",
+        "friends": ["2", "3"],
+        "photo": "https://st2.depositphotos.com/1715570/10091/i/450/depositphotos_100916584-stock-photo-young-black-man-laughing-and.jpg",
+        "gender": "male",
+        "weight": 86,
+        "height": 1.80,
+        "occupation": "Engineer",
+        "age": 30
+      },
+      {
+        "_id": "2",
+        "username": "Maria Souza",
+        "password": "senha456",
+        "email": "maria456@example.com",
+        "created_at": "2023-07-24T11:30:00Z",
+        "friends": ["1"],
+        "photo": "https://th.bing.com/th/id/OIP.bN5gB0y9xfcAgb6zZRFZXAHaGt?pid=ImgDet&rs=1",
+        "gender": "female",
+        "weight": 65,
+        "height": 1.70,
+        "occupation": "Teacher",
+        "age": 28
+      },
+      {
+        "_id": "3",
+        "username": "Carlo S.",
+        "password": "senha789",
+        "email": "pedro789@example.com",
+        "created_at": "2023-07-24T13:15:00Z",
+        "friends": ["1"],
+        "photo": "https://th.bing.com/th/id/OIP.MQO8xQ0vxHPfvwsGI-3o5gHaFL?pid=ImgDet&w=500&h=350&rs=1",
+        "gender": "male",
+        "weight": 80,
+        "height": 1.85,
+        "occupation": "Doctor",
+        "age": 35
+      }
+    ],
+
+
+        "training": [
+          {
+            "_id": "0",
+            "check": false,
+            "title": "Treino de Pernas",
+            "tasks": [
+              {
+                "_id": "0",
+                "description": "Agachamento"
+              },
+              {
+                "_id": "1",
+                "description": "Leg Press"
+              },
+              {
+                "_id": "2",
+                "description": "Cadeira Extensora"
+              },
+              {
+                "_id": "3",
+                "description": "Cadeira Flexora"
+              },
+              {
+                "_id": "4",
+                "description": "Stiff"
+              }
+            ]
+          },
+          {
+            "_id": "1",
+            "check": true,
+            "title": "Treino de Braços",
+            "tasks": [
+              {
+                "_id": "0",
+                "description": "Rosca Direta"
+              },
+              {
+                "_id": "1",
+                "description": "Tríceps Corda"
+              },
+              {
+                "_id": "2",
+                "description": "Desenvolvimento com Halteres"
+              },
+              {
+                "_id": "3",
+                "description": "Supino Reto"
+              },
+              {
+                "_id": "4",
+                "description": "Tríceps Francês"
+              }
+            ]
+          },
+          {
+            "_id": "2",
+            "check": true,
+            "title": "Treino de Costas",
+            "tasks": [
+              {
+                "_id": "0",
+                "description": "Barra Fixa"
+              },
+              {
+                "_id": "1",
+                "description": "Remada Curvada"
+              },
+              {
+                "_id": "2",
+                "description": "Puxada Frontal"
+              },
+              {
+                "_id": "3",
+                "description": "Levantamento Terra"
+              },
+              {
+                "_id": "4",
+                "description": "Remada Cavalinho"
+              }
+            ]
+          },
+          {
+            "_id": "3",
+            "check": false,
+            "title": "Treino de Peito",
+            "tasks": [
+              {
+                "_id": "0",
+                "description": "Supino Inclinado"
+              },
+              {
+                "_id": "1",
+                "description": "Supino Declinado"
+              },
+              {
+                "_id": "2",
+                "description": "Crucifixo"
+              },
+              {
+                "_id": "3",
+                "description": "Flexão de Braços"
+              },
+              {
+                "_id": "4",
+                "description": "Peck Deck"
+              }
+            ]
+          },
+          {
+            "_id": "4",
+            "check": false,
+            "title": "Treino de Pernas 2",
+            "tasks": [
+              {
+                "_id": "0",
+                "description": "Leg Press"
+              },
+              {
+                "_id": "1",
+                "description": "Polichinelos"
+              },
+              {
+                "_id": "2",
+                "description": "Cadeira Extensora"
+              },
+              {
+                "_id": "3",
+                "description": "Agachamento Isométrico"
+              },
+              {
+                "_id": "4",
+                "description": "Agachamento"
+              }
+            ]
+          },
+          {
+            "_id": "5",
+            "check": false,
+            "title": "Treinos de Cardio",
+            "tasks": [
+              {
+                "_id": "0",
+                "description": "Esteira"
+              },
+              {
+                "_id": "1",
+                "description": "Elíptico"
+              },
+              {
+                "_id": "2",
+                "description": "Remo"
+              },
+              {
+                "_id": "3",
+                "description": "Corda"
+              },
+              {
+                "_id": "4",
+                "description": "Aeróbica"
+              }
+            ]
+          },
+          {
+            "_id": "6",
+            "check": false,
+            "title": "Treinos de Abdômen",
+            "tasks": [
+              {
+                "_id": "0",
+                "description": "Prancha"
+              },
+              {
+                "_id": "1",
+                "description": "Sit-up"
+              },
+              {
+                "_id": "2",
+                "description": "Bicicleta no chão"
+              },
+              {
+                "_id": "3",
+                "description": "Crunch"
+              },
+              {
+                "_id": "4",
+                "description": "Levantamento de pernas suspenso"
+              }
+            ]
+          }
+        ],
+        
+        "meals": [
+          {
+            "_id": "0",
+            "check": true,
+            "meals": [
+              {
+                "_id": "0",
+                "description": "Café da manhã",
+                "ingredients": ["Omelete", "Vegetais"]
+              },
+              {
+                "_id": "1",
+                "description": "Lanche da manhã",
+                "ingredients": ["Banana", "Maçã"]
+              },
+              {
+                "_id": "2",
+                "description": "Almoço",
+                "ingredients": ["Peito de frango", "Salada"]
+              }
+            ]
+          },
+          {
+            "_id": "1",
+            "check": false,
+            "meals": [
+              {
+                "_id": "1",
+                "description": "Café da manhã",
+                "ingredients": ["Vitamina de banana", "Aveia"]
+              },
+              {
+                "_id": "2",
+                "description": "Lanche da manhã",
+                "ingredients": ["Sanduíche integral", "Queijo", "Tomate"]
+              },
+              {
+                "_id": "3",
+                "description": "Almoço",
+                "ingredients": ["Bife de patinho", "Arroz Integral","Legumes"]
+              }
+            ]
+          },
+          {
+            "_id": "2",
+            "check": true,
+            "meals": [
+              {
+                "_id": "0",
+                "description": "Jantar",
+                "ingredients": ["Salada de quinoa", "Legumes"]
+              },
+              {
+                "_id": "1",
+                "description": "Café da manhã",
+                "ingredients": ["Pão Integral", "Queijo Branco", "Peito de Peru"]
+              },
+              {
+                "_id": "2",
+                "description": "Almoço",
+                "ingredients": ["Peixe grelhado", "Batata-Doce"]
+              }
+            ]
+          },
+          {
+            "_id": "3",
+            "check": false,
+            "meals": [
+              {
+                "_id": "0",
+                "description": "Ceia",
+                "ingredients": ["Chá de Camomila"]
+              },
+              {
+                "_id": "1",
+                "description": "Café da manhã",
+                "ingredients": ["Mingau de Aveia", "Frutas Cítricas"]
+              },
+              {
+                "_id": "2",
+                "description": "Lanche da manhã",
+                "ingredients": ["Suco Verde"]
+              }
+            ]
+          },
+          {
+            "_id": "4",
+            "check": false,
+            "meals": [
+              {
+                "_id": "0",
+                "description": "Ceia",
+                "ingredients": ["Chá de Ervas"]
+              },
+              {
+                "_id": "1",
+                "description": "Café da manhã",
+                "ingredients": ["Iogurte", "Granola"]
+              },
+              {
+                "_id": "2",
+                "description": "Lanche da tarde",
+                "ingredients": ["Suco Natural", "Torradas"]
+              }
+            ]
+          },
+          {
+            "_id": "5",
+            "check": false,
+            "meals": [
+              {
+                "_id": "0",
+                "description": "Almoço",
+                "ingredients": ["Peixe grelhado", "Arroz"]
+              },
+              {
+                "_id": "1",
+                "description": "Café da manhã",
+                "ingredients": ["Mingau de Aveia", "Frutas"]
+              },
+              {
+                "_id": "2",
+                "description": "Lanche da tarde",
+                "ingredients": ["Castanhas"]
+              }
+            ]
+          },
+          {
+            "_id": "6",
+            "check": false,
+            "meals": [
+              {
+                "_id": "0",
+                "description": "Almoço",
+                "ingredients": ["Sopa", "Legumes"]
+              },
+              {
+                "_id": "1",
+                "description": "Café da manhã",
+                "ingredients": ["Ovo Mexido"]
+              },
+              {
+                "_id": "2",
+                "description": "Lanche da tarde",
+                "ingredients": ["Barra de proteínas", "Cereal"]
+              }
+            ]
+          }
+        ]
+      }
+
+  

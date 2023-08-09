@@ -13,22 +13,21 @@ describe('LoginRepository', () => {
 
     const mockUser = {
         _id: new mongoose.Types.ObjectId(),
-        "userName": mockCredentials.userName,
-        "password": '$2a$10$yH.C8uIjC.O9F5/RLKmKMu9JqG2tUzBLpLuJ.bfO6ZJ5V7oQ.tolC', // bcrypt hashed version of "password"
-        "email": "teste@teste.com",
-        "friends": [""],
-        "created_at": new Date,
-        "updated_at": new Date,
-        "photo": "url",
-        "gender": "M",
-        "weight": "90kg",
-        "height": "180cm",
-        "occupation": "none",
-        "age": 25
+        userName: mockCredentials.userName,
+        password: '$2a$10$yH.C8uIjC.O9F5/RLKmKMu9JqG2tUzBLpLuJ.bfO6ZJ5V7oQ.tolC', // bcrypt hashed version of "password"
+        email: "teste@teste.com",
+        friends: [""],
+        created_at: new Date,
+        updated_at: new Date,
+        photo: "url",
+        gender: "M",
+        weight: "90kg",
+        height: "180cm",
+        occupation: "none",
+        age: 25
     };
 
     beforeEach(() => {
-        // Mock the userModel's findOne method
         (userModel.findOne as jest.Mock).mockImplementation(async () => mockUser);
     });
 
@@ -44,12 +43,12 @@ describe('LoginRepository', () => {
     });
 
     it('should fail to login when user is not found', async () => {
-        (userModel.findOne as jest.Mock).mockImplementation(async () => null);  // User not found
+        (userModel.findOne as jest.Mock).mockImplementation(async () => null);
 
         const loginRepository = new LoginRepository();
 
         const result = await loginRepository.login(mockCredentials);
 
-        expect(result).toEqual({ error: true, message: 'Usuario nao encontrado', statusCode: 500 });
+        expect(result).toEqual({ error: true, message: 'Usuário ou senha incorretos.', statusCode: 500 });
     });
 });

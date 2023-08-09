@@ -19,7 +19,7 @@
   position: absolute;
   display: flex;
   flex-direction: column;
-  font-size: 5vw; /* Alterado para unidade vw */
+  font-size: 5vw;
 }
 
 .logo-name-git-login,
@@ -37,7 +37,7 @@
   width: 30%;
   min-width: 100px;
   height: 35vw;
-  min-height: 300px; /* Defina o valor mínimo desejado, por exemplo, 300px */
+  min-height: 300px;
   border-radius: 25px;
   border: 0.9px solid rgba(0, 0, 0, 0.604);
   box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.638);
@@ -48,6 +48,7 @@
 
 /* Menu content */
 .loginTitle {
+  margin-bottom: 2vw;
   color: rgba(115, 83, 186, 1);
   font-size: 2vw;
   font-weight: bold;
@@ -55,7 +56,7 @@
 
 .input-login {
   font-size: 0.8vw;
-  width: 70%;
+  width: 15vw;
   padding: 5%;
   font-weight: bold;
   color: rgba(115, 83, 186, 1);
@@ -78,7 +79,7 @@
   flex-direction: column;
   align-items: center;
   font-weight: bold;
-  font-size: 0.8vw; /* Alterado para unidade vw */
+  font-size: 0.8vw;
 }
 
 .forgetPassEdit:hover {
@@ -94,6 +95,35 @@
   color: rgba(115, 83, 186, 1);
   cursor: pointer;
   animation: brilho 0.5s infinite alternate;
+}
+
+.buttonLogin {
+  justify-content: center;
+  align-items: center;
+  background-color: #7353BA;
+  height: 2vw;
+  width: 4vw;
+  border-radius: 15px;  
+  padding: '10px 24px';
+  font-family: 'Poppins';
+  font-size: 1vw;
+  font-weight: 800;
+  line-height: '20px';
+  letter-spacing: '0.11em';
+  color: '#FFFFFF';
+  
+}
+.buttonLogin:hover {
+  background-color: #ffffff;
+  border-color: #7353BA;
+
+
+}
+form{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
 }
 
 

@@ -77,7 +77,6 @@ export default class UserService {
                 statusCode: error.code || 500
             };
         }
-
     }
 
     async update(id: string, updateData: IUpdateData): Promise<IResult> {
