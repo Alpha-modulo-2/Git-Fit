@@ -1,9 +1,12 @@
-import { BrowserRouter } from 'react-router-dom';
-import './styles/global.css';
-import { Router } from './routes';
+import { BrowserRouter } from "react-router-dom";
+import "./styles/global.css";
+import { Router } from "./routes";
+import { AuthProvider } from "./context/authContext";
 
 export const App = () => (
-  <BrowserRouter>
-    <Router />
-  </BrowserRouter>
+  <AuthProvider>
+    <BrowserRouter>
+      <Router />
+    </BrowserRouter>
+  </AuthProvider>
 );

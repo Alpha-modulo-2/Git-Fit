@@ -19,7 +19,7 @@
   position: absolute;
   display: flex;
   flex-direction: column;
-  font-size: 5vw; /* Alterado para unidade vw */
+  font-size: 5vw;
 }
 
 .logo-name-git-login,
@@ -37,7 +37,7 @@
   width: 30%;
   min-width: 100px;
   height: 35vw;
-  min-height: 300px; /* Defina o valor mínimo desejado, por exemplo, 300px */
+  min-height: 300px;
   border-radius: 25px;
   border: 0.9px solid rgba(0, 0, 0, 0.604);
   box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.638);
@@ -79,7 +79,7 @@
   flex-direction: column;
   align-items: center;
   font-weight: bold;
-  font-size: 0.8vw; /* Alterado para unidade vw */
+  font-size: 0.8vw;
 }
 
 .forgetPassEdit:hover {
