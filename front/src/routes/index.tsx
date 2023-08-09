@@ -6,6 +6,7 @@ import { PerfilEdit } from '../pages/PerfilEdit';
 import { Login } from '../pages/Login';
 import { SeeMore } from '../pages/SeeMore';
 import { Contacts } from '../pages/ContactsAndRequests';
+import { FullCard } from "../pages/FullCards";
 // import { Catalog } from '../pages/Catalog';
 // import { Error404 } from '../pages/Error404';
 // import { Home } from '../pages/Home';
@@ -20,6 +21,7 @@ export const Router = () => {
       <Route path="/see-more" element={<SeeMore/>} />
       <Route path="/contacts" element={<Contacts/>} />
       <Route path="/profile" element={<Profile />} />
+      <Route path="/fullcard/:id" element={<FullCard />} />
       {/* <Route path="*" element={<Error404 />} />
       <Route path="/" element={<Navigate to="/home" />} />
       <Route path="/details/:type/:movieTitle/:movieId" element={<Details />} /> */}

@@ -2,7 +2,7 @@ import { MouseEventHandler } from 'react';
 import * as S from './styles';
 
 interface PropTypes {
-  category: 'primary' | 'secondary' | 'tertiary';
+  category: 'primary' | 'secondary' | 'tertiary' | 'edit_cards';
   label: string;
   onClick?: MouseEventHandler;
   disabled?: boolean;

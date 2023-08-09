@@ -1,0 +1,21 @@
+.structure-minicard{
+  width: 4rem;
+  height: 4rem;
+  background-color: #151b22e7;
+  border: 2px solid rgb(255, 255, 255);
+  color: rgb(255, 255, 255);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.5vw;
+}
+
+.structure-minicard:active{
+  background-color: #151b22e7;
+  border: 2px solid rgb(0, 0, 0);
+}
+
+.structure-minicard:hover{
+  background-color: #0a0d10e9;
+}
