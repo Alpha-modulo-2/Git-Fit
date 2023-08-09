@@ -1,35 +1,45 @@
-import "./styles.css";
-import { Header } from "../../components/Header";
-import { NavigateFunction, useNavigate } from "react-router-dom";
-import React, { useState } from "react";
-import ILogin from "../../interfaces/ILogin";
-import Form from "./formLogin";
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import ILogin from '../../interfaces/ILogin';
+import Form from './formLogin';
+import { useAuth } from '../../context/authContext';
+import { Header } from '../../components/Header';
 
 export const Login = () => {
-  const [userNameValue, setUserNameValue] = useState("");
-  const [passwordValue, setPasswordValue] = useState("");
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userNameValue, setUserNameValue] = useState('');
+  const [passwordValue, setPasswordValue] = useState('');
+  const { isLoggedIn, login } = useAuth();
+  const navigate = useNavigate();
 
-  const navigate: NavigateFunction = useNavigate();
+  useEffect(() => {
+    if (isLoggedIn) {
+      navigate('/profile');
+    }
+  }, [isLoggedIn, navigate]);
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
     const userName = userNameValue;
     const password = passwordValue;
     const user: ILogin = { userName, password };
-    void fetch("http://localhost:3000/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify( user ),
-    }).then((response) => {
-      console.log(response);
-      if (response.ok) {
-        setIsLoggedIn(true);
-        console.log(isLoggedIn);
-      } else {
-        alert("Login failed");
-      }
-    });
+
+    fetch('http://localhost:3000/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(user),
+    })
+    .then((response) => {
+        if (response.ok) {
+          login(user);
+          navigate('/profile');
+        } else {
+          alert('Login failed');
+        }
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+      });
   };
 
   const handleUserNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -38,10 +48,6 @@ export const Login = () => {
   const handlePasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setPasswordValue(event.target.value);
   };
-
-  if (isLoggedIn) {
-    navigate("/profile");
-  }
 
   return (
     <div className="Login">
@@ -52,9 +58,9 @@ export const Login = () => {
       </div>
       <div className="All-content-login">
         <div className="container-login-content">
-        <label className="loginTitle">Login</label>
+          <label className="loginTitle">Login</label>
 
-        <Form
+          <Form
             onSubmit={handleSubmit}
             handleUserNameChange={handleUserNameChange}
             handlePasswordChange={handlePasswordChange}
