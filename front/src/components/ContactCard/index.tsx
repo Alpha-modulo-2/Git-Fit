@@ -1,7 +1,7 @@
 // ContactCard.tsx
 import React from 'react';
 import { XCircle, Check, UserCirclePlus } from "@phosphor-icons/react";
-import { User } from '../../types/interface';
+import { User } from '../../interfaces/IUser';
 
 interface ContactCardProps {
   requesterInfo?: User;
