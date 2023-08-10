@@ -1,4 +1,3 @@
-import userFormater from "../helpers/userFormater";
 import IResult from "../interfaces/IResult";
 import IUpdateUserData from "../interfaces/IUpdateUserData";
 import IUser from "../interfaces/IUser";
@@ -21,7 +20,7 @@ export default class UserRepository {
             return {
                 error: false,
                 statusCode: 201,
-                user: userFormater(result),
+                user: result,
             }
         } catch (error: any) {
             return {
@@ -41,12 +40,10 @@ export default class UserRepository {
                 throw new Error("Erro no servidor")
             }
 
-            const formatedUsers = users.map((user) => userFormater(user))
-
             return {
                 error: false,
                 statusCode: 200,
-                user: formatedUsers,
+                user: users,
             }
         } catch (error: any) {
             return {
@@ -75,7 +72,7 @@ export default class UserRepository {
             return {
                 error: false,
                 statusCode: 200,
-                user: userFormater(user),
+                user: user,
             }
         } catch (error: any) {
             return {
@@ -105,7 +102,7 @@ export default class UserRepository {
             return {
                 error: false,
                 statusCode: 200,
-                user: userFormater(user)
+                user: user
             }
 
         } catch (error: any) {
@@ -168,13 +165,10 @@ export default class UserRepository {
                 throw error
             }
 
-            const formatedUsers = users.map((user) => userFormater(user))
-
-
             return {
                 error: false,
                 statusCode: 200,
-                user: formatedUsers
+                user: users
             }
 
 
