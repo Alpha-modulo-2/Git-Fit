@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from 'react-router-dom';
 
 import {  useUsers } from "../../context/searchedUsersContext";
-import { User } from "../../interfaces/IUser";
+import { UserData } from "../../interfaces/IUser";
 
 interface PropTypes {
   isLoggedIn: boolean;
@@ -31,7 +31,7 @@ export const Header = ({ isLoggedIn }: PropTypes) => {
     try {        
         const response = await fetch(`http://localhost:3000/users/search?name=${query}`);
         if (response.ok) {
-            const data = await response.json() as User[];
+            const data = await response.json() as UserData[];
             console.log(data, 'searchusers');
             
               setUsers(data);

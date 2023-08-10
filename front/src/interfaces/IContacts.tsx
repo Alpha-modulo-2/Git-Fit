@@ -1,14 +1,20 @@
-import { User } from "./IUser";
+import { UserData } from "./IUser";
 
 export interface FriendRequest {
     _id: string;
-    requester: string;
+    requester?: UserData;
     recipient: string;
-    status: string;
     created_at: string;
     __v: number;
-    requesterInfo?: User
 }
+// export interface FriendRequest {
+//     _id: string;
+//     requester: string;
+//     recipient: string;
+//     created_at: string;
+//     __v: number;
+//     requesterInfo?: UserData
+// }
   
 export interface ApiResponseRequests {
     error: boolean;

@@ -7,7 +7,7 @@ import ContactCard from "../../components/ContactCard";
 import {Modal} from "../../components/Modal";
 import { Chat } from "../../components/Chat";
 import { useAuth } from '../../context/authContext';
-import { User } from '../../interfaces/IUser';
+import { UserData } from '../../interfaces/IUser';
 import { Friend } from '../../interfaces/IUser';
 import { FriendRequest } from '../../interfaces/IContacts';
 import { ApiResponseRequests } from '../../interfaces/IContacts';
@@ -40,7 +40,7 @@ export const Contacts = () => {
                 const id = String(user.id)
                 const response = await fetch(`http://localhost:3000/users/${id}`);
                 if (response.ok) {
-                    const data = await response.json() as User;
+                    const data = await response.json() as UserData;
                     setContacts(data.friends); 
     
                     console.log(data, 'contatct')
@@ -69,21 +69,7 @@ export const Contacts = () => {
                     const data = await response.json() as ApiResponseRequests;
     
                     setRequests(data.friendRequests); 
-    
-                    // getting information about every requester
-                    const requesterIds = data.friendRequests.map((request) => request.requester);
-                    const requesterDetails = await Promise.all(requesterIds.map((requesterId) => fetch(`http://localhost:3000/users/${requesterId}`)));
-                    const requesterData = await Promise.all(requesterDetails.map((response) => response.json()));
-                    
-                    // updating friendRequests with the information accquired
-                    const updatedRequests:  FriendRequest[] = data.friendRequests.map((request, index) => ({
-                        ...request,
-                        requesterInfo: requesterData[index] as User, 
-                        // Adding the users' info in 'requesterInfo' field
-                    }));
-                    
-                    setRequests(updatedRequests);
-                    console.log(updatedRequests, 'requests')  
+                    console.log(data.friendRequests, 'requests')  
                 } else {
                     console.error('Erro ao obter as solicitações');
                     setError('Erro ao obter as solicitações.');
@@ -131,15 +117,13 @@ export const Contacts = () => {
                     return getContacts();
                 }
             }).then(() => {
-                return getRequests(); // Retornando a promessa da função getRequests
+                return getRequests(); 
             })
             .catch(error => {
                 console.error('Erro na requisição:', error);
-                // Lidar com o erro aqui
             });
         } catch (error) {
-            console.error('Erro geral:', error);
-            // Lidar com o erro aqui
+            console.error('Erro geral:', error)
         }
     }
 
@@ -168,11 +152,10 @@ export const Contacts = () => {
                     return getContacts();
                 }
             }).then(() => {
-                return getRequests(); // Retornando a promessa da função getRequests
+                return getRequests();
             })
             .catch(error => {
                 console.error('Erro na requisição:', error);
-                // Lidar com o erro aqui
             });
         } catch (error) {
             console.error('Erro geral:', error);
@@ -200,18 +183,20 @@ export const Contacts = () => {
                                 requests?.map((requester) => (
                                     <ContactCard
                                         key={requester._id}
-                                        requesterInfo={requester.requesterInfo}
+                                        requesterInfo={requester.requester}
                                         requestId={requester._id}
                                         onUpdateFriends={updateFriends}
-                                        onRemoveFriends={removeFriends} 
+                                        onRemoveFriends={removeFriends}
+                                        typeOfCard="request" 
                                     />
                                 ))
                             ) : (
                                 contacts?.map((friend) => (
                                     <ContactCard
-                                        key={friend.id}
+                                        key={friend._id}
                                         requesterInfo={friend}
-                                        recipientId={friend.id}
+                                        recipientId={friend._id}
+                                        typeOfCard="contact" 
                                     />
                                 ))
                             )
