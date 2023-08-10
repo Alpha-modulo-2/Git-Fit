@@ -26,7 +26,7 @@ interface FormProps {
 
 export default function Form(props: FormProps) {
   return (
-    <form onSubmit={props.onSubmit}>
+    <form className="formEdit" onSubmit={props.onSubmit}>
       <div className="menu-edit">
         <div className="container-first-content-edit">
           <form encType="multipart/form-data" method="POST" action="/upload">

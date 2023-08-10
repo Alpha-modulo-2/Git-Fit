@@ -19,12 +19,14 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  min-width: 400px;
+  min-height: 320px;
   height: 38vw;
-  width: 60vw;
+  width: 50vw;
   border-radius: 25px;
   border: 0.9px solid rgba(0, 0, 0, 0.604);
   box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.638);
-  background-color: rgba(240, 248, 255, 0.766);
+  background-color: rgba(220, 235, 247, 0.766);
 }
 
   /* Menu content */
@@ -169,7 +171,8 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: #919191;
+    width: 4vw;
+    height: 2.2vw;
     -webkit-transition: .4s;
     transition: .4s;
   }
@@ -177,11 +180,11 @@
   .slider:before {
     position: absolute;
     content: "";
-    height: 26px;
-    width: 26px;
-    left: 4px;
+    height: 1.6vw;
+    width: 1.6vw;
+    top: 0.3vw;
+    left:0.5vw;
     bottom: 4px;
-    background-color: white;
     -webkit-transition: .4s;
     transition: .4s;
   }
@@ -193,7 +196,7 @@
   input:checked + .slider:before {
     -webkit-transform: translateX(26px);
     -ms-transform: translateX(26px);
-    transform: translateX(26px);
+    transform: translateX(1.5vw);
   }
   
   .slider.round {
@@ -225,7 +228,7 @@
 
   /* Button config */
 .diveditprofessionalProfile {
-  width: 70%;
+  width: 60%;
   padding: 8% 5% 3% 5%;
   background-color: transparent;
   background: transparent !important;
@@ -258,7 +261,8 @@
 }
 
 .divButton-edit {
-
+  display: flex;
+  justify-content: center;
 }
 
 
@@ -273,30 +277,40 @@
   font-weight: 800;
   line-height: '20px';
   letter-spacing: '0.11em';
-  color: black;
+  color: rgb(255, 255, 255);
   cursor: pointer;
+  border-radius: 25px;
 }
 .buttonSave:hover {
   background-color:rgb(83, 39, 180);
   color: rgb(255, 255, 255);
   cursor: pointer;
 }
+.divDeleteAccount-edit{
+  display: flex;
+  justify-content: right;
+}
 .deleteAccount-edit{
-  background-color: #ff00003a;
-  height: 1vw;
-  width: 6vw;
-  border-radius: 5px;
+  background-color: #A62626;
+  height: 1.7vw;
+  width: 5vw;
+  border-radius: 25px;
   padding: '10px 24px';
   font-family: 'Poppins';
-  font-size: 0.7vw;
+  font-size: 0.6vw;
   font-weight: 800;
   line-height: '20px';
   letter-spacing: '0.11em';
-  color: black;
+  color: rgb(255, 255, 255);
+  margin-right: 1vw;
 }
 .deleteAccount-edit:hover{
   background-color: #ff00008f;
   cursor: pointer;
 }
-  
+form{
+  align-items: center;
+  flex-direction: column;
+}
+
   

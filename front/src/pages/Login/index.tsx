@@ -4,6 +4,8 @@ import ILogin from '../../interfaces/ILogin';
 import Form from './formLogin';
 import { useAuth } from '../../context/authContext';
 import { Header } from '../../components/Header';
+import "./loginStyle.css";
+
 
 export const Login = () => {
   const [userNameValue, setUserNameValue] = useState('');

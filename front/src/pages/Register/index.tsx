@@ -1,4 +1,4 @@
-import "./styles.css";
+import "./registerStyle.css";
 import { Header } from "../../components/Header";
 import { useState } from "react";
 import RegisterForm from "./formRegister";
