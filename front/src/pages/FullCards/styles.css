@@ -218,14 +218,14 @@
 
 .structure-minicarrossel{
   position: absolute;
-  left: 93vw;
-  top: 10vw;
+  right: 1%;
+  top: 12%;
   display: flex;
   flex-direction: column;
 }
 
 .message_box{
-  width: 25vw;
+  width: 25%;
   height: 40vw;
   border: 1px solid black;
   background-color: #151b22e7;
