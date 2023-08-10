@@ -6,7 +6,7 @@ interface FormProps {
   
   export default function Form(props: FormProps) {
     return (
-      <form onSubmit={props.onSubmit}>
+      <form className="formLogin" onSubmit={props.onSubmit}>
         <input
           type="text"
           className="input-login"

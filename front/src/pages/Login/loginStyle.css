@@ -36,8 +36,8 @@
   align-items: center;
   width: 30%;
   min-width: 100px;
+  min-height: 250px;
   height: 35vw;
-  min-height: 300px;
   border-radius: 25px;
   border: 0.9px solid rgba(0, 0, 0, 0.604);
   box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.638);
@@ -101,12 +101,12 @@
   justify-content: center;
   align-items: center;
   background-color: #7353BA;
-  height: 2vw;
-  width: 4vw;
-  border-radius: 15px;  
+  height: 3vw;
+  width: 6vw;
+  border-radius: 25px;  
   padding: '10px 24px';
   font-family: 'Poppins';
-  font-size: 1vw;
+  font-size: 0.8vw;
   font-weight: 800;
   line-height: '20px';
   letter-spacing: '0.11em';
@@ -114,12 +114,12 @@
   
 }
 .buttonLogin:hover {
-  background-color: #ffffff;
+  background-color: #422483;
   border-color: #7353BA;
 
 
 }
-form{
+.formLogin{
   display: flex;
   flex-direction: column;
   align-items: center;

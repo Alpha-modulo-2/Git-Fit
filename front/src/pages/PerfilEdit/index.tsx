@@ -1,4 +1,4 @@
-import "./styles.css";
+import "./editStyle.css";
 import { Header } from "../../components/Header";
 import { NavigateFunction, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
