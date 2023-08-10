@@ -14,8 +14,10 @@ export class App {
     }
 
     private middleware() {
+        const allowedOrigins = ["http://localhost:3000", "https://localhost:5173"];
+
         this.server.use(cookieParser());
-        this.server.use(cors({ origin: "http://localhost:3000", credentials: true }));
+        this.server.use(cors({ origin: allowedOrigins, credentials: true }));
         this.server.use(express.urlencoded({ extended: true }));
         this.server.use(express.json());
         this.server.use(express.static(path.join(__dirname, 'public')));

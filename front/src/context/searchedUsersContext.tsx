@@ -1,10 +1,10 @@
 import { useState, createContext, ReactNode, useContext } from "react";
-import { User } from "../interfaces/IUser";
+import { UserData } from "../interfaces/IUser";
 
   
   interface SearchedUsersContextType {
-    usersFromSearch?: User[];
-    setUsers:(users: User[]) => void;
+    usersFromSearch?: UserData[];
+    setUsers:(users: UserData[]) => void;
   }
 
   export const SearchedUsersContext = createContext<SearchedUsersContextType>({} as SearchedUsersContextType);
@@ -14,9 +14,9 @@ import { User } from "../interfaces/IUser";
   }
 
   export function SearchedUsersProvider({ children} : SearchProviderProps){
-    const [usersFromSearch, setUsersFromSearch] = useState<User[]>();
+    const [usersFromSearch, setUsersFromSearch] = useState<UserData[]>();
 
-    function setUsers(users: User[]){
+    function setUsers(users: UserData[]){
         setUsersFromSearch(users)
         console.log(users, 'usersfromcontext')
     }
