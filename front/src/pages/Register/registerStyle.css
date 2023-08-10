@@ -14,17 +14,19 @@
 }
 
 .container-register-content {
-  margin-top: 8%;
+  margin-top: 3vw;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  min-width: 400px;
+  min-height: 320px;
   height: 38vw;
-  width: 60vw;
+  width: 50vw;
   border-radius: 25px;
   border: 0.9px solid rgba(0, 0, 0, 0.604);
   box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.638);
-  background-color: rgba(240, 248, 255, 0.766);
+  background-color: rgba(220, 235, 247, 0.766);
 }
 
   /* Menu content */
@@ -36,9 +38,9 @@
 
 .container-first-content-register,
 .container-second-content-register {
-  margin-top: 5vw;
   text-align: center;
   width: 50%;
+  margin-left: 5vw;
   height: 100%;
 }
 
@@ -50,7 +52,6 @@
 }
 
 .custom-file-label-register {
-  margin-top: 1%;
   width: 8vw;
   height: 8vw;
   display: inline-block;
@@ -170,21 +171,24 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: #919191;
+    width: 4vw;
+    height: 2.2vw;
     -webkit-transition: .4s;
     transition: .4s;
+    background-color: #9c9c9c;
   }
   
   .slider:before {
     position: absolute;
     content: "";
-    height: 26px;
-    width: 26px;
-    left: 4px;
+    height: 1.6vw;
+    width: 1.6vw;
+    top: 0.3vw;
+    left:0.5vw;
     bottom: 4px;
-    background-color: white;
     -webkit-transition: .4s;
     transition: .4s;
+    background-color: #ffffff;
   }
   
   input:checked + .slider {
@@ -194,7 +198,7 @@
   input:checked + .slider:before {
     -webkit-transform: translateX(26px);
     -ms-transform: translateX(26px);
-    transform: translateX(26px);
+    transform: translateX(1.5vw);
   }
   
   .slider.round {
@@ -226,7 +230,7 @@
 
   /* Button config */
 .divregisterprofessionalProfile {
-  width: 70%;
+  width: 60%;
   padding: 8% 5% 3% 5%;
   background-color: transparent;
   background: transparent !important;
@@ -257,22 +261,18 @@
   font-size: 0.8vw;
   font-weight: bold;
 }
-
-.divButton-edit {
-
-}
   .buttonLogin {
     background-color: rgba(115, 83, 186, 1);
     height: 3vw;
-    width: 6vw;
-    border-radius: 10px;
+    width: 8vw;
+    border-radius: 25px;
     padding: '10px 24px';
     font-family: 'Poppins';
-    font-size: 1vw;
+    font-size: 0.9vw;
     font-weight: 800;
     line-height: '20px';
     letter-spacing: '0.11em';
-    color: black;
+    color: rgb(255, 255, 255);
     cursor: pointer;
   }
   .buttonLogin:hover {

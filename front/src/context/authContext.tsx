@@ -1,7 +1,8 @@
 import React, { createContext, useContext, useState } from 'react'; // Importe ReactNode
 import {AuthContextType} from './types';
+import { User } from "../interfaces/IUser";
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+const AuthContext = createContext<AuthContextType | undefined>({} as AuthContextType);
 
 interface AuthProviderProps {
   children: React.ReactNode;
@@ -9,6 +10,12 @@ interface AuthProviderProps {
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [user, setUser] = useState<User>();
+
+  function setLoggedUser(user: User){
+    setUser(user)
+    console.log(user, 'userLogged')
+  }
 
   const login = () => {
     setIsLoggedIn(true);
@@ -19,7 +26,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ isLoggedIn, login, logout }}>
+    <AuthContext.Provider value={{ isLoggedIn, login, logout, user, setLoggedUser }}>
       {children}
     </AuthContext.Provider>
   );

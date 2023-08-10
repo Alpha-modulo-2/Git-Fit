@@ -8,7 +8,7 @@ export const LandingPage = () => {
     return (
       
         <div className="landing-page">
-            <Header isLoggedIn={true}/>
+            <Header isLoggedIn={false}/>
             <div className="container-all-content">
                 <div className="container-content">
                     <div className="logo-name">
@@ -17,7 +17,7 @@ export const LandingPage = () => {
                     </div>
                     <div className="text-info">
                         <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text </p>
-                        <Button category="primary" label="Ver mais" onClick={() => navigate('/register')}/>
+                        <Button category="primary" label="Ver mais" onClick={() => navigate('/see-more')}/>
                     </div>
                 </div>
             </div>
