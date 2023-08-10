@@ -1,15 +1,21 @@
 .structure-fullcard{
     display: flex;
     justify-content: flex-start;
+    max-width: 100%;
+    position: relative;
 }  
+
+.fullcard{
+  width: 100%;
+  height: 100%;
+}
 
 .structure-carrossel{
     position: absolute;
-    right: 0.1rem;
-    width: 30vw;
-    height: 88vh;
+    width: 25%;
     overflow-y: scroll;
     overflow-x: hidden;
+    right: 5%;
   }
   
 .structure-carrossel::-webkit-scrollbar-track{
@@ -33,15 +39,14 @@
 
   .background-card{
     font-family: "Poppins", sans-serif;
-    width: 50vw;
+    width: 55%;
     height: 87vh;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: space-evenly;
     background-color: #151b228f;
-    margin-left: 8%;
-    margin-right: 3%;
+    margin-left: 4%;
     border: 1.5px solid rgb(255, 255, 255);
     border-radius: 1.5rem;
     align-self: center;
@@ -90,7 +95,8 @@
   width: 90%;
   padding: 1rem;
   height: 75%;
-  overflow: scroll;
+  overflow-y: scroll;
+  overflow-x: hidden;
 }
 
 .body_training_card h3{
@@ -120,18 +126,28 @@
   display: flex;
   justify-content: space-evenly;
   margin-bottom: 1rem;
+  align-items: center;
 }
 
 .edit_form_meal input, .edit_form_training input{
-  width: 60%;
+  width: 68%;
   border-radius: 5rem;
-  padding: 0.5rem;
+  padding: 0.3rem;
+  font-size: 90%;
 }
 
 .add_form_meal input{
-  width: 50%;
+  width: 68%;
   border-radius: 5rem;
-  padding: 0.5rem;
+  font-size: 90%;
+  padding: 0.3rem;
+}
+
+.add_form_training input{
+  width: 68%;
+  border-radius: 5rem;
+  font-size: 90%;
+  padding: 0.3rem;
 }
 
 .daily_training_checkbox, .daily_meal_checkbox{
@@ -180,7 +196,16 @@
   padding: 1rem;
   display: flex;
   flex-direction: column;
-  overflow: scroll;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+
+.body_training_card::-webkit-scrollbar-track{
+  background-color: transparent;
+}
+
+.body_meal_card::-webkit-scrollbar-track{
+  background-color: transparent;
 }
 
 .body_meal_card h3{
