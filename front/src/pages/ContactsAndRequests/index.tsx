@@ -6,56 +6,12 @@ import { useState, useEffect } from "react";
 import ContactCard from "../../components/ContactCard";
 import {Modal} from "../../components/Modal";
 import { Chat } from "../../components/Chat";
+import { useAuth } from '../../context/authContext';
+import { User } from '../../interfaces/IUser';
+import { Friend } from '../../interfaces/IUser';
+import { FriendRequest } from '../../interfaces/IContacts';
+import { ApiResponseRequests } from '../../interfaces/IContacts';
 
-interface FriendRequest {
-    _id: string;
-    requester: string;
-    recipient: string;
-    status: string;
-    created_at: string;
-    __v: number;
-    requesterInfo?: User
-}
-  
-interface ApiResponseRequests {
-    error: boolean;
-    statusCode: number;
-    message?: string;
-    friendRequests: FriendRequest[];
-}
-
-interface Friend {
-    _id: string;
-    userName: string;
-    password: string;
-    email: string;
-    friends: Friend[]; // Array de IDs dos amigos (pode ser string[] ou Friend[])
-    gender: string;
-    weight: string;
-    height: string;
-    occupation: string;
-    age: number;
-    created_at: string;
-    updated_at: string;
-    __v: number;
-}
-
-interface User {
-    _id: string;
-    userName: string;
-    password: string;
-    email: string;
-    friends: Friend[];
-    photo?: string;
-    gender: string;
-    weight: string;
-    height: string;
-    occupation: string;
-    age: number;
-    created_at: string;
-    updated_at: string;
-    __v: number;
-}
 
 export const Contacts = () => {
     const [contacts, setContacts] = useState<Friend[]>();
@@ -64,7 +20,9 @@ export const Contacts = () => {
     const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
     const [messageModal, setMessageModal] = useState<string>('');
     const [error, setError] = useState('');
+    
 
+    const { isLoggedIn, login, user } = useAuth();
     /***************    MODAL    ********************/
     function openModal() {
         setModalIsOpen(true);
@@ -76,60 +34,64 @@ export const Contacts = () => {
 
     /***************    GET USER'S FRIENDS    ********************/
     async function getContacts() {
-        try {
-            const userId= 	'64c9a35f4cfe8a8f5b6a4d49';
+        console.log(isLoggedIn, login, user, 'login')
+        if(user){
+            try {
+                const id = String(user.id)
+                const response = await fetch(`http://localhost:3000/users/${id}`);
+                if (response.ok) {
+                    const data = await response.json() as User;
+                    setContacts(data.friends); 
     
-            const response = await fetch(`http://localhost:3000/users/${userId}`);
-            if (response.ok) {
-                const data = await response.json() as User;
-                setContacts(data.friends); 
-
-                console.log(data, 'contatct')
-                return;
-            } else {
-                setError('Erro ao obter os contatos.');
-                console.error('Erro ao obter os contatos', error);
-
+                    console.log(data, 'contatct')
+                    return;
+                } else {
+                    setError('Erro ao obter os contatos.');
+                    console.error('Erro ao obter os contatos', error);
+    
+                }
+            }catch (error) {
+                console.error('Erro na requisição:', error);
+                // setError('Erro na requisição');
             }
-        }catch (error) {
-            console.error('Erro na requisição:', error);
-            // setError('Erro na requisição');
+                
         }
     }
 
 
     /***************    GET THE FRIEND REQUESTS    ********************/
     async function getRequests() {
-        try {
-            const userId= 	'64c9a35f4cfe8a8f5b6a4d49';
-                
-            const response = await fetch(`http://localhost:3000/friendRequests/${userId}`);
-            if (response.ok) {
-                const data = await response.json() as ApiResponseRequests;
+        if(user){
 
-                setRequests(data.friendRequests); 
-
-                // getting information about every requester
-                const requesterIds = data.friendRequests.map((request) => request.requester);
-                const requesterDetails = await Promise.all(requesterIds.map((requesterId) => fetch(`http://localhost:3000/users/${requesterId}`)));
-                const requesterData = await Promise.all(requesterDetails.map((response) => response.json()));
-                
-                // updating friendRequests with the information accquired
-                const updatedRequests:  FriendRequest[] = data.friendRequests.map((request, index) => ({
-                    ...request,
-                    requesterInfo: requesterData[index] as User, 
-                    // Adding the users' info in 'requesterInfo' field
-                }));
-                
-                setRequests(updatedRequests);
-                console.log(updatedRequests, 'requests')  
-            } else {
-                console.error('Erro ao obter as solicitações');
-                setError('Erro ao obter as solicitações.');
+            try {                    
+                const response = await fetch(`http://localhost:3000/friendRequests/${user.id}`);
+                if (response.ok) {
+                    const data = await response.json() as ApiResponseRequests;
+    
+                    setRequests(data.friendRequests); 
+    
+                    // getting information about every requester
+                    const requesterIds = data.friendRequests.map((request) => request.requester);
+                    const requesterDetails = await Promise.all(requesterIds.map((requesterId) => fetch(`http://localhost:3000/users/${requesterId}`)));
+                    const requesterData = await Promise.all(requesterDetails.map((response) => response.json()));
+                    
+                    // updating friendRequests with the information accquired
+                    const updatedRequests:  FriendRequest[] = data.friendRequests.map((request, index) => ({
+                        ...request,
+                        requesterInfo: requesterData[index] as User, 
+                        // Adding the users' info in 'requesterInfo' field
+                    }));
+                    
+                    setRequests(updatedRequests);
+                    console.log(updatedRequests, 'requests')  
+                } else {
+                    console.error('Erro ao obter as solicitações');
+                    setError('Erro ao obter as solicitações.');
+                }
+            }catch (error) {
+                console.error('Erro na requisição:', error);
+                // setError('Erro na requisição');
             }
-        }catch (error) {
-            console.error('Erro na requisição:', error);
-            // setError('Erro na requisição');
         }
     }
         
@@ -247,9 +209,9 @@ export const Contacts = () => {
                             ) : (
                                 contacts?.map((friend) => (
                                     <ContactCard
-                                        key={friend._id}
+                                        key={friend.id}
                                         requesterInfo={friend}
-                                        recipientId={friend._id}
+                                        recipientId={friend.id}
                                     />
                                 ))
                             )

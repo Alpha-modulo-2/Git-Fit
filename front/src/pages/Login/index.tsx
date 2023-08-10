@@ -1,19 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ILogin from '../../interfaces/ILogin';
+import {User} from '../../interfaces/IUser';
 import Form from './formLogin';
 import { useAuth } from '../../context/authContext';
 import { Header } from '../../components/Header';
 
+export interface ApiResponseRequests {
+  message?: string;
+  user: User;
+}
+
 export const Login = () => {
   const [userNameValue, setUserNameValue] = useState('');
   const [passwordValue, setPasswordValue] = useState('');
-  const { isLoggedIn, login } = useAuth();
+  const { isLoggedIn, login, setLoggedUser } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
     if (isLoggedIn) {
-      navigate('/profile');
+      navigate('/contacts');
     }
   }, [isLoggedIn, navigate]);
 
@@ -31,11 +37,20 @@ export const Login = () => {
     })
     .then((response) => {
         if (response.ok) {
-          login(user);
-          navigate('/profile');
+          console.log(response, 'response')
+          // navigate('/profile');
+          
+          return response.json() as Promise<ApiResponseRequests>;
         } else {
           alert('Login failed');
         }
+      })
+      .then(data =>{
+        if(data){
+          login(user);
+          setLoggedUser(data.user)
+        }
+        console.log(data)
       })
       .catch((error) => {
         console.error('Error:', error);

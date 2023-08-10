@@ -6,8 +6,8 @@ import { useState, useContext, useEffect } from "react";
 import ContactCard from "../../components/ContactCard";
 import {Modal} from "../../components/Modal";
 import { Chat } from "../../components/Chat";
-import { SearchedUsersContext } from "../../contexts";
-import { User } from "../../types/interface";
+import { SearchedUsersContext } from "../../context/searchedUsersContext";
+import { User } from "../../interfaces/IUser";
 
 interface FriendRequest {
     _id: string;
@@ -97,10 +97,10 @@ export const SearchedResults = () => {
                         {usersFromSearch !== null && usersFromSearch && usersFromSearch.length > 0 ? (
                             usersFromSearch.map((user) => (
                                 <ContactCard
-                                    key={user._id}
+                                    key={user.id}
                                     requesterInfo={user}
                                     requestId={'64c9a35f4cfe8a8f5b6a4d49'}
-                                    recipientId={user._id}
+                                    recipientId={user.id}
                                     onAddFriend={addFriends} 
                                 />
                             ))

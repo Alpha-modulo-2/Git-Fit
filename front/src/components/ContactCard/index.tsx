@@ -3,7 +3,7 @@ import React from 'react';
 import { XCircle, Check, UserCirclePlus } from "@phosphor-icons/react";
 import { User } from '../../interfaces/IUser';
 
-interface ContactCardProps {
+interface ContactCardProps{
   requesterInfo?: User;
   requestId?: string; // Recebe o request._id da página principal
   recipientId?: string;
