@@ -7,7 +7,6 @@ import path from 'path';
 
 const port = process.env.PORT || 8000;
 
-// Verificar se as variáveis de ambiente estão definidas
 if (!process.env.SSL_KEY_PATH || !process.env.SSL_CERT_PATH) {
     throw new Error('As variáveis de ambiente SSL_KEY_PATH e SSL_CERT_PATH devem ser definidas.');
 }

@@ -16,11 +16,16 @@ export default class UserRepository {
                 }
                 throw error
             }
+            
+            const userData: IUser = {
+                ...result.toObject(),
+                id: result._id.toString(),
+            }
 
             return {
                 error: false,
                 statusCode: 201,
-                user: result,
+                user: userData,
             }
         } catch (error: any) {
             return {

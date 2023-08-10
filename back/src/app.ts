@@ -1,5 +1,5 @@
 import express from "express";
-import { router } from "./router";
+import { router } from "./routes/router";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import path from "path";

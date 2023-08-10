@@ -2,6 +2,7 @@ import IResult from "../interfaces/IResult";
 import IUpdateData from "../interfaces/IUpdateUserData";
 import IUser from "../interfaces/IUser";
 import UserRepository from "../repositories/UserRepository";
+import CardService from "./CardServices";
 
 export default class UserService {
     private repository: UserRepository;
@@ -21,6 +22,21 @@ export default class UserService {
                     code: result.statusCode
                 }
                 throw error
+            }
+
+            const createdUser: IUser = result.user as IUser;
+
+            if (createdUser.id !== undefined) {
+                const cardService = new CardService();
+                const cardResult = await cardService.insert(createdUser.id);
+    
+                if (cardResult.error) {
+                    const error = {
+                        message: result.message,
+                        code: result.statusCode
+                    }
+                    throw error
+                }
             }
 
             return result

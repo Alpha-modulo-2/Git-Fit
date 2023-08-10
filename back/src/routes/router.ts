@@ -1,18 +1,18 @@
 import { Router } from "express";
-import UserController from "./controllers/UserController";
-import CardController from "./controllers/CardController";
+import UserController from "../controllers/UserController";
+import CardController from "../controllers/CardController";
 import path from "path";
-import LoginController from "./controllers/loginController";
-import authenticate from "./middleware/authenticate";
-import { validateInsert, validateLogin, validateUpdate, validateId, validateRemoveFriend, validateQuery } from "./middleware/validators";
-import FriendRequestsController from "./controllers/FriendRequestsController";
-import cacheMiddleware from './middleware/cacheMiddleware';
+import LoginController from "../controllers/loginController";
+import authenticate from "../middleware/authenticate";
+import { validateInsert, validateLogin, validateUpdate, validateId, validateRemoveFriend, validateQuery } from "../middleware/validators";
+import FriendRequestsController from "../controllers/FriendRequestsController";
+import cacheMiddleware from '../middleware/cacheMiddleware';
 
 const router: Router = Router();
 
 const userController = new UserController();
 
-router.post("/users/", authenticate, validateInsert, userController.insert);
+router.post("/users/", validateInsert, userController.insert);
 router.get("/users/search", authenticate, cacheMiddleware, validateQuery, userController.getByName);
 router.get("/users/:id", authenticate, cacheMiddleware, validateId, userController.getOne);
 router.get("/users/", authenticate, cacheMiddleware, userController.get);
@@ -22,9 +22,8 @@ router.delete("/user/:userId/friend/:friendId", authenticate, validateRemoveFrie
 
 const cardController = new CardController();
 
-//Card Routes
 router.post("/cards/:userId", authenticate, cardController.insert);
-router.get("/allcards/:userId", authenticate, cacheMiddleware, cardController.getAllCardsByUser);
+router.get("/allcards/:userId", authenticate,cardController.getAllCardsByUser);
 router.get("/card/:cardId", authenticate, cardController.getOne);
 router.post("/card/:cardId/task", authenticate, cardController.addTask);
 router.post("/card/:cardId/meal", authenticate, cardController.addMeal);
@@ -38,7 +37,6 @@ router.delete("/meal/:mealId", authenticate, cardController.delMeal);
 
 const friendRequestsController = new FriendRequestsController();
 
-//FriendRequests Routes
 router.post("/solicitation", authenticate, friendRequestsController.insert);
 router.get("/friendRequests/:userId", authenticate, friendRequestsController.friendRequestsByUser);
 router.patch("/acceptFriend", authenticate, friendRequestsController.acceptFriend);
@@ -47,7 +45,6 @@ router.delete("/rejectFriend/:requestId", authenticate, friendRequestsController
 
 const loginController = new LoginController();
 
-//Login Routes
 router.post("/login", validateLogin, loginController.login);
 // router.delete("/logout", loginController.logout);
 
