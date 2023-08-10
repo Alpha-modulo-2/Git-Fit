@@ -1,0 +1,80 @@
+.search-page {
+  height: 100%;
+}
+.container-search {
+  display: flex;
+  flex-direction: column;
+  gap: 1.8rem;
+  /* justify-content: space-evenly; */
+  align-items: center;
+  color: #000000;
+  font-family: "Poppins", sans-serif;
+  height: 85%;
+}
+
+.search-box {
+  height: 1.8rem;
+  width: 12rem;
+  background-color: #dcdddf;
+  border-radius: 1rem;
+  display: flex;
+  align-items: center;
+  padding-left: 1rem;
+}
+
+.search-text {
+  border: none;
+  background: none;
+  outline: none;
+  font-size: 0.8rem;
+  width: 100%;
+}
+
+.container-search-results {
+  width: 42rem;
+  height: 32rem;
+  /* padding: 0 2rem; */
+  color: black;
+  background-color: #ffffffd5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-radius: 25px;
+}
+
+.search-results {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 50% 50%;
+  justify-items: center;
+  grid-auto-rows: 100px;
+  align-items: center;
+  overflow-y: auto;
+  padding-top: 1rem;
+}
+
+/* Estilizando a barra de rolagem */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+/* Estilizando o thumb (indicador de posição) da barra de rolagem */
+::-webkit-scrollbar-thumb {
+  background-color: #888;
+  border-radius: 4px;
+}
+
+/* Estilizando a área da barra de rolagem que não é ocupada pelo thumb */
+::-webkit-scrollbar-track {
+  background-color: #f1f1f1;
+  border-radius: 4px;
+}
+
+@media (max-width: 780px) {
+  .container-search-results {
+    width: 25rem;
+  }
+  .search-results {
+    grid-template-columns: 100%;
+  }
+}

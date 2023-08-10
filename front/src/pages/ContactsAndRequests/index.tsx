@@ -1,266 +1,265 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import "./styles.css"
 import { Header } from "../../components/Header";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ContactCard from "../../components/ContactCard";
+import {Modal} from "../../components/Modal";
 import { Chat } from "../../components/Chat";
 
-interface ContactsProps{
-    photo: string;
-    name: string;
-    occupation: string;
-    id: string;
+interface FriendRequest {
+    _id: string;
+    requester: string;
+    recipient: string;
+    status: string;
+    created_at: string;
+    __v: number;
+    requesterInfo?: User
+}
+  
+interface ApiResponseRequests {
+    error: boolean;
+    statusCode: number;
+    message?: string;
+    friendRequests: FriendRequest[];
 }
 
+interface Friend {
+    _id: string;
+    userName: string;
+    password: string;
+    email: string;
+    friends: Friend[]; // Array de IDs dos amigos (pode ser string[] ou Friend[])
+    gender: string;
+    weight: string;
+    height: string;
+    occupation: string;
+    age: number;
+    created_at: string;
+    updated_at: string;
+    __v: number;
+}
+
+interface User {
+    _id: string;
+    userName: string;
+    password: string;
+    email: string;
+    friends: Friend[];
+    photo?: string;
+    gender: string;
+    weight: string;
+    height: string;
+    occupation: string;
+    age: number;
+    created_at: string;
+    updated_at: string;
+    __v: number;
+}
 
 export const Contacts = () => {
-    const [contacts, setContacts] = useState<ContactsProps[]>();
-    const [requests, setRequests] = useState<ContactsProps[]>([]);
+    const [contacts, setContacts] = useState<Friend[]>();
+    const [requests, setRequests] = useState<FriendRequest[] | null>(null);
     const [showRequests, setShowRequests] = useState(false); // Estado para controlar exibição das solicitações
-    // const [error, setError] = useState('');
+    const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
+    const [messageModal, setMessageModal] = useState<string>('');
+    const [error, setError] = useState('');
 
-    const getContacts =  () => {
-        try {
-            const users: ContactsProps[] = [
-            {
-                photo: 'https://1.bp.blogspot.com/-KLg5TEY1v6U/T6P9I6YPZwI/AAAAAAAABEc/iYpstw_ouMQ/s1600/Mr_bean.jpg',
-                name: 'João da Silva',
-                occupation: 'Engenheiro',
-                id: '1'
-            },
-            {
-                photo: 'https://1.bp.blogspot.com/-KLg5TEY1v6U/T6P9I6YPZwI/AAAAAAAABEc/iYpstw_ouMQ/s1600/Mr_bean.jpg',
-                name: 'Maria Oliveira',
-                occupation: 'Médica',
-                id: '2'
-            },
-            {
-                photo: 'https://1.bp.blogspot.com/-KLg5TEY1v6U/T6P9I6YPZwI/AAAAAAAABEc/iYpstw_ouMQ/s1600/Mr_bean.jpg',
-                name: 'Pedro Santos',
-                occupation: 'Advogado',
-                id: '3'
-            },
-            {
-                photo: 'https://1.bp.blogspot.com/-KLg5TEY1v6U/T6P9I6YPZwI/AAAAAAAABEc/iYpstw_ouMQ/s1600/Mr_bean.jpg',
-                name: 'Ana Souza',
-                occupation: 'Professor',
-                id: '4'
-            },
-            {
-                photo: 'https://1.bp.blogspot.com/-KLg5TEY1v6U/T6P9I6YPZwI/AAAAAAAABEc/iYpstw_ouMQ/s1600/Mr_bean.jpg',
-                name: 'Lucas Lima',
-                occupation: 'Estudante',
-                id: '5'
-            },
-            {
-                photo: 'https://1.bp.blogspot.com/-KLg5TEY1v6U/T6P9I6YPZwI/AAAAAAAABEc/iYpstw_ouMQ/s1600/Mr_bean.jpg',
-                name: 'Isabela Costa',
-                occupation: 'Arquiteta',
-                id: '6'
-            },
-            {
-                photo: 'https://1.bp.blogspot.com/-KLg5TEY1v6U/T6P9I6YPZwI/AAAAAAAABEc/iYpstw_ouMQ/s1600/Mr_bean.jpg',
-                name: 'Ricardo Mendes da Silva',
-                occupation: 'Programador',
-                id: '7'
-            },
-            {
-                photo: 'https://1.bp.blogspot.com/-KLg5TEY1v6U/T6P9I6YPZwI/AAAAAAAABEc/iYpstw_ouMQ/s1600/Mr_bean.jpg',
-                name: 'Fernanda Rodrigues',
-                occupation: 'Enfermeira',
-                id: '8'
-            },
-            {
-                photo: 'https://1.bp.blogspot.com/-KLg5TEY1v6U/T6P9I6YPZwI/AAAAAAAABEc/iYpstw_ouMQ/s1600/Mr_bean.jpg',
-                name: 'Gabriel Alves',
-                occupation: 'Designer',
-                id: '9'
-            },
-            {
-                photo: 'https://1.bp.blogspot.com/-KLg5TEY1v6U/T6P9I6YPZwI/AAAAAAAABEc/iYpstw_ouMQ/s1600/Mr_bean.jpg',
-                name: 'Carolina Castro',
-                occupation: 'Psicóloga',
-                id: '10'
-            },];
-            setContacts(users)
-            // const response = await fetch('/contacts/list');
-            // if (response.ok) {
-                
-            //     const data = await response.json();
-            //     setContacts(data); 
-            // } else {
-            //     console.error('Erro ao obter os contatos');
-            //     setError('Failed to fetch contacts.');
-            // }
-        }catch (error) {
-            console.error('Erro na requisição:', error);
-            // setError('An error occurred while fetching the contacts.');
-        }
+    /***************    MODAL    ********************/
+    function openModal() {
+        setModalIsOpen(true);
     }
-    const getRequests =  () => {
+    function closeModal() {
+        setModalIsOpen(false);
+    }
+    
+
+    /***************    GET USER'S FRIENDS    ********************/
+    async function getContacts() {
         try {
-            const users: ContactsProps[] = [
-                {
-                    photo: 'https://conteudo.imguol.com.br/c/esporte/26/2021/02/25/terry-crews-interpretou-julius-rock-em-todo-mundo-odeia-o-chris-1614287010913_v2_600x600.jpg',
-                    name: 'Júlia Souza',
-                    occupation: 'Atriz',
-                    id: '1'
-                },
-                {
-                    photo: 'https://conteudo.imguol.com.br/c/esporte/26/2021/02/25/terry-crews-interpretou-julius-rock-em-todo-mundo-odeia-o-chris-1614287010913_v2_600x600.jpg',
-                    name: 'Ana Silva',
-                    occupation: 'Advogada',
-                    id: '2'
-                },
-                {
-                    photo: 'https://conteudo.imguol.com.br/c/esporte/26/2021/02/25/terry-crews-interpretou-julius-rock-em-todo-mundo-odeia-o-chris-1614287010913_v2_600x600.jpg',
-                    name: 'Luana Freitas',
-                    occupation: 'Nutricionista',
-                    id: '3'
-                },
-                {
-                    photo: 'https://conteudo.imguol.com.br/c/esporte/26/2021/02/25/terry-crews-interpretou-julius-rock-em-todo-mundo-odeia-o-chris-1614287010913_v2_600x600.jpg',
-                    name: 'Ana Souza',
-                    occupation: 'Professor',
-                    id: '4'
-                },
-                {
-                    photo: 'https://conteudo.imguol.com.br/c/esporte/26/2021/02/25/terry-crews-interpretou-julius-rock-em-todo-mundo-odeia-o-chris-1614287010913_v2_600x600.jpg',
-                    name: 'Lucas Lima',
-                    occupation: 'Estudante',
-                    id: '5'
-                },
-                {
-                    photo: 'https://conteudo.imguol.com.br/c/esporte/26/2021/02/25/terry-crews-interpretou-julius-rock-em-todo-mundo-odeia-o-chris-1614287010913_v2_600x600.jpg',
-                    name: 'Isabela Costa',
-                    occupation: 'Arquiteta',
-                    id: '6'
-                },
-                {
-                    photo: 'https://conteudo.imguol.com.br/c/esporte/26/2021/02/25/terry-crews-interpretou-julius-rock-em-todo-mundo-odeia-o-chris-1614287010913_v2_600x600.jpg',
-                    name: 'Ricardo Mendes da Silva',
-                    occupation: 'Programador',
-                    id: '7'
-                },
-                {
-                    photo: 'https://conteudo.imguol.com.br/c/esporte/26/2021/02/25/terry-crews-interpretou-julius-rock-em-todo-mundo-odeia-o-chris-1614287010913_v2_600x600.jpg',
-                    name: 'Fernanda Rodrigues',
-                    occupation: 'Enfermeira',
-                    id: '8'
-                },
-                {
-                    photo: 'https://conteudo.imguol.com.br/c/esporte/26/2021/02/25/terry-crews-interpretou-julius-rock-em-todo-mundo-odeia-o-chris-1614287010913_v2_600x600.jpg',
-                    name: 'Gabriel Alves',
-                    occupation: 'Designer',
-                    id: '9'
-                },
-                {
-                    photo: 'https://conteudo.imguol.com.br/c/esporte/26/2021/02/25/terry-crews-interpretou-julius-rock-em-todo-mundo-odeia-o-chris-1614287010913_v2_600x600.jpg',
-                    name: 'Carolina Castro',
-                    occupation: 'Psicóloga',
-                    id: '10'
-                },];
-                setRequests(users)
-            // const response = await fetch('/contacts/solicitations');
-            // if (response.ok) {
-            //     const data = await response.json();
-            //     setRequests(data); 
-            // } else {
-            //     console.error('Erro ao obter as solicitações');
-            //     setError('Erro ao obter as solicitações.');
-            // }
+            const userId= 	'64c9a35f4cfe8a8f5b6a4d49';
+    
+            const response = await fetch(`http://localhost:3000/users/${userId}`);
+            if (response.ok) {
+                const data = await response.json() as User;
+                setContacts(data.friends); 
+
+                console.log(data, 'contatct')
+                return;
+            } else {
+                setError('Erro ao obter os contatos.');
+                console.error('Erro ao obter os contatos', error);
+
+            }
         }catch (error) {
             console.error('Erro na requisição:', error);
             // setError('Erro na requisição');
         }
     }
-    const updateFriends = (userId: string, friendId: string) => {
-        console.log(userId, friendId)
-        fetch(`/friends/${userId}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ friendId }),
-        })
-        .then((response) => {
+
+
+    /***************    GET THE FRIEND REQUESTS    ********************/
+    async function getRequests() {
+        try {
+            const userId= 	'64c9a35f4cfe8a8f5b6a4d49';
+                
+            const response = await fetch(`http://localhost:3000/friendRequests/${userId}`);
             if (response.ok) {
-                return response.json();
+                const data = await response.json() as ApiResponseRequests;
+
+                setRequests(data.friendRequests); 
+
+                // getting information about every requester
+                const requesterIds = data.friendRequests.map((request) => request.requester);
+                const requesterDetails = await Promise.all(requesterIds.map((requesterId) => fetch(`http://localhost:3000/users/${requesterId}`)));
+                const requesterData = await Promise.all(requesterDetails.map((response) => response.json()));
+                
+                // updating friendRequests with the information accquired
+                const updatedRequests:  FriendRequest[] = data.friendRequests.map((request, index) => ({
+                    ...request,
+                    requesterInfo: requesterData[index] as User, 
+                    // Adding the users' info in 'requesterInfo' field
+                }));
+                
+                setRequests(updatedRequests);
+                console.log(updatedRequests, 'requests')  
             } else {
-                console.error('Erro ao atualizar os contatos');
-                // setError('Failed to update contacts.');
+                console.error('Erro ao obter as solicitações');
+                setError('Erro ao obter as solicitações.');
             }
-        })
-        .then((data) => {
-            if (data) {
-                //setContacts(data);
-            }
-        })
-        .catch((error) => {
+        }catch (error) {
             console.error('Erro na requisição:', error);
-            // setError('An error occurred while updating the contacts.');
+            // setError('Erro na requisição');
+        }
+    }
+        
+    useEffect(() => {
+        getContacts().catch((error) => {
+            console.error('Erro ao obter as solicitações:', error);
         });
-    };
-    
-//       // useEffect com a função getContacts
-//   useEffect(() => {
-//     getContacts();
-        // getRequests();
-    
-//   }, []);
 
-  // Se você precisar que o useEffect seja executado apenas uma vez ao montar o componente,
-    // deixe o segundo argumento do useEffect vazio (ou seja, uma array vazia []).
-    // Se precisar que o useEffect seja executado toda vez que uma dependência mudar,
-    // coloque a dependência dentro da array (por exemplo, [contacts]).
+        getRequests().catch((error) => {
+            console.error('Erro ao obter as solicitações:', error);
+        });
+    }, []);
 
-    // const navigate: NavigateFunction = useNavigate();
+    
+    /***************    ACCEPT A FRIEND REQUEST     ********************/
+    function updateFriends(requestId: string): void {
+        try {
+            console.log(requestId);
+            fetch(`http://localhost:3000/acceptFriend`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ requestId }),
+            }).then(response => {
+                if (response.ok) {
+                    return response.json() as Promise<ApiResponseRequests>;
+                } else {
+                    setError('Erro ao obter as solicitações.');
+                    throw new Error('Failed to update contacts.');
+                }
+            }).then(data => {
+                console.log(data.message);
+                if(data.message){
+                    setMessageModal(data.message)
+                    openModal()
+                    return getContacts();
+                }
+            }).then(() => {
+                return getRequests(); // Retornando a promessa da função getRequests
+            })
+            .catch(error => {
+                console.error('Erro na requisição:', error);
+                // Lidar com o erro aqui
+            });
+        } catch (error) {
+            console.error('Erro geral:', error);
+            // Lidar com o erro aqui
+        }
+    }
+
+
+    /***************    REFUSE A FRIEND REQUEST     ********************/
+    function removeFriends(requestId: string): void {
+        try {
+            console.log(requestId);
+            fetch(`http://localhost:3000/rejectFriend/${requestId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            }).then(response => {
+                if (response.ok) {
+                    return response.json() as Promise<ApiResponseRequests>;
+                } else {
+                    setError('Erro ao obter as solicitações.');
+                    throw new Error('Failed to update contacts.');
+                }
+            }).then(data => {
+                console.log(data, 'data');
+                if(data.message){
+                    setMessageModal(data.message)
+                    openModal()
+                    return getContacts();
+                }
+            }).then(() => {
+                return getRequests(); // Retornando a promessa da função getRequests
+            })
+            .catch(error => {
+                console.error('Erro na requisição:', error);
+                // Lidar com o erro aqui
+            });
+        } catch (error) {
+            console.error('Erro geral:', error);
+        }
+    }
+     
     return (
-      
         <div className="contacts-page">
             <Header isLoggedIn={true}/>
             <div className="container-contacts-request">
                 <Chat/>
-                <div className="search-box">
-                    <input type="text" className="search-text" placeholder="Pesquisar"/>
-                </div>
                 <div className="content-contacts">
                     <div className="container-titles-contacts">
-                        <p className={`title-contacts title-content-left ${!showRequests ? 'active' : ''}`} onClick={()=> {
-                            getContacts(); 
-                            setShowRequests(false)
-                        }}
+                        <p className={`title-contacts title-content-left ${!showRequests ? 'active' : ''}`} onClick={() => setShowRequests(false)}
                         >Contatos</p>
-                        <p className={`title-contacts title-content-right ${showRequests ? 'active' : ''}`} onClick={() => {
-                            getRequests();
-                            setShowRequests(true);
-                        }}             
+                        <p className={`title-contacts title-content-right ${showRequests ? 'active' : ''}`} onClick={() => setShowRequests(true)}
                         >Solicitações</p>
                     </div>
                     <p className="contacts-line"></p>
 
                     {/* div dos cards */}
                     <div className="container-contact-cards">
-                    {showRequests ? requests.map((user) => (
-                        <ContactCard
-                        key={user.id}
-                        user={user}
-                        onAddClick={(userId, friendId) => updateFriends(userId, friendId)}
-                        onRemoveClick={(userId) => console.log(userId)
-                        } 
-                        // logica para remover contato
-                        />
-                    )) : contacts?.map((user) => (
-                        <ContactCard
-                        key={user.id}
-                        user={user}
-                        onAddClick={(userId, friendId) => updateFriends(userId, friendId)}
-                        onRemoveClick={undefined}
-                        />
-                    ))}
+                        {(
+                            showRequests ? (
+                                requests?.map((requester) => (
+                                    <ContactCard
+                                        key={requester._id}
+                                        requesterInfo={requester.requesterInfo}
+                                        requestId={requester._id}
+                                        onUpdateFriends={updateFriends}
+                                        onRemoveFriends={removeFriends} 
+                                    />
+                                ))
+                            ) : (
+                                contacts?.map((friend) => (
+                                    <ContactCard
+                                        key={friend._id}
+                                        requesterInfo={friend}
+                                        recipientId={friend._id}
+                                    />
+                                ))
+                            )
+                        )}
                     </div>
+
                 </div>
-                
+                {modalIsOpen && (
+                    <Modal children={messageModal} onClick={closeModal} />
+                )}
             </div>
         </div>
       

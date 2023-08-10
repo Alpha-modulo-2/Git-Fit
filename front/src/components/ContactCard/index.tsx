@@ -1,47 +1,63 @@
 // ContactCard.tsx
 import React from 'react';
-import { XCircle, Check } from "@phosphor-icons/react";
-
-interface ContactsProps{
-    photo: string;
-    name: string;
-    occupation: string;
-    id: string;
-}
+import { XCircle, Check, UserCirclePlus } from "@phosphor-icons/react";
+import { User } from '../../interfaces/IUser';
 
 interface ContactCardProps {
-  user: ContactsProps;
-  onAddClick: (userId: string, friendId: string) => void;
-  onRemoveClick?: (userId: string) => void;
+  requesterInfo?: User;
+  requestId?: string; // Recebe o request._id da página principal
+  recipientId?: string;
+  onUpdateFriends?: (requestId: string) => void;
+  onRemoveFriends?: (requestId: string) => void;
+  onAddFriend?: (requestId: string, recipientId: string) => void; //id do usuário a ser adicionado e de quem tá solicitando
 }
 
-const ContactCard: React.FC<ContactCardProps> = ({ user, onAddClick, onRemoveClick }) => {
+const ContactCard: React.FC<ContactCardProps> = ({ requesterInfo, requestId, onUpdateFriends, onRemoveFriends, onAddFriend, recipientId }) => {
   return (
     <div className="contact-card">
       <div className="img-card-contacts">
-        <img src={user.photo} alt="" />
+        <img src={'https://1.bp.blogspot.com/-KLg5TEY1v6U/T6P9I6YPZwI/AAAAAAAABEc/iYpstw_ouMQ/s1600/Mr_bean.jpg'} alt="" />
       </div>
 
       <div className="user-contacts-info">
-        <p className="username-contact">{user.name.length > 12 ? user.name.substring(0, 10) + "..." : user.name}</p>
-        <p className="useroccupation-contact">{user.occupation.length > 12 ? user.occupation.substring(0, 10) + "..." : user.occupation}</p>
+        <p className="username-contact">
+          {requesterInfo?.userName && requesterInfo.userName.length > 12 
+            ? requesterInfo.userName.substring(0, 10) + "..." 
+            : requesterInfo?.userName}
+        </p>
+        <p className="useroccupation-contact">
+          {requesterInfo?.occupation && requesterInfo?.occupation.length > 12 
+            ? requesterInfo.occupation.substring(0, 10) + "..." 
+            : requesterInfo?.occupation}
+        </p>
       </div>
-      {onRemoveClick && (
-            <div className="container-icon-contact">
-                <Check
-                    size={20}
-                    color="black"
-                    className="icon-add-contact"
-                    onClick={() => onAddClick(user.id, 'friendId')}
-                />
-                <XCircle
-                    size={20}
-                    color="black"
-                    className="icon-remove-contact"
-                    onClick={() => onRemoveClick(user.id)}
-                />
-            </div>
-        )}
+
+
+      {onUpdateFriends && onRemoveFriends && requestId ? (
+        <div className="container-icon-contact">
+          <Check
+            size={20}
+            color="black"
+            className="icon-add-contact"
+            onClick={() => onUpdateFriends(requestId)}
+          />
+          <XCircle
+            size={20}
+            color="black"
+            className="icon-remove-contact"
+            onClick={() => onRemoveFriends(requestId)}
+          />
+        </div>
+      ) : onAddFriend && recipientId && (requestId) && (
+        <div className="container-icon-contact">
+          <UserCirclePlus
+            size={20}
+            color="black"
+            className="icon-add-friend"
+            onClick={() => onAddFriend(requestId, recipientId)}
+          />
+        </div>
+      )}
     </div>
   );
 };
