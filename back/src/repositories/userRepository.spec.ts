@@ -50,13 +50,16 @@ describe('UserRepository', () => {
     });
 
     it('should insert a user', async () => {
-        userModel.create = jest.fn().mockResolvedValue(mockUser);
+        userModel.create = jest.fn().mockResolvedValue({
+            toObject: jest.fn(() => mockUser),
+            _id: { toString: jest.fn(() => mockUserId) }
+        });
 
         const userRepository = new UserRepository();
         const user = await userRepository.insert(mockUser);
 
         expect(userModel.create).toHaveBeenCalledWith(mockUser);
-        expect(user).toEqual({ error: false, statusCode: 201, user: mockUser });
+        expect(user).toEqual({ error: false, statusCode: 201, user: { ...mockUser, id: mockUserId } });
     });
 
     it('should get users', async () => {

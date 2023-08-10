@@ -29,7 +29,6 @@ export default class UserController {
 
             if (result.error) {
                 const message = result.message as string
-                console.log('MESAGE', message)
                 if (message.includes("E11000")) {
                     return res.status(500).json("Username já esta sendo utilizado");
                 }
