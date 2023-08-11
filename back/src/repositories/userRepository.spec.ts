@@ -168,7 +168,7 @@ describe('UserRepository', () => {
         expect(result).toEqual({ error: false, statusCode: 200, user: mockUser });
     });
 
-    it('should return when user is not found', async () => {
+    it('should return 404 when user is not found', async () => {
         userModel.find = jest.fn().mockImplementationOnce(() => ({
             select: jest.fn().mockImplementationOnce(() => ({
                 populate: jest.fn().mockResolvedValueOnce(
@@ -186,7 +186,7 @@ describe('UserRepository', () => {
                 { name: { $regex: '.*' + mockUser.name + '.*', $options: 'i' } }
             ]
         });
-        expect(result).toEqual({ error: false, statusCode: 200, user: [] });
+        expect(result).toEqual({ error: true, statusCode: 404, message: "Usuário não encontrado." });
     });
 
     it('should handle failure when getting a user by name', async () => {

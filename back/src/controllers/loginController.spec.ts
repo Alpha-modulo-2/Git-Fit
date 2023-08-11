@@ -46,7 +46,7 @@ describe('LoginController', () => {
         expect(jwt.sign).toHaveBeenCalledWith({ user: { userName: 'test' } }, process.env.JWTSECRET);
         expect(res.cookie).toHaveBeenCalledWith('session', 'token');
         expect(res.status).toHaveBeenCalledWith(200);
-        expect(res.json).toHaveBeenCalledWith({ message: "Usuário 'test' logado com sucesso.", user: { userName: "test" } });
+        expect(res.json).toHaveBeenCalledWith({ message: "Usuário 'test' logado com sucesso.", token: "token",user: { userName: "test" } });
     });
 
     it('should fail to login when service throws an error', async () => {

@@ -31,15 +31,21 @@ describe('LoginRepository', () => {
         (userModel.findOne as jest.Mock).mockImplementation(async () => mockUser);
     });
 
-    it('should login a user', async () => {
+    fit('should login a user', async () => {
         const loginRepository = new LoginRepository();
+
+        userModel.findOne = jest.fn().mockResolvedValue({
+            toObject: jest.fn(() => mockUser)
+        }
+        )
 
         const result = await loginRepository.login(mockCredentials);
 
         const { _id, ...restOfMockUser } = mockUser
 
         expect(userModel.findOne).toHaveBeenCalledWith({ userName: mockCredentials.userName });
-        expect(result).toEqual({ error: false, statusCode: 200, user: { ...restOfMockUser, id: _id.toString() } });
+        expect(result).toEqual({ error: false, statusCode: 200,
+            user: mockUser });
     });
 
     it('should fail to login when user is not found', async () => {

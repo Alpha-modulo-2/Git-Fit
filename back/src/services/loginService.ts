@@ -29,13 +29,14 @@ export default class LoginService {
                 throw new Error('JWTSECRET nao definido');
             }
 
-            const user = result.user as IUser
-
-            const login = await bcrypt.compare(credentials.password, user.password!);
+            if (!result.user) {
+                throw new Error('Nenhum usuario encontrado');
+            }
+            const login = await bcrypt.compare(credentials.password, (result.user as IUser).password!);
 
             if (login) {
 
-                const { password, ...restOfUser } = user
+                const { password, ...restOfUser } = result.user as IUser
 
                 const sessionJWT = JWT.sign(
                     { restOfUser },

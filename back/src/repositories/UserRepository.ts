@@ -152,7 +152,6 @@ export default class UserRepository {
     }
 
     async getByName(name: string): Promise<IResult> {
-
         try {
             const user = await userModel.find({
                 $or: [
@@ -161,7 +160,7 @@ export default class UserRepository {
                 ]
             }).select("-password").populate("friends", { userName: 1, name: 1, photo: 1, occupation: 1, id: 1 });
 
-            if (!user) {
+            if (!user || user.length === 0) {
                 const error = {
                     error: true,
                     statusCode: 404,
@@ -181,7 +180,7 @@ export default class UserRepository {
             return {
                 error: true,
                 message: error.message,
-                statusCode: error.code || 500,
+                statusCode: error.statusCode || 500,
             }
         }
     }
