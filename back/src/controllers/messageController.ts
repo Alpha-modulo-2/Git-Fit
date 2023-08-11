@@ -13,9 +13,9 @@ export default class MessageController {
     async create(req: Request, res: Response) {
         try {
 
-            const { conversationId, sender, text } = req.body
+            const { chatId, sender, text } = req.body
 
-            const result = await this.service.create({ conversationId, sender, text });
+            const result = await this.service.create({ chatId, sender, text });
 
             return res.status(result.statusCode).json(result.statusCode >= 300 ? result.message : result.chatMessage);
         } catch (error: any) {

@@ -1,7 +1,7 @@
 import { Types } from 'mongoose';
 
 export default interface IMessage {
-    conversationId: Types.ObjectId,
+    chatId: Types.ObjectId,
     sender: Types.ObjectId,
     text: string,
     id?: string,

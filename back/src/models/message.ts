@@ -3,7 +3,7 @@ import IMessage from "../interfaces/IMessage";
 import { Schema, SchemaTypes, model } from "mongoose";
 
 const messageSchema = new Schema<IMessage>({
-    conversationId: {
+    chatId: {
         type: SchemaTypes.ObjectId,
         ref: "Conversation"
     },

@@ -31,10 +31,10 @@ export default class MessageRepository {
         }
     }
 
-    async get(conversationId: string): Promise<IResult> {
+    async get(chatId: string): Promise<IResult> {
         try {
 
-            const results = await messageModel.find({ conversationId: conversationId })
+            const results = await messageModel.find({ chatId: chatId })
 
             if (!results) {
                 throw new Error("Erro no servidor")

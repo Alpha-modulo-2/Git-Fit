@@ -33,9 +33,9 @@ export default class MessageService {
 
     }
 
-    async get(conversationId: string): Promise<IResult> {
+    async get(chatId: string): Promise<IResult> {
         try {
-            const result = await this.repository.get(conversationId);
+            const result = await this.repository.get(chatId);
 
             if (result.error) {
                 const error = {
