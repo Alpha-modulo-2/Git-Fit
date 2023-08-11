@@ -13,14 +13,14 @@ interface FormProps {
           placeholder="Nome de Usuário"
           onChange={props.handleUserNameChange}
         />
-        <br />
+        
         <input
           type="password"
           className="input-login"
           placeholder="Senha"
           onChange={props.handlePasswordChange}
         />
-        <br />
+        
         <button className="buttonLogin" type="submit">Entrar</button>
       </form>
     );

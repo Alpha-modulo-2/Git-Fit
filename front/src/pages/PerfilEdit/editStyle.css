@@ -14,15 +14,13 @@
 }
 
 .container-edit-content {
-  margin-top: 3vw;
   display: flex;
-  flex-direction: column;
-  justify-content: center;
+  justify-content: space-around;
   align-items: center;
   min-width: 400px;
   min-height: 320px;
-  height: 38vw;
-  width: 50vw;
+  height: 100%;
+  width: 50%;
   border-radius: 25px;
   border: 0.9px solid rgba(0, 0, 0, 0.604);
   box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.638);
@@ -38,10 +36,13 @@
 
 .container-first-content-edit,
 .container-second-content-edit {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
   text-align: center;
-  width: 50%;
-  margin-left: 5vw;
+  width: 100%;
   height: 100%;
+  padding: 5% 0 5% 15% ;
 }
 
 .custom-file-input-edit {
@@ -80,23 +81,19 @@
   transform: translate(-50%, -50%);
 }
 
-.addPhoto-edit {
-  margin-right: 6vw;
-  background: transparent !important;
-  font-weight: bold;
-  color: rgba(115, 83, 186, 1);
-}
   
 .input-edit {
-  width: 70%;
+  width: 100%;
   padding: 2% 5% 3% 5%;
-  height:3vw;
-  font-weight: bold;
+  height:3.2vw;
   color: rgba(115, 83, 186, 1);
   border-bottom: 1px solid rgb(0, 0, 0);
   background-color: transparent;
   background: transparent !important;
-  font-size: 0.8vw;
+  font-weight: bold;
+  font-size: 77%;
+  outline: none;
+  caret-color: black;
 }
   
 .input-edit::placeholder {
@@ -108,37 +105,39 @@
 }
 
 .input-weight-edit {
-  font-size: 0.8vw;
+  font-size: 77%;
   color: black;
   background-color: transparent;
   color: rgba(115, 83, 186, 1);
   background: transparent !important;
   font-weight: bold;
   border-bottom: 1px solid rgb(0, 0, 0);
-  width: 33%;
+  width: 47%;
   height: 100%;
   height: 50px;
+  outline: none;
+  caret-color: black;
 
 }
 
 .input-hight-edit {
-  font-size: 0.8vw;
+  font-size: 77%;
   color: black;
   background-color: transparent;
   color: rgba(115, 83, 186, 1);
   background: transparent !important;
   font-weight: bold;
   border-bottom: 1px solid rgb(0, 0, 0);
-  width: 34%;
+  width: 47%;
   height: 100%;
-  margin-left: 3%;
   height: 50px;
+  outline: none;
+  caret-color: black;
 
 }
 
 .weightHight-edit{
   margin-top: 2vw;
-  margin-bottom: -1.5vw;
 }
 
 .input-hight-edit::placeholder,
@@ -154,8 +153,7 @@
   .switch {
     position: relative;
     display: inline-block;
-    width: 60px;
-    height: 34px;
+
   }
   
   .switch input {
@@ -164,84 +162,60 @@
     height: 0;
   }
   
-  .slider {
+  .sliderE-round {
+    left: 10px;
     position: absolute;
     cursor: pointer;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    width: 4vw;
-    height: 2.2vw;
+    width: 50px;
+    height: 23px;
     -webkit-transition: .4s;
     transition: .4s;
+    background-color: #9c9c9c;
+    border-radius: 34px;
+
   }
   
-  .slider:before {
+  .sliderE-round:before {
     position: absolute;
     content: "";
-    height: 1.6vw;
-    width: 1.6vw;
-    top: 0.3vw;
-    left:0.5vw;
+    height: 15px;
+    width: 15px;
+    border-radius: 50%;
+    left:5px;
     bottom: 4px;
     -webkit-transition: .4s;
     transition: .4s;
+    background-color: #ffffff;
   }
   
-  input:checked + .slider {
+  input:checked + .sliderE-round {
     background-color: rgba(115, 83, 186, 1);
+    border-radius: 34px;
+
   }
 
-  input:checked + .slider:before {
-    -webkit-transform: translateX(26px);
-    -ms-transform: translateX(26px);
-    transform: translateX(1.5vw);
+  input:checked + .sliderE-round:before {
+    -webkit-transform: translateX(23px);
+    transform: translateX(25px);
   }
   
-  .slider.round {
-    border-radius: 34px;
-  }
+ 
   
-  .slider.round:before {
+  .sliderR.round:before {
     border-radius: 50%;
   }
   
  /*button config*/
-  .divButton{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    height: 8vw;
-  }
+ .divButton-edit {
+  display: flex;
+  justify-content: center;
+  padding: 2%;
+  
+}
   .editprofessionalProfile{
     font-weight: bold;
-    font-size: 0.8vw;
+    font-size: 77%;
   }
-  
-  .professionalProfile {
-    font-size: 0.8vw;
-  }
-  
-
-
-  /* Button config */
-.diveditprofessionalProfile {
-  width: 60%;
-  padding: 8% 5% 3% 5%;
-  background-color: transparent;
-  background: transparent !important;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 15px;
-}
-
-
-.professionalProfile {
-  font-size: 0.8vw;
-}
 
 /* Button config */
 .diveditprofessionalProfile {
@@ -251,58 +225,62 @@
   background: transparent !important;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: left;
   font-size: 15px;
 }
 
-.editprofessionalProfile {
-  font-size: 0.8vw;
-  font-weight: bold;
-}
-
-.divButton-edit {
-  display: flex;
-  justify-content: center;
-}
-
-
-.buttonSave {
-  background-color: rgba(115, 83, 186, 1);
-  height: 3vw;
-  width: 6vw;
-  border-radius: 10px;
-  padding: '10px 24px';
-  font-family: 'Poppins';
-  font-size: 1vw;
-  font-weight: 800;
-  line-height: '20px';
-  letter-spacing: '0.11em';
-  color: rgb(255, 255, 255);
-  cursor: pointer;
-  border-radius: 25px;
-}
-.buttonSave:hover {
-  background-color:rgb(83, 39, 180);
-  color: rgb(255, 255, 255);
-  cursor: pointer;
-}
+  .buttonLogin {
+    background-color: rgba(115, 83, 186, 1);
+    height: 3vw;
+    width: 8vw;
+    border-radius: 15px;
+    padding: '10px 24px';
+    font-family: 'Poppins';
+    font-size: 0.9vw;
+    font-weight: 800;
+    line-height: '20px';
+    letter-spacing: '0.11em';
+    color: rgb(255, 255, 255);
+    cursor: pointer;
+  }
+  .buttonLogin {
+    background-color: rgba(115, 83, 186, 1);
+    height: 3vw;
+    width: 8vw;
+    border-radius: 15px;
+    padding: '10px 24px';
+    font-family: 'Poppins';
+    font-size: 0.9vw;
+    font-weight: 800;
+    line-height: '20px';
+    letter-spacing: '0.11em';
+    color: rgb(255, 255, 255);
+    cursor: pointer;
+  }
+  .buttonLogin:hover {
+    background-color:rgb(83, 39, 180);
+    color: rgb(255, 255, 255);
+    cursor: pointer;
+  }
+  
+  
 .divDeleteAccount-edit{
   display: flex;
   justify-content: right;
 }
 .deleteAccount-edit{
+  
   background-color: #A62626;
   height: 1.7vw;
   width: 5vw;
   border-radius: 25px;
-  padding: '10px 24px';
   font-family: 'Poppins';
   font-size: 0.6vw;
   font-weight: 800;
   line-height: '20px';
   letter-spacing: '0.11em';
   color: rgb(255, 255, 255);
-  margin-right: 1vw;
+  margin: 0 10px 10px 0;
 }
 .deleteAccount-edit:hover{
   background-color: #ff00008f;
