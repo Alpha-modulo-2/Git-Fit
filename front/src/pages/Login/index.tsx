@@ -52,7 +52,7 @@ export const Login = () => {
           login(user);
           setLoggedUser(data.user)
         }
-        console.log(data)
+        console.log(data, 'data from login')
       })
       .catch((error) => {
         console.error('Error:', error);

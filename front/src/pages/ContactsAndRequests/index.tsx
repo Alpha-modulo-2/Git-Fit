@@ -22,7 +22,7 @@ export const Contacts = () => {
     const [error, setError] = useState('');
     
 
-    const { isLoggedIn, login, user } = useAuth();
+    const { user } = useAuth();
     /***************    MODAL    ********************/
     function openModal() {
         setModalIsOpen(true);
@@ -34,7 +34,7 @@ export const Contacts = () => {
 
     /***************    GET USER'S FRIENDS    ********************/
     async function getContacts() {
-        console.log(isLoggedIn, login, user, 'login')
+        console.log(user, 'login')
         if(user){
             try {
                 const id = String(user.id)
@@ -62,7 +62,6 @@ export const Contacts = () => {
     /***************    GET THE FRIEND REQUESTS    ********************/
     async function getRequests() {
         if(user){
-
             try {                    
                 const response = await fetch(`http://localhost:3000/friendRequests/${user.id}`);
                 if (response.ok) {

@@ -34,19 +34,19 @@ const ContactCard: React.FC<ContactCardProps> = ({ requesterInfo, requestId, onU
       </div>
 
 
-      {onUpdateFriends && onRemoveFriends && requestId && typeOfCard === 'request' && (
+      { typeOfCard === 'request' && (
         <div className="container-icon-contact">
           <Check
             size={20}
             color="black"
             className="icon-add-contact"
-            onClick={() => onUpdateFriends(requestId)}
+            onClick={() => (onUpdateFriends && requestId) && onUpdateFriends(requestId)}
           />
           <XCircle
             size={20}
             color="black"
             className="icon-remove-contact"
-            onClick={() => onRemoveFriends(requestId)}
+            onClick={() => (onRemoveFriends && requestId) && onRemoveFriends(requestId)}
           />
         </div>
       )}
