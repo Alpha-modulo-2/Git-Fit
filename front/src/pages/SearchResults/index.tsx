@@ -52,7 +52,7 @@ export const SearchedResults = () => {
     /***************    GET USER FRIEND REQUESTS     ********************/
     async function getRequests() {
         if(user){
-            const response = await generalRequest(`/friendRequests/${user.id}`) as ApiResponseRequests;
+            const response = await generalRequest(`/friendRequests/${user._id}`) as ApiResponseRequests;
             if(response){
                 setUserFriendRequests(response.friendRequests); 
             }
@@ -132,7 +132,7 @@ export const SearchedResults = () => {
             const updatedFriends: Friend[] = [
                 ...userSearched.friends,
                 {
-                    _id: user?.id || '',
+                    _id: user?._id || '',
                     occupation: user?.occupation || '',
                     photo: user?.photo || '',
                     userName: user?.userName || '',
@@ -154,7 +154,7 @@ export const SearchedResults = () => {
         
     /***************    GET TYPE OF CARD    ********************/
     function getCardType(userSearched: UserData): ReactElement{
-        const isFriend = userSearched.friends.some(friend => friend._id === user?.id);
+        const isFriend = userSearched.friends.some(friend => friend._id === user?._id);
 
         const requestedFriend = userFriendRequests?.find(request => {
             return request.requester._id === userSearched._id;
@@ -182,14 +182,14 @@ export const SearchedResults = () => {
                     typeOfCard={'request'}
                 />
             )
-        } else if (userSearched._id === user?.id) {
+        } else if (userSearched._id === user?._id) {
             return  (<></>)
         } else {
             return (
                 <ContactCard
                     key={userSearched._id}
                     requesterInfo={userSearched}
-                    requestId={user?.id}
+                    requestId={user?._id}
                     recipientId={userSearched._id}
                     onAddFriend={addFriends}
                     typeOfCard={'addUser'}

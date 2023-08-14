@@ -1,14 +1,15 @@
-// const url = 'http://localhost:3000'
+// const url = 'https://localhost:443'
 type method = 'GET' | 'POST' | 'PATCH' | 'DELETE';
 
 export async function generalRequest<T>(endpoint: string, body?:object, method: method = 'GET'){
     try {
-        const req = await fetch(`http://localhost:3000${endpoint}`, {
+        const req = await fetch(`https://localhost:443${endpoint}`, {
             method: method,
             headers: {
                 "Content-Type": "application/json"
             },
             body: JSON.stringify(body),
+            credentials: 'include'
         });
 
         // eslint-disable-next-line @typescript-eslint/no-unsafe-return

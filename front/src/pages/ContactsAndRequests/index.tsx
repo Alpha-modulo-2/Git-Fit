@@ -35,7 +35,7 @@ export const Contacts = () => {
     /***************    GET USER'S FRIENDS    ********************/
     async function getContacts() {
         if(user){
-            const id = String(user.id)
+            const id = String(user._id)
             const response = await generalRequest(`/users/${id}`) as UserData;
             if(response){
                 setContacts(response.friends)
@@ -50,8 +50,9 @@ export const Contacts = () => {
 
     /***************    GET THE FRIEND REQUESTS    ********************/
     async function getRequests() {
+        console.log(user, 'uasssserre')
         if(user){
-            const response = await generalRequest(`/friendRequests/${user.id}`) as ApiResponseRequests;
+            const response = await generalRequest(`/friendRequests/${user._id}`) as ApiResponseRequests;
             if(response){
                 setRequests(response.friendRequests)
             }

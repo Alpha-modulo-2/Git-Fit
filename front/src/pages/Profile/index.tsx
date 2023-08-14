@@ -53,7 +53,7 @@ export const Profile = () => {
     useEffect(() => {
         const fetchUserData = async () => {
           try {
-            const response = await fetch(`http://localhost:3000/users/${userId}`);
+            const response = await fetch(`https://localhost:443/users/${userId}`);
             const data = await response.json();
             setUserData(data);
           } catch (error) {
@@ -63,7 +63,7 @@ export const Profile = () => {
 
         const fetchCardsData = async () => {
           try {
-            const response = await fetch(`http://localhost:3000/allcards/${userId}`);
+            const response = await fetch(`https://localhost:443/allcards/${userId}`);
             const data = await response.json();
             setCardData(data);
           } catch (error) {
