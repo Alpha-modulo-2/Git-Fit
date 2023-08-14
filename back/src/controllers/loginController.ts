@@ -44,7 +44,8 @@ export default class LoginController {
                     result.message :
                     {
                         message: `Usuário '${credentials.userName}' logado com sucesso.`,
-                        user: result.user
+                        user: result.user,
+                        token: result.data
                     },
 
             );
