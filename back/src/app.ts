@@ -15,7 +15,7 @@ export class App {
 
     private middleware() {
         this.server.use(cookieParser());
-        this.server.use(cors({ origin: "*", credentials: true }));
+        this.server.use(cors({ origin: "*" }));
         this.server.use(express.urlencoded({ extended: true }));
         this.server.use(express.json());
         this.server.use(express.static(path.join(__dirname, 'public')));
