@@ -6,21 +6,22 @@ import { DailyCard } from "../../components/DailyCard";
 import { MiniCard } from "../../components/MiniCard";
 import { useNavigate } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
-import currentuser from '../../currentuser.json'
+import { useAuth } from '../../context/authContext';
+//import currentuser from '../../currentuser.json'
 
 interface CardData {
-    _id: string;
     trainingCard: {
-        checked: boolean;
-        title: string;
-        tasks: { description: string; _id: string }[];
+      checked: boolean;
+      title: string;
+      tasks: { _id: string; description: string }[];
     };
     mealsCard: {
-        checked: boolean;
-        meals: { description: string; ingredients: string[]; _id: string }[];
+      checked: boolean;
+      meals: { _id: string; description: string }[];
     };
+    _id: string;
     name: string;
-}
+  }
 
 const weekDays = [
     { id: 0, name: 'Domingo' },
@@ -37,7 +38,11 @@ export const FullCard = () => {
     const { id } = useParams();
     const selectedId = id ?? "1";
     const selectedDay = weekDays.find(day => day.id === parseInt(selectedId));
-    let userId = currentuser.id;
+
+    const { isLoggedIn, login, user } = useAuth();
+    console.log(isLoggedIn, login, user, 'login');
+    let userId = String(user?.id);
+
     const [trainingCard, setTrainingCard] = useState<CardData['trainingCard']>({
         checked: false,
         title: '',
@@ -50,13 +55,14 @@ export const FullCard = () => {
     });
 
     const [currently_card, set_currently_card_id] = useState<CardData | undefined>();
-
+    
     useEffect(() => {
         const fetchCardsData = async () => {
             try {
                 const response = await fetch(`http://localhost:3000/allcards/${userId}`);
-                const data: CardData[] = await response.json();
-                const currentCard = data.find((card) => card.name === selectedDay?.name);
+                const data = await response.json();
+                const datacard = data.card;
+                const currentCard = datacard.find((card: { name: string | undefined; }) => card.name === selectedDay?.name);
                 console.log(currentCard);
                 if (currentCard) {
                     setTrainingCard(currentCard.trainingCard);
@@ -268,13 +274,13 @@ export const FullCard = () => {
         console.log(editingTaskId)
         console.log(editingTaskIndex)
         try {
-            await fetch(`http://localhost:3000/card/${currently_card?._id}/task/${editingTaskId}`, {
+            await fetch(`http://localhost:3000/updateTask`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    _id: editingTaskId,
+                    taskId: editingTaskId,
                     description: updatedTaskDescription,
                 }),
             });

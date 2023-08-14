@@ -7,12 +7,13 @@ import { PhotoProfile } from "../../components/PhotoProfile";
 // import { Carrossel } from "../../components/Carrossel";
 import { DailyCard } from "../../components/DailyCard";
 import {  NavigateFunction, useNavigate } from 'react-router-dom';
-import currentuser from '../../currentuser.json'
+import { useAuth } from '../../context/authContext';
+//import currentuser from '../../currentuser.json'
 
 
 const convertToNumber = (stringValue: string) => {
-    const numericValue = stringValue.replace(/\D/g, '');
-    const numberValue = parseFloat(numericValue) / (stringValue.includes('cm') ? 100 : 1);
+    const numericValue = stringValue ? stringValue.replace(/\D/g, '') : '';
+    const numberValue = parseFloat(numericValue) / (stringValue && stringValue.includes('cm') ? 100 : 1);
     return numberValue;
   };
 
@@ -41,7 +42,11 @@ const Calc_IMC = ( weight_imc: number, height_imc:number) =>{
 
 export const Profile = () => {
     const navigate: NavigateFunction = useNavigate();
-    let userId = currentuser.id;
+
+    const { isLoggedIn, login, user } = useAuth();
+    console.log(isLoggedIn, login, user, 'login');
+    let userId = String(user?.id);
+
     const [userData, setUserData] = useState<any>(null);
     const [cardData, setCardData] = useState<any[]>([]);
 
@@ -94,8 +99,12 @@ export const Profile = () => {
    //-------------------------
     const countTrainingCheckboxes = () => {
         let totalDays = cardData.length;
-        let checkedDays = cardData.filter((day) => day.trainingCard.checked).length;
-        return (checkedDays / totalDays) * 100;
+        let checkedDays = Array.isArray(cardData) ? cardData.filter((day) => day.trainingCard.checked).length : 0;
+        if(isNaN(checkedDays)){
+          return (checkedDays / totalDays) * 100;
+        }else{
+          return 0;
+        }
     };
 
        //consoles
@@ -106,8 +115,12 @@ export const Profile = () => {
     // Função para contar a quantidade de checkboxes marcados para alimentação
     const countMealCheckboxes = () => {
         let totalDays = cardData.length;
-        let checkedDays = cardData.filter((day) => day.mealsCard.checked).length;
-        return (checkedDays / totalDays) * 100;
+        let checkedDays = Array.isArray(cardData) ? cardData.filter((day) => day.mealsCard.checked).length : 0;
+        if(isNaN(checkedDays)){
+          return (checkedDays / totalDays) * 100;
+        }else{
+          return 0;
+        }
     };
 
     let progress1 = parseInt(countMealCheckboxes().toFixed(0));

@@ -19,6 +19,8 @@ export const Router = () => {
     <div>
       <SearchedUsersProvider>
         <Routes>
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/landing-page" element={<LandingPage />} />
           <Route path="/landing_page" element={<LandingPage />} />
           <Route path="/register" element={<Register />} />
           <Route path="/edit/:id" element={<PerfilEdit/>} />
