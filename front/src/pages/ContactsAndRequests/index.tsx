@@ -11,7 +11,7 @@ import { UserData } from '../../interfaces/IUser';
 import { Friend } from '../../interfaces/IUser';
 import { FriendRequest } from '../../interfaces/IContacts';
 import { ApiResponseRequests } from '../../interfaces/IContacts';
-import { generalRequest } from "../../helpers";
+import { generalRequest } from "../../generalFunction";
 
 
 export const Contacts = () => {

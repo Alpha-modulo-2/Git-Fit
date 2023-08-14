@@ -10,7 +10,7 @@ import { Chat } from "../../components/Chat";
 
 import "./styles.css"
 import { useAuth } from '../../context/authContext';
-import { generalRequest } from "../../helpers";
+import { generalRequest } from "../../generalFunction";
 
 // import  { UserFriendRequests } from '../ContactsAndRequests/getUserRequests';
 import { UserData } from "../../interfaces/IUser";
