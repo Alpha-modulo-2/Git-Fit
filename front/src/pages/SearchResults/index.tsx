@@ -1,5 +1,7 @@
+/* eslint-disable @typescript-eslint/no-misused-promises */
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useState, useContext, useEffect, ReactElement } from "react";
+import { useState, useEffect, ReactElement } from "react";
+import { MagnifyingGlass } from "@phosphor-icons/react";
 
 import { Header } from "../../components/Header";
 import ContactCard from "../../components/ContactCard";
@@ -7,11 +9,12 @@ import {Modal} from "../../components/Modal";
 import { Chat } from "../../components/Chat";
 
 import "./styles.css"
-import { SearchedUsersContext } from "../../context/searchedUsersContext";
 import { useAuth } from '../../context/authContext';
+import { generalRequest } from "../../helpers";
 
 // import  { UserFriendRequests } from '../ContactsAndRequests/getUserRequests';
 import { UserData } from "../../interfaces/IUser";
+import { Friend } from '../../interfaces/IUser';
 
 interface FriendRequest {
     _id: string;
@@ -20,7 +23,7 @@ interface FriendRequest {
     created_at: string;
     __v: number;
 }
-  
+
 interface ApiResponseRequests {
     error: boolean;
     statusCode: number;
@@ -33,19 +36,9 @@ export const SearchedResults = () => {
     const [messageModal, setMessageModal] = useState<string>('');
     const [usersFromSearch, setUsersFromSearch] = useState<UserData[] | undefined>([]);
     const [userFriendRequests, setUserFriendRequests] = useState<FriendRequest[] | null | undefined>()
-    const [error, setError] = useState('');
-
-    const searchedUsersContext = useContext(SearchedUsersContext);
+    const [query, setQuery]=useState('')
+    
     const { user } = useAuth();
-
-    useEffect(() => {
-        if(searchedUsersContext){
-            setUsersFromSearch(searchedUsersContext.usersFromSearch)
-            console.log(usersFromSearch,'paginaresultado')
-        }
-
-    }, [usersFromSearch, searchedUsersContext]);
-
 
     /***************    MODAL    ********************/
     function openModal() {
@@ -59,17 +52,12 @@ export const SearchedResults = () => {
     /***************    GET USER FRIEND REQUESTS     ********************/
     async function getRequests() {
         if(user){
-            try {                    
-                const response = await fetch(`http://localhost:3000/friendRequests/${user?.id}`);
-                if (response.ok) {
-                    const data = await response.json() as ApiResponseRequests;
-                    setUserFriendRequests(data.friendRequests); 
-                    console.log(data.friendRequests, 'requestsinSearch')
-                } else {
-                    console.error('Erro ao obter as solicitações');
-                }
-            } catch (error) {
-                console.error('Erro na requisição:', error);
+            const response = await generalRequest(`/friendRequests/${user.id}`) as ApiResponseRequests;
+            if(response){
+                setUserFriendRequests(response.friendRequests); 
+            }
+            if(response.error){
+                console.error('Erro ao obter as solicitações');
             }
         }
     }
@@ -78,146 +66,99 @@ export const SearchedResults = () => {
             console.error('Erro ao obter as solicitações:', error);
         });
 
-    }, [user]);
-    
+    }, [user]);  
 
     /***************    MAKE A FRIEND REQUEST     ********************/
     function addFriends(requesterId: string, recipientId: string): void {
-        try {
-            console.log(requesterId);
-            console.log(usersFromSearch, 'usersfromsearch')
-            
-            fetch(`http://localhost:3000/solicitation`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ requesterId, recipientId }),
-            }).then(response => {
-
-                if (response.ok) {
-                    return response.json() as Promise<ApiResponseRequests>;
-                } else {
-                    setError('Erro ao adicionar amizade.');
-                    console.error(error)
-                    throw new Error('Failed to update contacts.');
-                }
-
-            }).then(data => {
-
-                console.log(data.message);
-                if(data.message){
-                    setMessageModal(data.message)
-                    openModal()
-                }
-
-            }).catch(error => {
-                console.error('Erro na requisição:', error);
-                // Lidar com o erro aqui
-            });
-        } catch (error) {
-            console.error('Erro geral:', error);
-            // Lidar com o erro aqui
-        }
+        const response = generalRequest('/solicitation', {requesterId, recipientId}, 'POST') as Promise<ApiResponseRequests> ;
+        response
+        .then(data => {
+            if(data.message){
+                setMessageModal(data.message)
+                openModal();   
+        }}
+        ).catch(error => {
+            console.error('Erro na requisição:', error);
+        });
     }
-    // function checkAFriend(){
-    //     if(usersFromSearch && user){
-    //         const filteredUsers = usersFromSearch.filter(userSearched =>
-    //             userSearched.friends.some(friend => friend._id === user.id)
-    //         );
-    //         console.log(filteredUsers, 'filteredUsers')
-    //         return filteredUsers
-    //     }
-    // }
 
-
-    /***************    GET USER FRIEND REQUESTS     ********************/
-    
-    // function getUserRequests() {
-    //     if(user){
-    //         const friendRequests = useFriendRequests(user?.id);
-    //         // return friendRequests;
-    //         setUserFriendRequests(friendRequests)
-    //     }
-        
-    //     // Agora você pode usar a array de friendRequests em seu componente
-      
-    // } 
     /***************    ACCEPT A FRIEND REQUEST     ********************/
-    function updateFriends(requestId: string): void {
-        try {
-            console.log(requestId);
-            fetch(`http://localhost:3000/acceptFriend`, {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ requestId }),
-            }).then(response => {
-                if (response.ok) {
-                    return response.json() as Promise<ApiResponseRequests>;
-                } else {
-                    setError('Erro ao obter as solicitações.');
-                    throw new Error('Failed to update contacts.');
-                }
-            }).then(data => {
-                console.log(data.message);
-                if(data.message){
-                    setMessageModal(data.message)
-                    openModal()
-                }
-            })
-            .catch(error => {
+    function updateFriends(requestId: string, requesterId?: string): void {
+        const response = generalRequest('/acceptFriend', {requestId}, 'PATCH') as Promise<ApiResponseRequests> ;
+        response
+        .then(data => {
+            if(data.message){
+                setMessageModal(data.message)
+                openModal();  
+                addUserAsFriend(requesterId);
+            }}).catch(error => {
                 console.error('Erro na requisição:', error);
-            });
-        } catch (error) {
-            console.error('Erro geral:', error)
-        }
+        });
+      
     }
-
 
     /***************    REFUSE A FRIEND REQUEST     ********************/
     function removeFriends(requestId: string): void {
-        try {
-            console.log(requestId);
-            fetch(`http://localhost:3000/rejectFriend/${requestId}`, {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            }).then(response => {
-                if (response.ok) {
-                    return response.json() as Promise<ApiResponseRequests>;
-                } else {
-                    setError('Erro ao obter as solicitações.');
-                    throw new Error('Failed to update contacts.');
-                }
-            }).then(data => {
-                console.log(data, 'data');
-                if(data.message){
-                    setMessageModal(data.message)
-                    openModal()
-                }
-            })
-            .catch(error => {
-                console.error('Erro na requisição:', error);
-            });
-        } catch (error) {
-            console.error('Erro geral:', error);
+        const response = generalRequest(`/rejectFriend/${requestId}`, {requestId}, 'DELETE') as Promise<ApiResponseRequests>;
+        response
+        .then(data => {
+            if(data.message){
+                setMessageModal(data.message)
+                openModal()
+                getRequests().catch(() => {console.log('Não foi possível obter as solicitações')})
+            }
+        }).catch(error => {
+            console.error('Erro na requisição:', error);
+        });
+    }
+
+    /***************    GET USERS FROM SEARCH    ********************/
+    async function searchUsers() {
+        const response = await generalRequest<UserData[]>(`/users/search?name=${query}`)
+        if(response){
+            if(response.length === 0){
+                setMessageModal('Não foi encontrado nenhum usuário na pesquisa')
+                openModal();
+            }else{
+                setUsersFromSearch(response)
+            }
         }
     }
-           
+
+    /***************    ADD USER AS FRIEND    ********************/
+  function addUserAsFriend(requesterId: string | undefined){
+    const updatedUsers = usersFromSearch?.map((userSearched) => {
+        if (userSearched._id === requesterId) {
+            const updatedFriends: Friend[] = [
+                ...userSearched.friends,
+                {
+                    _id: user?.id || '',
+                    occupation: user?.occupation || '',
+                    photo: user?.photo || '',
+                    userName: user?.userName || '',
+                },
+            ];
+
+            return {
+                ...userSearched,
+                friends: updatedFriends,
+            };
+        }
+        return userSearched;
+    });
+
+    if (updatedUsers) {
+        setUsersFromSearch(updatedUsers);
+    }
+  }
+        
+    /***************    GET TYPE OF CARD    ********************/
     function getCardType(userSearched: UserData): ReactElement{
         const isFriend = userSearched.friends.some(friend => friend._id === user?.id);
 
-        // const isRequested = userFriendRequests?.some(request => request.requester._id === userSearched._id);
-        // console.log(userFriendRequests?.find(request => request.requester._id === userSearched._id), '2 condição')
         const requestedFriend = userFriendRequests?.find(request => {
             return request.requester._id === userSearched._id;
-        });
-        console.log("requestedFriend:", requestedFriend);
-        
-        
+        });       
 
         if (isFriend) {
             return (
@@ -258,22 +199,34 @@ export const SearchedResults = () => {
     }
 
       
-
     return (
         <div className="search-page">
             <Header isLoggedIn={true} />
             <div className="container-search">
                 <Chat/>
-
-                <div className="container-search-results">
-                    {/* div dos cards */}
-                    <div className="search-results">
-                    {usersFromSearch?.map((userSearched) => (
+                <div className="search-box">
+                    <input type="text" className="search-text" placeholder="Pesquisar usuários..."
+                    onChange={(e)=> setQuery(e.target.value)}/>
+                    
+                    <button onClick={()=> searchUsers()} type="button" className="icon-search-btn">
+                        <MagnifyingGlass
+                        size={20}
+                        weight="bold"
+                        color="#3d3d3d"
+                        className="icon-search"
+                        />
+                    </button>
+                </div>
+                {usersFromSearch && usersFromSearch.length > 0 &&(
+                    <div className="container-search-results">
+                        {/* div dos cards */}
+                        <div className="search-results">
+                        {usersFromSearch?.map((userSearched) => (
                             getCardType(userSearched)
                         ))}
+                        </div>
                     </div>
-
-                </div>
+                )}
                 {modalIsOpen && (
                     <Modal children={messageModal} onClick={closeModal} />
                 )}

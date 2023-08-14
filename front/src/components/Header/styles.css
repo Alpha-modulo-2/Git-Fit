@@ -50,3 +50,8 @@
   background-color: #fff;
   border: 1px solid #fff;
 }
+@media (max-width: 780px) {
+  .header-menu-items {
+    gap: 2.5rem;
+  }
+}
