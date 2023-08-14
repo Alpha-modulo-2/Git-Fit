@@ -4,6 +4,7 @@ interface FormProps {
   onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
   handleUserNameChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handlePasswordChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleConfirmPasswordChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleEmailChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handlePhotoChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleGenderChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -11,7 +12,7 @@ interface FormProps {
   handleHeightChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleOccupationChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleAgeChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  handleDeleteAccount: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleDeleteAccount: () => void;
 
   inputsNameValue: string;
   inputsEmailValue: string;
@@ -25,7 +26,6 @@ interface FormProps {
 }
 
 export default function RegisterForm(props: FormProps) {
-
   const [isProfessional, setIsProfessional] = useState(false);
 
   const handleOccupationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -36,11 +36,7 @@ export default function RegisterForm(props: FormProps) {
     <form onSubmit={props.onSubmit}>
       <div className="menu-register">
         <div className="container-first-content-register">
-          <form
-            encType="multipart/form-data"
-            method="POST"
-            action="/upload"
-          >
+          <form encType="multipart/form-data" method="POST" action="/upload">
             <label
               htmlFor="photo-upload"
               className="custom-file-label-register"
@@ -111,6 +107,7 @@ export default function RegisterForm(props: FormProps) {
             type="password"
             className="input-register"
             placeholder="Confirme a senha"
+            onChange={props.handleConfirmPasswordChange}
           />
 
           <div className="divregisterprofessionalProfile">
@@ -119,10 +116,7 @@ export default function RegisterForm(props: FormProps) {
             </label>
 
             <label className="switch">
-              <input
-                type="checkbox"
-                onChange={handleOccupationChange}
-              />
+              <input type="checkbox" onChange={handleOccupationChange} />
               <span className="sliderR-round"></span>
             </label>
           </div>
@@ -138,7 +132,17 @@ export default function RegisterForm(props: FormProps) {
         </div>
       </div>
       <div className="divButton-register">
-        <button className="buttonLogin" type="submit">Cadastrar</button>
+        <button className="buttonLogin" type="submit">
+          Salvar
+        </button>
+      </div>
+      <div className="divDeleteAccount-edit">
+        <button
+          className="deleteAccount-edit"
+          onClick={props.handleDeleteAccount}
+        >
+          Excluir Conta
+        </button>
       </div>
     </form>
   );

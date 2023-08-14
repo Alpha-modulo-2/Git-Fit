@@ -11,6 +11,7 @@ export const PerfilEdit = () => {
   const userId = id ?? "";
   const [userNameValue, setUserNameValue] = useState("");
   const [passwordValue, setPasswordValue] = useState("");
+  const [confirmPasswordValue, setConfirmPasswordValue] = useState("");
   const [emailValue, setEmailValue] = useState("");
   const [photoValue, setPhotoValue] = useState("");
   const [genderValue, setGenderValue] = useState("");
@@ -30,14 +31,14 @@ export const PerfilEdit = () => {
           const userData = await response.json() as IUpdateUserData;
 
           setUserNameValue(userData.userName);
-          setPasswordValue(userData.password);
           setEmailValue(userData.email);
           setPhotoValue(userData.photo);
           setGenderValue(userData.gender);
           setWeightValue(userData.weight);
           setHeightValue(userData.height);
           setOccupationValue(userData.occupation);
-          setAgeValue(userData.age.toString());
+          setAgeValue(parseInt(userData.age, 10).toString());
+
         } else {
           console.error("Erro ao buscar dados do usuário.");
         }
@@ -70,8 +71,15 @@ export const PerfilEdit = () => {
       weight,
       height,
       occupation,
-      age,
+      age
     };
+
+    if (password !== confirmPasswordValue) {
+      console.log("As senhas não coincidem.");
+      alert("As senhas não coincidem.");
+      return; 
+    }
+
     void fetch(`http://localhost:3000/users/${userId}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
@@ -80,8 +88,7 @@ export const PerfilEdit = () => {
       if (response.ok) {
         console.log("Perfil atualizado com sucesso!");
         setIsLoggedIn(true);
-        console.log(isLoggedIn);
-        console.log(response);
+        navigate("/profile");
       } else {
         console.log(response);
         console.log(userId);
@@ -89,6 +96,9 @@ export const PerfilEdit = () => {
     });
   };
 
+  const handleConfirmPasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setConfirmPasswordValue(event.target.value);
+  };
   const handleUserNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setUserNameValue(event.target.value);
   };
@@ -114,24 +124,33 @@ export const PerfilEdit = () => {
     setOccupationValue(event.target.value);
   };
   const handleAgeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setAgeValue(event.target.value);
+    const newAgeValue = event.target.value;
+    setAgeValue(newAgeValue);
   };
 
-
-  
-  const handleDeleteAccount = async () => {
-    try {
-      await fetch(`http://localhost:3000/users/${userId}`, {
+  const handleDeleteAccount = () => {
+    const confirmed = window.confirm("Tem certeza de que deseja excluir sua conta?");
+    if (confirmed) {
+      fetch(`http://localhost:3000/users/${userId}`, {
         method: "DELETE",
-      });
-      console.log("Usuário excluído com sucesso!");
-      // Aqui você pode redirecionar o usuário para outra página, exibir uma mensagem de sucesso, etc.
-    } catch (error) {
-      console.error("Erro ao excluir usuário:", error);
-      // Aqui você pode tratar o erro de acordo com sua necessidade.
+      })
+        .then((response) => {
+          if (response.ok) {
+            console.log("Usuário excluído com sucesso!");
+            alert("usuário deletado com sucesso!");
+            navigate("/profile");
+          } else {
+            console.error("Erro ao excluir usuário:", response);
+            alert("erro ao deletar usuário");
+          }
+        })
+        .catch((error) => {
+          console.error("Erro ao excluir usuário:", error);
+          alert("erro ao deletar usuário");
+        });
     }
   };
-
+  
   if (isLoggedIn) {
     navigate("/profile");
   }
@@ -153,6 +172,7 @@ export const PerfilEdit = () => {
             onSubmit={handleSubmit}
             handleUserNameChange={handleUserNameChange}
             handlePasswordChange={handlePasswordChange}
+            handleConfirmPasswordChange={handleConfirmPasswordChange}
             handleEmailChange={handleEmailChange}
             handlePhotoChange={handlePhotoChange}
             handleGenderChange={handleGenderChange}

@@ -4,6 +4,7 @@ interface FormProps {
   onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
   handleUserNameChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handlePasswordChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleConfirmPasswordValue: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleEmailChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handlePhotoChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleGenderChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -99,6 +100,7 @@ const RegisterForm: React.FC<FormProps> = (props) => {
             type="text"
             className="input-register"
             placeholder="Confirme a senha"
+            onChange={props.handleConfirmPasswordValue}
           />
 
           <div className="divregisterprofessionalProfile">
