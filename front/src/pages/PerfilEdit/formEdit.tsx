@@ -11,9 +11,21 @@ interface FormProps {
   handleHeightChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleOccupationChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleAgeChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleDeleteAccount: (e: React.ChangeEvent<HTMLInputElement>) => void;
+
+  inputsNameValue: string;
+  inputsEmailValue: string;
+  inputsPasswordValue: string;
+  inputsPhotoValue: string;
+  inputsGenderValue: string;
+  inputsWeightValue: string;
+  inputsHeightValue: string;
+  inputsOccupationValue: string;
+  inputsAgeValue: string;
 }
 
 export default function RegisterForm(props: FormProps) {
+
   const [isProfessional, setIsProfessional] = useState(false);
 
   const handleOccupationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
