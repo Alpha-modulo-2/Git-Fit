@@ -30,6 +30,6 @@ const io = new Server(server, { cors: { origin: "*" } });
 
 new SocketController(io);
 
-server.listen(443, () => {
-    console.log(`Server is running on port 443`);
+server.listen(process.env.PORT, () => {
+    console.log(`Server is running on port ${process.env.PORT}`);
 });
