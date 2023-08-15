@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 
 interface FormProps {
   onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
@@ -11,7 +11,7 @@ interface FormProps {
   handleHeightChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleOccupationChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleAgeChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  handleDeleteAccount: () => void;
+  handleDeleteAccount: (e: React.ChangeEvent<HTMLInputElement>) => void;
 
   inputsNameValue: string;
   inputsEmailValue: string;
@@ -24,124 +24,121 @@ interface FormProps {
   inputsAgeValue: string;
 }
 
-export default function Form(props: FormProps) {
+export default function RegisterForm(props: FormProps) {
+
+  const [isProfessional, setIsProfessional] = useState(false);
+
+  const handleOccupationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setIsProfessional(e.target.checked);
+  };
+
   return (
-    <form className="formEdit" onSubmit={props.onSubmit}>
-      <div className="menu-edit">
-        <div className="container-first-content-edit">
-          <form encType="multipart/form-data" method="POST" action="/upload">
-            <label htmlFor="photo-upload" className="custom-file-label-edit">
-              {props.inputsPhotoValue}
-            </label>
+    <form onSubmit={props.onSubmit}>
+      <div className="menu-register">
+        <div className="container-first-content-register">
+          <form
+            encType="multipart/form-data"
+            method="POST"
+            action="/upload"
+          >
+            <label
+              htmlFor="photo-upload"
+              className="custom-file-label-register"
+            ></label>
             <input
               id="photo-upload"
-              className="custom-file-input-edit"
+              className="custom-file-input-register"
               type="file"
               name="photo"
               accept="image/*"
               onChange={props.handlePhotoChange}
-              value={props.inputsPhotoValue}
-            />
-            <input
-              type="submit"
-              className="addPhoto-edit"
-              value="Adicionar foto"
             />
           </form>
-          <br />
+
           <input
             type="text"
-            className="input-edit"
+            className="input-register"
             placeholder="Nome Completo"
             onChange={props.handleUserNameChange}
-            value={props.inputsNameValue}
           />
-          <br />
+
           <input
             type="text"
-            className="input-edit"
+            className="input-register"
             placeholder="E-mail"
             onChange={props.handleEmailChange}
-            value={props.inputsEmailValue}
           />
-          <br />
+
           <input
             type="number"
-            className="input-edit"
+            className="input-register"
             placeholder="Idade"
             onChange={props.handleAgeChange}
-            value={props.inputsAgeValue}
           />
-          <br />
+
           <input
             type="text"
-            className="input-edit"
+            className="input-register"
             placeholder="Gênero"
             onChange={props.handleGenderChange}
-            value={props.inputsGenderValue}
           />
-          <br />
         </div>
 
-        <div className="container-second-content-edit">
-          <div className="weightHight-edit">
+        <div className="container-second-content-register">
+          <div className="weightHight-register">
             <input
               type="text"
-              className="input-weight-edit"
+              className="input-weight-register"
               placeholder="Peso"
               onChange={props.handleWeightChange}
-              value={props.inputsWeightValue}
             />
             <input
               type="text"
-              className="input-hight-edit"
+              className="input-hight-register"
               placeholder="Altura"
               onChange={props.handleHeightChange}
-              value={props.inputsHeightValue}
             />
           </div>
-          <br />
+
           <input
             type="password"
-            className="input-edit"
+            className="input-register"
             placeholder="Senha"
             onChange={props.handlePasswordChange}
-            value={props.inputsPasswordValue}
           />
 
           <input
             type="password"
-            className="input-edit"
+            className="input-register"
             placeholder="Confirme a senha"
           />
-          <br />
-          <div className="diveditprofessionalProfile">
-            <label className="editprofessionalProfile">
+
+          <div className="divregisterprofessionalProfile">
+            <label className="registerprofessionalProfile">
               Perfil Profissional?
             </label>
-            <br />
+
             <label className="switch">
-              <input type="checkbox" onChange={props.handleOccupationChange} />
-              <span className="slider round"></span>
+              <input
+                type="checkbox"
+                onChange={handleOccupationChange}
+              />
+              <span className="sliderR-round"></span>
             </label>
-            <br />
           </div>
-          <input
-            type="text"
-            className="input-edit"
-            placeholder="Profissão"
-            onChange={props.handleOccupationChange}
-            value={props.inputsOccupationValue}
-          />
+
+          {isProfessional && (
+            <input
+              type="text"
+              className="input-register"
+              placeholder="Profissão"
+              onChange={props.handleOccupationChange}
+            />
+          )}
         </div>
       </div>
-      <div className="divButton-edit">
-        <button className="buttonSave" type="submit">Salvar</button>
-      </div>
-      <div className="divDeleteAccount-edit">
-        <button className="deleteAccount-edit" onClick={props.handleDeleteAccount}>
-          Excluir Conta
-        </button>
+      <div className="divButton-register">
+        <button className="buttonLogin" type="submit">Cadastrar</button>
       </div>
     </form>
   );

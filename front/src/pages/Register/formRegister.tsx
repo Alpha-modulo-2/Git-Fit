@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useState } from "react";
+
 interface FormProps {
   onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
   handleUserNameChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -13,10 +14,16 @@ interface FormProps {
 }
 
 const RegisterForm: React.FC<FormProps> = (props) => {
+  const [isProfessional, setIsProfessional] = useState(false);
+
+  const handleOccupationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setIsProfessional(e.target.checked);
+  };
+
   return (
     <form onSubmit={props.onSubmit}>
-      <div className="menu-edit">
-        <div className="container-first-content-edit">
+      <div className="menu-register">
+        <div className="container-first-content-register">
           <form
             encType="multipart/form-data"
             method="POST"
@@ -24,104 +31,105 @@ const RegisterForm: React.FC<FormProps> = (props) => {
           >
             <label
               htmlFor="photo-upload"
-              className="custom-file-label-edit"
+              className="custom-file-label-register"
             ></label>
             <input
               id="photo-upload"
-              className="custom-file-input-edit"
+              className="custom-file-input-register"
               type="file"
               name="photo"
               accept="image/*"
               onChange={props.handlePhotoChange}
             />
-            <input
-              type="submit"
-              className="addPhoto-edit"
-              value="Adicionar foto"
-            />
           </form>
-          <br />
+
           <input
             type="text"
-            className="input-edit"
+            className="input-register"
             placeholder="Nome Completo"
             onChange={props.handleUserNameChange}
           />
-          <br />
+
           <input
             type="text"
-            className="input-edit"
+            className="input-register"
             placeholder="E-mail"
             onChange={props.handleEmailChange}
           />
-          <br />
+
           <input
             type="number"
-            className="input-edit"
+            className="input-register"
             placeholder="Idade"
             onChange={props.handleAgeChange}
           />
-          <br />
+
           <input
             type="text"
-            className="input-edit"
+            className="input-register"
             placeholder="Gênero"
             onChange={props.handleGenderChange}
           />
-          <br />
         </div>
 
-        <div className="container-second-content-edit">
-          <div className="weightHight-edit">
+        <div className="container-second-content-register">
+          <div className="weightHight-register">
             <input
               type="text"
-              className="input-weight-edit"
+              className="input-weight-register"
               placeholder="Peso"
               onChange={props.handleWeightChange}
             />
             <input
               type="text"
-              className="input-hight-edit"
+              className="input-hight-register"
               placeholder="Altura"
               onChange={props.handleHeightChange}
             />
           </div>
-          <br />
+
           <input
             type="text"
-            className="input-edit"
+            className="input-register"
             placeholder="Senha"
             onChange={props.handlePasswordChange}
           />
 
           <input
             type="text"
-            className="input-edit"
+            className="input-register"
             placeholder="Confirme a senha"
           />
-          <br />
-          <div className="diveditprofessionalProfile">
-            <label className="editprofessionalProfile">
+
+          <div className="divregisterprofessionalProfile">
+            <label className="registerprofessionalProfile">
               Perfil Profissional?
             </label>
-            <br />
+
             <label className="switch">
-              <input type="checkbox" onChange={props.handleOccupationChange} />
-              <span className="slider round"></span>
+              <input
+                type="checkbox"
+                checked={isProfessional}
+                onChange={handleOccupationChange}
+              />
+              <span className="sliderR-round"></span>
             </label>
-            <br />
           </div>
-          <input
-            type="text"
-            className="input-edit"
-            placeholder="Profissão"
-            onChange={props.handleOccupationChange}
-          />
+
+          {isProfessional && (
+            <input
+              type="text"
+              className="input-register"
+              placeholder="Profissão"
+              onChange={props.handleOccupationChange}
+            />
+          )}
         </div>
       </div>
-      <div className="divButton-edit">
-      <button className="buttonLogin" type="submit">Cadastrar</button>
-
+      <div className="divButton-register">
+        <button className="buttonLogin" type="submit">
+          Cadastrar
+        </button>
       </div>
     </form>
   );

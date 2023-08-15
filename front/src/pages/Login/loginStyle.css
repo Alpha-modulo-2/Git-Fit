@@ -11,15 +11,30 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100%;
+  height: 70%;
   width: 100%;
 }
 
+.container-login-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 50px;
+  width: 20vw;
+  height: 27vw;
+  min-width: 100px;
+  min-height: 250px;
+  border-radius: 25px;
+  border: 0.9px solid rgba(0, 0, 0, 0.604);
+  box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.638);
+  background-color: rgba(240, 248, 255, 0.766);
+}
 .logo-name-login {
   position: absolute;
   display: flex;
   flex-direction: column;
-  font-size: 5vw;
+  font-size: 500%;
 }
 
 .logo-name-git-login,
@@ -28,41 +43,28 @@
   font-family: 'Italiana', serif;
 }
 
-.container-login-content {
-  margin-top: 5%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  width: 30%;
-  min-width: 100px;
-  min-height: 250px;
-  height: 35vw;
-  border-radius: 25px;
-  border: 0.9px solid rgba(0, 0, 0, 0.604);
-  box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.638);
-  background-color: rgba(240, 248, 255, 0.766);
-}
 
 
 
 /* Menu content */
 .loginTitle {
-  margin-bottom: 2vw;
   color: rgba(115, 83, 186, 1);
-  font-size: 2vw;
+  font-size: 40px;
   font-weight: bold;
 }
 
 .input-login {
-  font-size: 0.8vw;
-  width: 15vw;
-  padding: 5%;
+  font-size: 0.9vw;
+  width: 70%;
+  height: 20%;
   font-weight: bold;
   color: rgba(115, 83, 186, 1);
   border-bottom: 1px solid rgb(0, 0, 0);
   background-color: transparent;
   background: transparent !important;
+  outline: none;
+  caret-color: black;
+  
 }
 
 .input-login::placeholder {
@@ -72,6 +74,7 @@
 .input-login::value {
   color: rgba(115, 83, 186, 1);
 }
+
 
 /* Button config */
 .divButton-edit {
@@ -98,32 +101,39 @@
 }
 
 .buttonLogin {
+  display: flex;
   justify-content: center;
   align-items: center;
   background-color: #7353BA;
-  height: 3vw;
-  width: 6vw;
+  text-align: center;
   border-radius: 25px;  
-  padding: '10px 24px';
-  font-family: 'Poppins';
+  padding: 20px 34px;
+  font-family: Poppins;
   font-size: 0.8vw;
   font-weight: 800;
-  line-height: '20px';
-  letter-spacing: '0.11em';
-  color: '#FFFFFF';
+  line-height: 20px;
+  letter-spacing: 0.11em;
+  color: #FFFFFF;
   
 }
 .buttonLogin:hover {
   background-color: #422483;
   border-color: #7353BA;
-
-
 }
 .formLogin{
+  height: 40%;
+  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: 30px;
+}
 
+@media (max-width: 780px) {
+  .container-login-content {
+    width: 300px;
+    height: 320px;
+  }
 }
 
 

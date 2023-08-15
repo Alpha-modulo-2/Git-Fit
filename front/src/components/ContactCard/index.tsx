@@ -1,13 +1,13 @@
 // ContactCard.tsx
 import React from 'react';
 import { XCircle, Check, UserCirclePlus } from "@phosphor-icons/react";
-import { UserData } from '../../interfaces/IUser';
+import { Friend, UserData } from '../../interfaces/IUser';
 
 interface ContactCardProps{
-  requesterInfo?: UserData;
+  requesterInfo?: UserData | Friend;
   requestId?: string; // Recebe o request._id da página principal
   recipientId?: string;
-  onUpdateFriends?: (requestId: string) => void;
+  onUpdateFriends?: (requestId: string, requesterId: string) => void;
   onRemoveFriends?: (requestId: string) => void;
   onAddFriend?: (requestId: string, recipientId: string) => void; //id do usuário a ser adicionado e de quem tá solicitando
   typeOfCard: "request" | "contact" | "addUser";
@@ -34,19 +34,19 @@ const ContactCard: React.FC<ContactCardProps> = ({ requesterInfo, requestId, onU
       </div>
 
 
-      {onUpdateFriends && onRemoveFriends && requestId && typeOfCard === 'request' && (
+      { typeOfCard === 'request' && (
         <div className="container-icon-contact">
           <Check
             size={20}
             color="black"
             className="icon-add-contact"
-            onClick={() => onUpdateFriends(requestId)}
+            onClick={() => (onUpdateFriends && requestId && requesterInfo) && onUpdateFriends(requestId, requesterInfo?._id)}
           />
           <XCircle
             size={20}
             color="black"
             className="icon-remove-contact"
-            onClick={() => onRemoveFriends(requestId)}
+            onClick={() => (onRemoveFriends && requestId && requesterInfo) && onRemoveFriends(requestId)}
           />
         </div>
       )}
