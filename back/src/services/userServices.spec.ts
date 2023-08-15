@@ -12,7 +12,6 @@ describe('UserService', () => {
     const mockUserId = new mongoose.Types.ObjectId().toString()
 
     const mockUser = {
-        _id: mockUserId,
         userName: "teste",
         name: "teste",
         password: "teste",

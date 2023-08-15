@@ -31,7 +31,7 @@ describe('LoginRepository', () => {
         (userModel.findOne as jest.Mock).mockImplementation(async () => mockUser);
     });
 
-    fit('should login a user', async () => {
+    it('should login a user', async () => {
         const loginRepository = new LoginRepository();
 
         userModel.findOne = jest.fn().mockResolvedValue({

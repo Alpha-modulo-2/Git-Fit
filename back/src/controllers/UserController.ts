@@ -121,14 +121,19 @@ export default class UserController {
 
     async removeFriend(req: Request, res: Response) {
         const { userId, friendId } = req.params;
-        
+
         try {
             if (!process.env.JWTSECRET) {
                 throw new Error('JWTSECRET nao definido');
             }
 
             const data = jwt.verify(req.cookies["session"], process.env.JWTSECRET);
-            const cookieId = (data as IUser)._id
+
+            if (typeof data === "string") {
+                throw new Error("JWT data is a string, expected an object.");
+            }
+
+            const cookieId = data.user._id
 
             if (cookieId != userId) {
                 throw new Error("Você não pode remover um amigo de outra pessoa.")
