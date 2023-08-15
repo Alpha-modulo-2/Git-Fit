@@ -2,11 +2,8 @@ import mongoose from 'mongoose';
 import UserController from '../controllers/UserController';
 import jwt from "jsonwebtoken"
 import UserService from '../services/UserServices';
-import bcrypt from 'bcrypt';
 import * as validators from '../middleware/validators';
 import { Request, Response } from 'express';
-
-jest.mock('bcrypt');
 
 interface MockUserService extends UserService {
     insert: jest.Mock;
@@ -69,7 +66,6 @@ describe('UserController', () => {
         } as MockUserService;
 
         userController = new UserController(userService);
-        (bcrypt.hash as jest.Mock).mockReturnValue('hashedPassword');
     });
 
     it('should insert a user', async () => {
@@ -77,8 +73,7 @@ describe('UserController', () => {
 
         await userController.insert(req, res);
 
-        expect(bcrypt.hash).toHaveBeenCalledWith(mockUser.password, 10);
-        expect(userService.insert).toHaveBeenCalledWith({ ...mockUser, password: 'hashedPassword' });
+        expect(userService.insert).toHaveBeenCalledWith(mockUser);
         expect(res.status).toHaveBeenCalledWith(200);
         expect(res.json).toHaveBeenCalledWith(mockUser);
     });
@@ -127,7 +122,7 @@ describe('UserController', () => {
             params: {
                 id: mockUserId
             },
-            cookies: { "session": jwt.sign({ user: { id: mockUserId } }, process.env.JWTSECRET!) }
+            cookies: { "session": jwt.sign({ user: { _id: mockUserId } }, process.env.JWTSECRET!) }
         }
 
         await userController.delete(req, res);
@@ -142,7 +137,7 @@ describe('UserController', () => {
 
         await userController.insert(req, res);
 
-        expect(userService.insert).toHaveBeenCalledWith({ ...mockUser, password: 'hashedPassword' });
+        expect(userService.insert).toHaveBeenCalledWith(mockUser);
         expect(res.status).toHaveBeenCalledWith(500);
         expect(res.json).toHaveBeenCalledWith({ error: true, message: `Erro ao inserir a conta ${error.message}`, statusCode: 500 });
     });
@@ -278,7 +273,7 @@ describe('UserController', () => {
                 userId: mockUserId,
                 friendId: mockFriendID
             },
-            cookies: { "session": jwt.sign({ user: { id: mockUserId } }, process.env.JWTSECRET!) }
+            cookies: { "session": jwt.sign({ user: { _id: mockUserId } }, process.env.JWTSECRET!) }
         }
         userService.removeFriend.mockResolvedValue({ error: false, statusCode: 200, user: mockUser });
 
