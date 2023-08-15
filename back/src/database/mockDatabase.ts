@@ -20,3 +20,11 @@ export async function closeDatabase() {
     await mongoose.connection.close();
     await mongod.stop();
 }
+
+export async  function resetDatabase() {
+    const collections = await mongoose.connection.db.collections();
+
+    for (let collection of collections) {
+        await collection.deleteMany();
+    }
+}
