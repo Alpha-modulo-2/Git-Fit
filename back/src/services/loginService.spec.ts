@@ -21,7 +21,7 @@ describe('LoginService', () => {
     };
 
     const mockUser: IUser = {
-        id: "123456789101112131415161",
+        _id: "123456789101112131415161",
         userName: mockCredentials.userName,
         name: "teste",
         password: '$2a$10$yH.C8uIjC.O9F5/RLKmKMu9JqG2tUzBLpLuJ.bfO6ZJ5V7oQ.tolC', // bcrypt hashed version of "password"
@@ -40,7 +40,7 @@ describe('LoginService', () => {
     const restOfUser: IUser = {
         userName: mockUser.userName,
         name: mockUser.name,
-        id: mockUser.id,
+        _id: mockUser._id,
         email: mockUser.email,
         photo: mockUser.photo,
         gender: mockUser.gender,

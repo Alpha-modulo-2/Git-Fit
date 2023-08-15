@@ -20,20 +20,7 @@ export default class UserController {
 
     async insert(req: Request, res: Response) {
         try {
-
-            const { password } = req.body
-
-            const passwordHash = await bcrypt.hash(password, 10);
-
-            const result = await this.service.insert({ ...req.body, password: passwordHash });
-
-            if (result.error) {
-                const message = result.message as string
-                if (message.includes("E11000")) {
-                    return res.status(500).json("Username já esta sendo utilizado");
-                }
-            }
-
+            const result = await this.service.insert(req.body);
             return res.status(result.statusCode).json(result.statusCode >= 300 ? result.message : result.user);
         } catch (error: any) {
             return res.status(500).json({
@@ -77,18 +64,7 @@ export default class UserController {
         const { id } = req.params
 
         try {
-
-            let reqData = {
-                ...req.body
-            }
-
-            if (req.body.password) {
-                const { password } = req.body
-                const passwordHash = await bcrypt.hash(password, 10);
-                reqData = { ...req.body, password: passwordHash }
-            }
-
-            const result = await this.service.update(id, reqData);
+            const result = await this.service.update(id, req.body);
             return res.status(result.statusCode).json(result.statusCode >= 300 ? result.message : result.user);
         } catch (error: any) {
             return res.status(500).json({
@@ -109,7 +85,7 @@ export default class UserController {
             }
 
             const data = jwt.verify(req.cookies["session"], process.env.JWTSECRET);
-            const cookieId = (data as IToken).user.id
+            const cookieId = (data as IToken).user._id
 
             if (cookieId != id) {
                 throw new Error("Você não pode remover uma conta de outra pessoa.")
@@ -131,7 +107,6 @@ export default class UserController {
 
         try {
             const result = await this.service.getByName(name);
-
             return res.status(result.statusCode).json(result.statusCode >= 300 ? result.message : result.user);
         } catch (error: any) {
             return res.status(500).json({
@@ -152,7 +127,7 @@ export default class UserController {
 
             const data = jwt.verify(req.cookies["session"], process.env.JWTSECRET);
 
-            const cookieId = (data as IToken).user.id
+            const cookieId = (data as IToken).user._id
 
             if (cookieId != userId) {
                 throw new Error("Você não pode remover um amigo de outra pessoa.")

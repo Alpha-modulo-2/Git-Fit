@@ -1,5 +1,6 @@
 import { Server, Socket } from 'socket.io';
 import MessageService from '../services/messageService';
+import retryOperation from '../helpers/retry';
 
 export default class SocketController {
     private io: Server;
@@ -16,16 +17,30 @@ export default class SocketController {
         console.log('A user connected');
 
         socket.on('joinRoom', async (chatId) => {
-            socket.join(chatId);
 
-            const chatHistory = await this.service.get(chatId);
+            try {
+                await retryOperation(async () => {
+                    socket.join(chatId);
+                    const chatHistory = await this.service.get(chatId);
+                    socket.emit('chatHistory', chatHistory);
+                });
+            } catch (error) {
+                console.error('Error occurred after max retries:', error);
+                socket.emit('error', { message: 'An error occurred. Please try again later.' });
+            }
 
-            socket.emit('chatHistory', chatHistory);
         });
 
         socket.on('sendMessage', async (data) => {
-            const savedMessage = await this.service.create(data);
-            this.io.to(data.chatId).emit('receiveMessage', savedMessage);
+            try {
+                await retryOperation(async () => {
+                    const savedMessage = await this.service.create(data);
+                    this.io.to(data.chatId).emit('receiveMessage', savedMessage);
+                });
+            } catch (error) {
+                console.error('Error occurred after max retries:', error);
+                socket.emit('error', { message: 'An error occurred. Please try again later.' });
+            }
         });
 
         socket.on('disconnect', () => {
