@@ -3,6 +3,7 @@ import bcrypt from "bcrypt";
 import UserService from "../services/UserServices";
 import jwt from "jsonwebtoken"
 import IToken from "../interfaces/IToken";
+import IUser from "../interfaces/IUser";
 
 export default class UserController {
     private service: UserService;
@@ -21,6 +22,7 @@ export default class UserController {
     async insert(req: Request, res: Response) {
         try {
             const result = await this.service.insert(req.body);
+
             return res.status(result.statusCode).json(result.statusCode >= 300 ? result.message : result.user);
         } catch (error: any) {
             return res.status(500).json({
@@ -119,15 +121,14 @@ export default class UserController {
 
     async removeFriend(req: Request, res: Response) {
         const { userId, friendId } = req.params;
-
+        
         try {
             if (!process.env.JWTSECRET) {
                 throw new Error('JWTSECRET nao definido');
             }
 
             const data = jwt.verify(req.cookies["session"], process.env.JWTSECRET);
-
-            const cookieId = (data as IToken).user._id
+            const cookieId = (data as IUser)._id
 
             if (cookieId != userId) {
                 throw new Error("Você não pode remover um amigo de outra pessoa.")

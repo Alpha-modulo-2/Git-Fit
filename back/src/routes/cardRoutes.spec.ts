@@ -44,6 +44,7 @@ async function createLogin(username: string) {
 
 async function createUser(username: string) {
     const user = {
+        _id: new mongoose.Types.ObjectId(),
         name: `${username} Surname`,
         userName: username,
         password: 'test12345',
@@ -63,7 +64,6 @@ async function createUser(username: string) {
     return response.body;
 }
 
-
 async function getCardsFromDatabase(userId: string): Promise<ICard[]> {
     try {
         const cards:ICard[] = await cardModel.find({ userId: userId });
@@ -77,6 +77,7 @@ describe('POST /cards/:userId', () => {
     it('should insert cards for the user successfully', async () => {
         const passwordHash = await bcrypt.hash('test12345', 10);
         const testname = {
+            _id: new mongoose.Types.ObjectId(),
             name: `Test Surname`,
             userName: 'testname',
             password: passwordHash,
@@ -186,6 +187,7 @@ describe('GET /allcards/:userId', () => {
     it('should return an error if no cards found for the user', async () => {
         const passwordHash = await bcrypt.hash('test12345', 10);
         const testname = {
+            _id: new mongoose.Types.ObjectId(),
             name: `Test Surname`,
             userName: 'testname',
             password: passwordHash,

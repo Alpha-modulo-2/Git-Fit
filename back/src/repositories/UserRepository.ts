@@ -8,6 +8,7 @@ export default class UserRepository {
         try {
 
             const result = await userModel.create(user)
+
             if (!result) {
                 const error = {
                     message: "Usuário não encontrado.",
@@ -15,16 +16,11 @@ export default class UserRepository {
                 }
                 throw error
             }
-            
-            const userData: IUser = {
-                ...result.toObject(),
-                _id: result._id.toString(),
-            }
 
             return {
                 error: false,
                 statusCode: 201,
-                user: userData,
+                user: result,
             }
         } catch (error: any) {
             return {
@@ -151,6 +147,7 @@ export default class UserRepository {
     }
 
     async getByName(name: string): Promise<IResult> {
+
         try {
             const users = await userModel.find({
                 $or: [
@@ -179,7 +176,7 @@ export default class UserRepository {
             return {
                 error: true,
                 message: error.message,
-                statusCode: error.statusCode || 500,
+                statusCode: error.code || 500,
             }
         }
     }
