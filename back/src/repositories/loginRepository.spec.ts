@@ -41,11 +41,8 @@ describe('LoginRepository', () => {
 
         const result = await loginRepository.login(mockCredentials);
 
-        const { _id, ...restOfMockUser } = mockUser
-
         expect(userModel.findOne).toHaveBeenCalledWith({ userName: mockCredentials.userName });
-        expect(result).toEqual({ error: false, statusCode: 200,
-            user: mockUser });
+        expect(result).toEqual({ error: false, statusCode: 200, user: mockUser });
     });
 
     it('should fail to login when user is not found', async () => {

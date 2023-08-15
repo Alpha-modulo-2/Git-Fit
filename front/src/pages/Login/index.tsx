@@ -1,19 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ILogin from '../../interfaces/ILogin';
+import {User} from '../../interfaces/IUser';
 import Form from './formLogin';
 import { useAuth } from '../../context/authContext';
 import { Header } from '../../components/Header';
+import "./loginStyle.css";
+
+
+export interface ApiResponseRequests {
+  message?: string;
+  user: User;
+  token: string;
+}
 
 export const Login = () => {
   const [userNameValue, setUserNameValue] = useState('');
   const [passwordValue, setPasswordValue] = useState('');
-  const { isLoggedIn, login } = useAuth();
+  const { isLoggedIn, login, setLoggedUser } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
     if (isLoggedIn) {
-      navigate('/profile');
+      navigate('/contacts');
     }
   }, [isLoggedIn, navigate]);
 
@@ -24,18 +33,28 @@ export const Login = () => {
     const password = passwordValue;
     const user: ILogin = { userName, password };
 
-    fetch('http://localhost:3000/login', {
+    fetch('https://localhost:443/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(user),
     })
     .then((response) => {
         if (response.ok) {
-          login(user);
-          navigate('/profile');
+          console.log(response, 'response')
+          // navigate('/profile');
+          
+          return response.json() as Promise<ApiResponseRequests>;
         } else {
           alert('Login failed');
         }
+      })
+      .then(data =>{
+        if(data){
+          login(user);
+          setCookie(data.token); 
+          setLoggedUser(data.user)
+        }
+        console.log(data, 'data from login')
       })
       .catch((error) => {
         console.error('Error:', error);
@@ -48,6 +67,13 @@ export const Login = () => {
   const handlePasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setPasswordValue(event.target.value);
   };
+
+  function setCookie(value: string) {
+    const expires = new Date();
+    expires.setTime(expires.getTime() + 3 * 24 * 60 * 60 * 1000);
+    document.cookie = `${'session'}=${value};expires=${expires.toUTCString()};path=/`;
+  }
+  
 
   return (
     <div className="Login">

@@ -2,9 +2,10 @@ import UserService from './UserServices';
 import UserRepository from '../repositories/UserRepository';
 import IUser from '../interfaces/IUser';
 import mongoose from 'mongoose';
+import bcrypt from 'bcrypt';
 
 jest.mock('../repositories/UserRepository');
-
+jest.mock('bcrypt');
 
 describe('UserService', () => {
     const mockFriendID = new mongoose.Types.ObjectId().toString()
@@ -35,6 +36,9 @@ describe('UserService', () => {
     beforeEach(() => {
         userRepository = new UserRepository() as jest.Mocked<UserRepository>;
         userService = new UserService(userRepository);
+        process.env.JWTSECRET = 'your-test-secret';
+        (bcrypt.hash as jest.Mock).mockReturnValue('hashedPassword');
+
     });
 
     it('should insert a user', async () => {
@@ -44,7 +48,7 @@ describe('UserService', () => {
         const result = await userService.insert(newUser);
 
         expect(result).toEqual({ error: false, statusCode: 201, user: newUser });
-        expect(userRepository.insert).toHaveBeenCalledWith(newUser);
+        expect(userRepository.insert).toHaveBeenCalledWith({ ...newUser, password: "hashedPassword" });
     });
 
     it('should get users', async () => {
@@ -69,11 +73,11 @@ describe('UserService', () => {
     it('should update a user', async () => {
         const id = '123';
         const updateData = { userName: 'Updated' };
-        userRepository.update.mockResolvedValue({ error: false, statusCode: 200, user: { ...mockUser, ...updateData } });
+        userRepository.update.mockResolvedValue({ error: false, statusCode: 200, user: { ...mockUser, userName: 'Updated' } });
 
-        const result = await userService.update(id, updateData);
+        const result = await userService.update(id, { ...updateData });
 
-        expect(result).toEqual({ error: false, statusCode: 200, user: { ...mockUser, ...updateData } });
+        expect(result).toEqual({ error: false, statusCode: 200, user: { ...mockUser, userName: 'Updated' } });
         expect(userRepository.update).toHaveBeenCalledWith(id, updateData);
     });
 
@@ -93,7 +97,7 @@ describe('UserService', () => {
         const result = await userService.insert(mockUser);
 
         expect(result).toEqual({ error: true, message: "Server error", statusCode: 500 });
-        expect(userRepository.insert).toHaveBeenCalledWith(mockUser);
+        expect(userRepository.insert).toHaveBeenCalledWith({ ...mockUser, password: "hashedPassword" });
     });
 
     it('should not insert a user without required fields', async () => {
@@ -103,7 +107,7 @@ describe('UserService', () => {
         const result = await userService.insert(newUser);
 
         expect(result).toEqual({ error: true, message: 'userName is required', statusCode: 500 });
-        expect(userRepository.insert).toHaveBeenCalledWith(newUser);
+        expect(userRepository.insert).toHaveBeenCalledWith({ ...newUser, password: "hashedPassword" });
     });
 
     it('should handle error when getting all users', async () => {

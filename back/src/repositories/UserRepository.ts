@@ -18,7 +18,7 @@ export default class UserRepository {
             
             const userData: IUser = {
                 ...result.toObject(),
-                id: result._id.toString(),
+                _id: result._id.toString(),
             }
 
             return {
@@ -152,14 +152,14 @@ export default class UserRepository {
 
     async getByName(name: string): Promise<IResult> {
         try {
-            const user = await userModel.find({
+            const users = await userModel.find({
                 $or: [
                     { userName: { $regex: '.*' + name + '.*', $options: 'i' } },
                     { name: { $regex: '.*' + name + '.*', $options: 'i' } }
                 ]
             }).select("-password").populate("friends", { userName: 1, name: 1, photo: 1, occupation: 1, id: 1 });
 
-            if (!user || user.length === 0) {
+            if (!users) {
                 const error = {
                     error: true,
                     statusCode: 404,
@@ -171,7 +171,7 @@ export default class UserRepository {
             return {
                 error: false,
                 statusCode: 200,
-                user: user,
+                user: users
             }
 
 

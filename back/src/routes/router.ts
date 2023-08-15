@@ -7,6 +7,8 @@ import authenticate from "../middleware/authenticate";
 import { validateInsert, validateLogin, validateUpdate, validateId, validateRemoveFriend, validateQuery } from "../middleware/validators";
 import FriendRequestsController from "../controllers/FriendRequestsController";
 import cacheMiddleware from '../middleware/cacheMiddleware';
+import ConversationController from "../controllers/conversationController";
+import MessageController from "../controllers/messageController";
 
 const router: Router = Router();
 
@@ -47,6 +49,16 @@ const loginController = new LoginController();
 
 router.post("/login", validateLogin, loginController.login);
 // router.delete("/logout", loginController.logout);
+
+const conversationController = new ConversationController();
+const messageController = new MessageController();
+
+//Chat Routes
+router.post("/conversations", conversationController.create)
+router.get("/conversations/:userId", conversationController.get)
+
+router.post("/messages", messageController.create)
+router.get("/messages/:chatId", messageController.get)
 
 router.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, 'public/index.html'));

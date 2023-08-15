@@ -1,4 +1,4 @@
-import "./styles.css";
+import "./registerStyle.css";
 import { Header } from "../../components/Header";
 import { useState } from "react";
 import RegisterForm from "./formRegister";
@@ -38,7 +38,7 @@ export const Register = () => {
       occupation,
       age
     };
-    void fetch("http://localhost:3000/users", { 
+    void fetch("https://localhost:443/users", { 
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(user),
