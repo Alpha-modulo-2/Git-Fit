@@ -39,9 +39,10 @@ const weekDays = [
 
 export const DailyCard = ({ week_number, onClick }: PropTypes) => {
 
-  const { isLoggedIn, login, user } = useAuth();
-  console.log(isLoggedIn, login, user, 'login');
-  let userId = String(user?.id);
+  const { user } = useAuth();
+  // const { isLoggedIn, login, user } = useAuth();
+  // console.log(isLoggedIn, login, user, 'login');
+  const userId = String(user?._id);
   
     const [cardData, setCardData] = useState<CardData[]>([]);
     const [dataResponse, setDataResponse] = useState(false);
@@ -49,10 +50,9 @@ export const DailyCard = ({ week_number, onClick }: PropTypes) => {
     useEffect(() => {
         const fetchCardsData = async () => {
           try {
-            const response = await fetch(`http://localhost:3000/allcards/${userId}`);
+            const response = await fetch(`https://localhost:443/allcards/${userId}`);
             const data = await response.json();
             setCardData(data.card);
-            console.log(data);
             if(data.error){
               setDataResponse(false);
             }else{
@@ -69,8 +69,6 @@ export const DailyCard = ({ week_number, onClick }: PropTypes) => {
 let daily_theme = "Nenhum";
 let daily_food = "Nenhum";
 if(dataResponse){
-  console.log(dataResponse);
-  console.log(cardData)
   const currentCard = cardData.find((card) => card.name === weekDays[week_number].name);
   if (!currentCard) {
     return <div className="structure-daily-card">Card não encontrado para a semana selecionada.</div>;

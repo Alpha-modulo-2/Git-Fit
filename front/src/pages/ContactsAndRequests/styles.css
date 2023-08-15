@@ -12,24 +12,6 @@
   padding: 2rem 0rem 0rem 0rem;
 }
 
-.search-box {
-  height: 1.5rem;
-  width: 8rem;
-  background-color: #dcdddf;
-  border-radius: 2rem;
-  display: flex;
-  align-items: center;
-  padding-left: 1rem;
-}
-
-.search-text {
-  border: none;
-  background: none;
-  outline: none;
-  font-size: 0.8rem;
-  width: 100%;
-}
-
 .content-contacts {
   width: 48rem;
   height: 32rem;
@@ -108,7 +90,6 @@
   width: 250px;
   height: 65px;
   display: flex;
-  /* justify-content: space-between; */
   gap: 1rem;
   align-items: center;
   background-color: #ffffff;
@@ -151,7 +132,6 @@
   display: flex;
   gap: 0.7rem;
   width: 4.5rem;
-  min-width: 4.5rem;
 }
 
 .icon-add-contact:hover,

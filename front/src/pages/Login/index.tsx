@@ -11,6 +11,7 @@ import "./loginStyle.css";
 export interface ApiResponseRequests {
   message?: string;
   user: User;
+  token: string;
 }
 
 export const Login = () => {
@@ -32,7 +33,7 @@ export const Login = () => {
     const password = passwordValue;
     const user: ILogin = { userName, password };
 
-    fetch('http://localhost:3000/login', {
+    fetch('https://localhost:443/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(user),
@@ -50,9 +51,10 @@ export const Login = () => {
       .then(data =>{
         if(data){
           login(user);
+          setCookie(data.token); 
           setLoggedUser(data.user)
         }
-        console.log(data)
+        console.log(data, 'data from login')
       })
       .catch((error) => {
         console.error('Error:', error);
@@ -66,13 +68,16 @@ export const Login = () => {
     setPasswordValue(event.target.value);
   };
 
+  function setCookie(value: string) {
+    const expires = new Date();
+    expires.setTime(expires.getTime() + 3 * 24 * 60 * 60 * 1000);
+    document.cookie = `${'session'}=${value};expires=${expires.toUTCString()};path=/`;
+  }
+  
+
   return (
     <div className="Login">
       <Header isLoggedIn={isLoggedIn} />
-      <div className="logo-name-login">
-        <p className="logo-name-git-login">Git</p>
-        <p className="logo-name-fit-login">Fit</p>
-      </div>
       <div className="All-content-login">
         <div className="container-login-content">
           <label className="loginTitle">Login</label>
@@ -83,13 +88,10 @@ export const Login = () => {
             handlePasswordChange={handlePasswordChange}
           />
           <div className="divButton-edit">
-            <br />
             <label>
               Não possuí conta ainda?{" "}
               <span className="registerOption">Cadastre-se</span>
             </label>
-            <br />
-            <label className="forgetPassEdit">Esqueci minha senha</label>
           </div>
         </div>
       </div>
