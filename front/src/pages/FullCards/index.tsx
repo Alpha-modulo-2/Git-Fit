@@ -41,7 +41,7 @@ export const FullCard = () => {
 
     const { isLoggedIn, login, user } = useAuth();
     console.log(isLoggedIn, login, user, 'login');
-    let userId = String(user?.id);
+    const userId = String(user?._id);
 
     const [trainingCard, setTrainingCard] = useState<CardData['trainingCard']>({
         checked: false,
