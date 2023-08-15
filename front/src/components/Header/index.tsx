@@ -1,86 +1,26 @@
 // import './styles.css';
-import { Link } from "react-router-dom";
-import "./styles.css";
-
-import { useEffect, useState } from "react";
 import { useNavigate } from 'react-router-dom';
-
-import {  useUsers } from "../../context/searchedUsersContext";
-import { UserData } from "../../interfaces/IUser";
+import { Link } from "react-router-dom";
+import { SignOut } from "@phosphor-icons/react";
+import { useAuth } from '../../context/authContext';
+import "./styles.css";
 
 interface PropTypes {
   isLoggedIn: boolean;
 }
 
 export const Header = ({ isLoggedIn }: PropTypes) => {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [error, setError] = useState('');
-  
+  const { logout } = useAuth();
+  const navigate = useNavigate();
   const logo = new URL("../../assets/images/logo.png", import.meta.url).href;
 
-  const navigate = useNavigate();
-  
-  const {  setUsers } = useUsers();
-    
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = event.target.value;
-    setSearchQuery(newValue);
-  };
-  /***************    GET USERS FROM SEARCH    ********************/
-  async function searchUsers(query: string){
-    try {        
-        const response = await fetch(`http://localhost:3000/users/search?name=${query}`);
-        if (response.ok) {
-            const data = await response.json() as UserData[];
-            console.log(data, 'searchusers');
-            
-              setUsers(data);
-              console.log('Redirecting to /searched_results');
-              navigate('/searched_results');
-            
-            return
-        } else {
-           
-              // setUsers([])
-            
-            setError('Erro ao fazer pesquisa.');
-            console.error( error);
-
-        }
-    }catch (error) {
-        setError('Erro ao fazer pesquisa');
-        console.error(error);
+  function logoutPage(){
+    if(isLoggedIn){
+      document.cookie = 'session=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+      logout();
+      navigate('/login');
     }
   }
-        
-  useEffect(() => {
-      let searchTimer: NodeJS.Timeout | null = null;
-
-      // Clear the previous timeout to start a new one
-      if (searchTimer) {
-          clearTimeout(searchTimer);
-      }
-
-      // Set a new timeout for the search after 5 seconds
-      searchTimer = setTimeout(() => {
-          if (searchQuery) {
-              searchUsers(searchQuery).catch((error) => {
-                  console.error('Erro ao obter as solicitações:', error);
-              });
-          }
-      }, 3000); // 5000 milliseconds (5 seconds)
-
-      return () => {
-          // Clean up by clearing the timer if the component unmounts or the searchQuery changes
-          if (searchTimer) {
-              clearTimeout(searchTimer);
-          }
-      };
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchQuery]);
-
-  
 
   return (
     <header className="header">
@@ -118,9 +58,16 @@ export const Header = ({ isLoggedIn }: PropTypes) => {
               <Link to="/profile" className="menu-items">
                 Perfil
               </Link>
-              <div className="search-box">
-                    <input type="text" className="search-text" placeholder="Pesquisar" value={searchQuery} onChange={handleInputChange}/>
-              </div>
+              <Link to="/searched_results" className="menu-items">
+                Pesquisar
+              </Link>
+              <SignOut
+                size={25}
+                weight='bold'
+                color="white"
+                className="icon-logout"
+                onClick={logoutPage}
+              />
             </nav>
             <p className="header-line" />
           </div>

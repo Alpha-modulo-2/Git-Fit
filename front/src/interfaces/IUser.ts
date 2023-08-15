@@ -1,5 +1,5 @@
 export interface User {
-    id: string;
+    _id: string;
     userName: string;
     password: string;
     email: string;
@@ -18,17 +18,18 @@ export interface User {
  export interface Friend {
     _id: string;
     userName: string;
-    password: string;
-    email: string;
-    friends: Friend[]; // Array de IDs dos amigos (pode ser string[] ou Friend[])
-    gender: string;
-    weight: string;
-    height: string;
+    password?: string;
+    email?: string;
+    friends?: Friend[]; // Array de IDs dos amigos (pode ser string[] ou Friend[])
+    gender?: string;
+    weight?: string;
+    height?: string;
     occupation: string;
-    age: number;
-    created_at: string;
-    updated_at: string;
-    __v: number;
+    age?: number;
+    created_at?: string;
+    updated_at?: string;
+    __v?: number;
+    photo?:string;
   }
 
   export interface UserData {

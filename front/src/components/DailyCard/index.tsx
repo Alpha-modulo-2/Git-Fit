@@ -41,7 +41,7 @@ export const DailyCard = ({ week_number, onClick }: PropTypes) => {
 
   const { isLoggedIn, login, user } = useAuth();
   console.log(isLoggedIn, login, user, 'login');
-  let userId = String(user?.id);
+  const userId = String(user?._id);
   
     const [cardData, setCardData] = useState<CardData[]>([]);
     const [dataResponse, setDataResponse] = useState(false);
@@ -49,7 +49,7 @@ export const DailyCard = ({ week_number, onClick }: PropTypes) => {
     useEffect(() => {
         const fetchCardsData = async () => {
           try {
-            const response = await fetch(`http://localhost:3000/allcards/${userId}`);
+            const response = await fetch(`https://localhost:443/allcards/${userId}`);
             const data = await response.json();
             setCardData(data.card);
             console.log(data);
