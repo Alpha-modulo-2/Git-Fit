@@ -1,26 +1,34 @@
+*{
+  margin: 0;
+  padding: 0;
+
+}
+
 .landing-page {
   height: 100%;
 }
 .container-all-content {
   display: flex;
-  justify-content: flex-end;
+  justify-content: center;
+  align-items: center;
   color: #fff;
   font-family: "Poppins", sans-serif;
-  height: 85%;
 }
-/* problema com essa altura */
 
 .container-content {
-  width: 26rem;
+  height: 50rem;
+  width: 60rem;
   display: flex;
   align-items: center;
   padding-right: 8rem;
 }
 
 .logo-name {
+  margin-bottom: 10rem;
+  margin-left: 12rem;
   display: flex;
   flex-direction: column;
-  font-size: 3rem;
+  font-size: 5rem;
 }
 
 .logo-name-git {
@@ -32,9 +40,13 @@
 }
 
 .text-info {
-  font-size: 1rem;
+  text-align: center;
+  font-size: 1.2rem;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
+  justify-content: center;
   gap: 2rem;
 }
+
+
+

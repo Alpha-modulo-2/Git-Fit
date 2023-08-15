@@ -16,7 +16,12 @@ export const LandingPage = () => {
                         <p className="logo-name-fit">Fit</p>
                     </div>
                     <div className="text-info">
-                        <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text </p>
+                        <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's s
+                            tandard dummy text Lorem Ipsum is simply dummy text of the printing and typesetting industry. 
+                            Lorem Ipsum has been the industry's standard dummy textLorem Ipsum is simply dummy text of the 
+                            printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy textLorem Ipsu
+                            m is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's s
+                            tandard dummy text</p>
                         <Button category="primary" label="Ver mais" onClick={() => navigate('/see-more')}/>
                     </div>
                 </div>

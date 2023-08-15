@@ -1,8 +1,8 @@
-import "./registerStyle.css";
+import React, { useState } from "react";
 import { Header } from "../../components/Header";
-import { useState } from "react";
 import RegisterForm from "./formRegister";
 import IUpdateUserData from "../../interfaces/IUpdateUserData";
+import "./registerStyle.css";
 
 export const Register = () => {
   const [userNameValue, setUserNameValue] = useState("");
@@ -122,7 +122,7 @@ export const Register = () => {
     setPhotoValue(event.target.value);
   };
 
-  const handleGenderChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleGenderChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setGenderValue(event.target.value);
   };
 
@@ -159,6 +159,11 @@ export const Register = () => {
             handleOccupationChange={handleOccupationChange}
             handleAgeChange={handleAgeChange}
             handleConfirmPasswordValue={handleConfirmPasswordValue}
+
+            userNameValue={userNameValue}
+            genderValue={genderValue}
+            weightValue={weightValue}
+            heightValue={heightValue}
           />
         </div>
       </div>

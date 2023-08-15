@@ -7,7 +7,7 @@ interface FormProps {
   handleConfirmPasswordChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleEmailChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handlePhotoChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  handleGenderChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleGenderChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
   handleWeightChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleHeightChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleOccupationChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -27,16 +27,32 @@ interface FormProps {
 
 export default function RegisterForm(props: FormProps) {
   const [isProfessional, setIsProfessional] = useState(false);
+  const [weightValue, setWeightValue] = useState(""); 
+  const [heightValue, setHeightValue] = useState(""); 
 
   const handleOccupationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setIsProfessional(e.target.checked);
+  };
+
+  const handleWeightChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value;
+    const formattedValue = value.replace(/[^0-9]/g, "") + " Kg";
+    setWeightValue(formattedValue);
+  };
+
+  const handleHeightChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value;
+    const formattedValue = value.replace(/[^0-9]/g, "") + " cm";
+    setHeightValue(formattedValue);
   };
 
   return (
     <form onSubmit={props.onSubmit}>
       <div className="menu-register">
         <div className="container-first-content-register">
-          <form encType="multipart/form-data" method="POST" action="/upload">
+          <form encType="multipart/form-data" 
+            method="POST" 
+            action="/upload">
             <label
               htmlFor="photo-upload"
               className="custom-file-label-register"
@@ -72,12 +88,15 @@ export default function RegisterForm(props: FormProps) {
             onChange={props.handleAgeChange}
           />
 
-          <input
-            type="text"
+          <select
             className="input-register"
-            placeholder="Gênero"
             onChange={props.handleGenderChange}
-          />
+            value={props.inputsGenderValue}
+          >
+            <option value="">Selecione o Gênero</option>
+            <option value="M">Masculino</option>
+            <option value="F">Feminino</option>
+          </select>
         </div>
 
         <div className="container-second-content-register">
@@ -86,13 +105,15 @@ export default function RegisterForm(props: FormProps) {
               type="text"
               className="input-weight-register"
               placeholder="Peso"
-              onChange={props.handleWeightChange}
+              value={weightValue}
+              onChange={handleWeightChange}
             />
             <input
               type="text"
               className="input-hight-register"
               placeholder="Altura"
-              onChange={props.handleHeightChange}
+              value={heightValue}
+              onChange={handleHeightChange}
             />
           </div>
 
@@ -116,7 +137,8 @@ export default function RegisterForm(props: FormProps) {
             </label>
 
             <label className="switch">
-              <input type="checkbox" onChange={handleOccupationChange} />
+              <input type="checkbox" 
+                onChange={handleOccupationChange} />
               <span className="sliderR-round"></span>
             </label>
           </div>
@@ -132,7 +154,8 @@ export default function RegisterForm(props: FormProps) {
         </div>
       </div>
       <div className="divButton-register">
-        <button className="buttonLogin" type="submit">
+        <button className="buttonLogin" 
+          type="submit">
           Salvar
         </button>
       </div>

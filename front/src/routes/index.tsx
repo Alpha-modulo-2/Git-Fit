@@ -9,6 +9,7 @@ import { Contacts } from '../pages/ContactsAndRequests';
 import { SearchedResults } from "../pages/SearchResults";
 import { SearchedUsersProvider } from "../context/searchedUsersContext"; 
 import { FullCard } from "../pages/FullCards";
+import { Contact_profile } from "../pages/ContactProfile";
 // import { Catalog } from '../pages/Catalog';
 // import { Error404 } from '../pages/Error404';
 // import { Home } from '../pages/Home';
@@ -20,6 +21,7 @@ export const Router = () => {
       <SearchedUsersProvider>
         <Routes>
           <Route path="/landing_page" element={<LandingPage />} />
+          <Route path="/contact_profile" element={<Contact_profile />} />
           <Route path="/register" element={<Register />} />
           <Route path="/edit/:id" element={<PerfilEdit/>} />
           <Route path="/login" element={<Login/>} />

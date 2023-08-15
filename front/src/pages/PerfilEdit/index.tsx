@@ -28,7 +28,7 @@ export const PerfilEdit = () => {
       try {
         const response = await fetch(`http://localhost:3000/users/${userId}`);
         if (response.ok) {
-          const userData = await response.json() as IUpdateUserData;
+          const userData = (await response.json()) as IUpdateUserData;
 
           setUserNameValue(userData.userName);
           setEmailValue(userData.email);
@@ -38,7 +38,7 @@ export const PerfilEdit = () => {
           setHeightValue(userData.height);
           setOccupationValue(userData.occupation);
           setAgeValue(parseInt(userData.age, 10).toString());
-
+          
         } else {
           console.error("Erro ao buscar dados do usuário.");
         }
@@ -71,13 +71,13 @@ export const PerfilEdit = () => {
       weight,
       height,
       occupation,
-      age
+      age,
     };
 
     if (password !== confirmPasswordValue) {
       console.log("As senhas não coincidem.");
       alert("As senhas não coincidem.");
-      return; 
+      return;
     }
 
     void fetch(`http://localhost:3000/users/${userId}`, {
@@ -111,9 +111,6 @@ export const PerfilEdit = () => {
   const handlePhotoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setPhotoValue(event.target.value);
   };
-  const handleGenderChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setGenderValue(event.target.value);
-  };
   const handleWeightChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setWeightValue(event.target.value);
   };
@@ -123,13 +120,18 @@ export const PerfilEdit = () => {
   const handleOccupationChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setOccupationValue(event.target.value);
   };
+  const handleGenderChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setGenderValue(event.target.value);
+  };
   const handleAgeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newAgeValue = event.target.value;
     setAgeValue(newAgeValue);
   };
 
   const handleDeleteAccount = () => {
-    const confirmed = window.confirm("Tem certeza de que deseja excluir sua conta?");
+    const confirmed = window.confirm(
+      "Tem certeza de que deseja excluir sua conta?"
+    );
     if (confirmed) {
       fetch(`http://localhost:3000/users/${userId}`, {
         method: "DELETE",
@@ -150,7 +152,7 @@ export const PerfilEdit = () => {
         });
     }
   };
-  
+
   if (isLoggedIn) {
     navigate("/profile");
   }
@@ -169,15 +171,16 @@ export const PerfilEdit = () => {
             inputsHeightValue={heightValue}
             inputsOccupationValue={occupationValue}
             inputsAgeValue={ageValue}
+
+            handleWeightChange={handleWeightChange}
+            handleHeightChange={handleHeightChange}
+            handleGenderChange={handleGenderChange}
             onSubmit={handleSubmit}
             handleUserNameChange={handleUserNameChange}
             handlePasswordChange={handlePasswordChange}
             handleConfirmPasswordChange={handleConfirmPasswordChange}
             handleEmailChange={handleEmailChange}
             handlePhotoChange={handlePhotoChange}
-            handleGenderChange={handleGenderChange}
-            handleWeightChange={handleWeightChange}
-            handleHeightChange={handleHeightChange}
             handleOccupationChange={handleOccupationChange}
             handleAgeChange={handleAgeChange}
             handleDeleteAccount={handleDeleteAccount}

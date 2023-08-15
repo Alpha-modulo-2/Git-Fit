@@ -1,12 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import ILogin from '../../interfaces/ILogin';
-import {User} from '../../interfaces/IUser';
-import Form from './formLogin';
-import { useAuth } from '../../context/authContext';
-import { Header } from '../../components/Header';
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import ILogin from "../../interfaces/ILogin";
+import { User } from "../../interfaces/IUser";
+import Form from "./formLogin";
+import { useAuth } from "../../context/authContext";
+import { Header } from "../../components/Header";
 import "./loginStyle.css";
-
 
 export interface ApiResponseRequests {
   message?: string;
@@ -14,14 +13,14 @@ export interface ApiResponseRequests {
 }
 
 export const Login = () => {
-  const [userNameValue, setUserNameValue] = useState('');
-  const [passwordValue, setPasswordValue] = useState('');
+  const [userNameValue, setUserNameValue] = useState("");
+  const [passwordValue, setPasswordValue] = useState("");
   const { isLoggedIn, login, setLoggedUser } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
     if (isLoggedIn) {
-      navigate('/contacts');
+      navigate("/contacts");
     }
   }, [isLoggedIn, navigate]);
 
@@ -32,30 +31,30 @@ export const Login = () => {
     const password = passwordValue;
     const user: ILogin = { userName, password };
 
-    fetch('http://localhost:3000/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+    fetch("https://localhost:443/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(user),
     })
-    .then((response) => {
+      .then((response) => {
         if (response.ok) {
-          console.log(response, 'response')
-          // navigate('/profile');
-          
+          console.log(response, "response");
+          navigate("/profile");
+
           return response.json() as Promise<ApiResponseRequests>;
         } else {
-          alert('Login failed');
+          alert("Login failed");
         }
       })
-      .then(data =>{
-        if(data){
+      .then((data) => {
+        if (data) {
           login(user);
-          setLoggedUser(data.user)
+          setLoggedUser(data.user);
         }
-        console.log(data)
+        console.log(data);
       })
       .catch((error) => {
-        console.error('Error:', error);
+        console.error("Error:", error);
       });
   };
 

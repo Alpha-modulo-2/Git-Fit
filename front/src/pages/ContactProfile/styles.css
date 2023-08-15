@@ -1,0 +1,53 @@
+body {
+  caret-color: transparent;
+}
+
+.structure-profile{
+  display: flex;
+}
+
+.structure-carrossel{
+  position: absolute;
+  right: 0.1rem;
+  width: 30vw;
+  height: 88vh;
+  overflow: scroll;
+}
+
+::-webkit-scrollbar {
+  width: 0px;
+}
+
+.container-profile{
+  font-family: "Poppins", sans-serif;
+  width: 75vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.container-progress-bar{
+  width: 80%;
+  height: 50vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;  
+}
+
+.div-progress-bar{
+  display: flex;
+  align-items: center;
+}
+
+.buttonAdd{
+  background-color: rgba(115, 83, 186, 1);
+  width: 10rem;
+  height: 2rem;
+  border-radius: 25px;
+  color: rgb(255, 255, 255);
+}
+
+.buttonAdd:hover{
+  background-color: rgb(135, 105, 199);
+  cursor: pointer;
+}
