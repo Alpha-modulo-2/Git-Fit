@@ -78,10 +78,6 @@ export const Login = () => {
   return (
     <div className="Login">
       <Header isLoggedIn={isLoggedIn} />
-      <div className="logo-name-login">
-        <p className="logo-name-git-login">Git</p>
-        <p className="logo-name-fit-login">Fit</p>
-      </div>
       <div className="All-content-login">
         <div className="container-login-content">
           <label className="loginTitle">Login</label>
@@ -92,13 +88,10 @@ export const Login = () => {
             handlePasswordChange={handlePasswordChange}
           />
           <div className="divButton-edit">
-            <br />
             <label>
               Não possuí conta ainda?{" "}
               <span className="registerOption">Cadastre-se</span>
             </label>
-            <br />
-            <label className="forgetPassEdit">Esqueci minha senha</label>
           </div>
         </div>
       </div>

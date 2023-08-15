@@ -81,10 +81,10 @@ export const Register = () => {
   };
 
   return (
-    <div className="Edit">
+    <div className="Register">
       <Header isLoggedIn={true} />
-      <div className="All-content-edit">
-        <div className="container-edit-content">
+      <div className="All-content-register">
+        <div className="container-register-content">
           <RegisterForm
             onSubmit={handleSubmit}
             handleUserNameChange={handleUserNameChange}
