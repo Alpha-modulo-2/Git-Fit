@@ -8,7 +8,6 @@ export default class UserRepository {
         try {
 
             const result = await userModel.create(user)
-
             if (!result) {
                 const error = {
                     message: "Usuário não encontrado.",
@@ -92,7 +91,7 @@ export default class UserRepository {
 
         try {
 
-            const user = await userModel.findByIdAndUpdate(id, { $set: updateData, updated_at: new Date }).select("-password")
+            const user = await userModel.findByIdAndUpdate(id, { $set: updateData, updated_at: new Date }, { new: true }).select("-password")
 
             if (!user) {
                 const error = {
