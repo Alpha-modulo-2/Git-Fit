@@ -12,5 +12,5 @@ export default interface IUser {
     height: string,
     occupation: string,
     age: number,
-    id?: string,
+    _id?: string,
 }

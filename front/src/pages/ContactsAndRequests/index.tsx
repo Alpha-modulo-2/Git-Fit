@@ -11,6 +11,7 @@ import { UserData } from '../../interfaces/IUser';
 import { Friend } from '../../interfaces/IUser';
 import { FriendRequest } from '../../interfaces/IContacts';
 import { ApiResponseRequests } from '../../interfaces/IContacts';
+import { generalRequest } from "../../generalFunction";
 
 
 export const Contacts = () => {
@@ -19,10 +20,9 @@ export const Contacts = () => {
     const [showRequests, setShowRequests] = useState(false); // Estado para controlar exibição das solicitações
     const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
     const [messageModal, setMessageModal] = useState<string>('');
-    const [error, setError] = useState('');
-    
 
-    const { isLoggedIn, login, user } = useAuth();
+    
+    const { user } = useAuth();
     /***************    MODAL    ********************/
     function openModal() {
         setModalIsOpen(true);
@@ -34,49 +34,30 @@ export const Contacts = () => {
 
     /***************    GET USER'S FRIENDS    ********************/
     async function getContacts() {
-        console.log(isLoggedIn, login, user, 'login')
         if(user){
-            try {
-                const id = String(user.id)
-                const response = await fetch(`http://localhost:3000/users/${id}`);
-                if (response.ok) {
-                    const data = await response.json() as UserData;
-                    setContacts(data.friends); 
-    
-                    console.log(data, 'contatct')
-                    return;
-                } else {
-                    setError('Erro ao obter os contatos.');
-                    console.error('Erro ao obter os contatos', error);
-    
-                }
-            }catch (error) {
-                console.error('Erro na requisição:', error);
-                // setError('Erro na requisição');
+            const id = String(user._id)
+            const response = await generalRequest(`/users/${id}`) as UserData;
+            if(response){
+                setContacts(response.friends)
             }
-                
+            if(typeof response !== "object"){
+                setMessageModal('Você não tem contatos')
+                openModal();
+            }
         }
     }
 
 
     /***************    GET THE FRIEND REQUESTS    ********************/
     async function getRequests() {
+        console.log(user, 'uasssserre')
         if(user){
-
-            try {                    
-                const response = await fetch(`http://localhost:3000/friendRequests/${user.id}`);
-                if (response.ok) {
-                    const data = await response.json() as ApiResponseRequests;
-    
-                    setRequests(data.friendRequests); 
-                    console.log(data.friendRequests, 'requests')  
-                } else {
-                    console.error('Erro ao obter as solicitações');
-                    setError('Erro ao obter as solicitações.');
-                }
-            }catch (error) {
-                console.error('Erro na requisição:', error);
-                // setError('Erro na requisição');
+            const response = await generalRequest(`/friendRequests/${user._id}`) as ApiResponseRequests;
+            if(response){
+                setRequests(response.friendRequests)
+            }
+            if(response.error){
+                setRequests([])
             }
         }
     }
@@ -94,72 +75,34 @@ export const Contacts = () => {
     
     /***************    ACCEPT A FRIEND REQUEST     ********************/
     function updateFriends(requestId: string): void {
-        try {
-            console.log(requestId);
-            fetch(`http://localhost:3000/acceptFriend`, {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ requestId }),
-            }).then(response => {
-                if (response.ok) {
-                    return response.json() as Promise<ApiResponseRequests>;
-                } else {
-                    setError('Erro ao obter as solicitações.');
-                    throw new Error('Failed to update contacts.');
-                }
-            }).then(data => {
-                console.log(data.message);
-                if(data.message){
-                    setMessageModal(data.message)
-                    openModal()
-                    return getContacts();
-                }
-            }).then(() => {
-                return getRequests(); 
-            })
-            .catch(error => {
-                console.error('Erro na requisição:', error);
-            });
-        } catch (error) {
-            console.error('Erro geral:', error)
-        }
+        const response = generalRequest('/acceptFriend', {requestId}, 'PATCH') as Promise<ApiResponseRequests> ;
+        response
+        .then(data => {
+            if(data.message){
+                setMessageModal(data.message)
+                openModal();   
+                return getContacts()
+        }}).then(() =>{return getRequests()}
+        ).catch(error => {
+            console.error('Erro na requisição:', error);
+        });
+      
     }
 
 
     /***************    REFUSE A FRIEND REQUEST     ********************/
     function removeFriends(requestId: string): void {
-        try {
-            console.log(requestId);
-            fetch(`http://localhost:3000/rejectFriend/${requestId}`, {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            }).then(response => {
-                if (response.ok) {
-                    return response.json() as Promise<ApiResponseRequests>;
-                } else {
-                    setError('Erro ao obter as solicitações.');
-                    throw new Error('Failed to update contacts.');
-                }
-            }).then(data => {
-                console.log(data, 'data');
-                if(data.message){
-                    setMessageModal(data.message)
-                    openModal()
-                    return getContacts();
-                }
-            }).then(() => {
-                return getRequests();
-            })
-            .catch(error => {
-                console.error('Erro na requisição:', error);
-            });
-        } catch (error) {
-            console.error('Erro geral:', error);
-        }
+        const response = generalRequest(`/rejectFriend/${requestId}`, {requestId}, 'DELETE') as Promise<ApiResponseRequests> ;
+        response
+        .then(data => {
+            if(data.message){
+                setMessageModal(data.message)
+                openModal();   
+                return getContacts()
+        }}).then(() => {return getRequests()}
+        ).catch(error => {
+            console.error('Erro na requisição:', error);
+        });
     }
      
     return (

@@ -73,7 +73,6 @@ export const PerfilEdit = () => {
       occupation,
       age,
     };
-
     if (password !== confirmPasswordValue) {
       console.log("As senhas não coincidem.");
       alert("As senhas não coincidem.");

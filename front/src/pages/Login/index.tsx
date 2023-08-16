@@ -10,6 +10,7 @@ import "./loginStyle.css";
 export interface ApiResponseRequests {
   message?: string;
   user: User;
+  token: string;
 }
 
 export const Login = () => {
@@ -31,9 +32,9 @@ export const Login = () => {
     const password = passwordValue;
     const user: ILogin = { userName, password };
 
-    fetch("https://localhost:443/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
+    fetch('https://localhost:443/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(user),
     })
       .then((response) => {
@@ -49,9 +50,10 @@ export const Login = () => {
       .then((data) => {
         if (data) {
           login(user);
-          setLoggedUser(data.user);
+          setCookie(data.token); 
+          setLoggedUser(data.user)
         }
-        console.log(data);
+        console.log(data, 'data from login')
       })
       .catch((error) => {
         console.error("Error:", error);
@@ -64,6 +66,13 @@ export const Login = () => {
   const handlePasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setPasswordValue(event.target.value);
   };
+
+  function setCookie(value: string) {
+    const expires = new Date();
+    expires.setTime(expires.getTime() + 3 * 24 * 60 * 60 * 1000);
+    document.cookie = `${'session'}=${value};expires=${expires.toUTCString()};path=/`;
+  }
+  
 
   return (
     <div className="Login">

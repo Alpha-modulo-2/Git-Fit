@@ -6,20 +6,27 @@ import { DailyCard } from "../../components/DailyCard";
 import { MiniCard } from "../../components/MiniCard";
 import { useNavigate } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
-import currentuser from '../../currentuser.json'
+import { useAuth } from '../../context/authContext';
+import { Chat } from "../../components/Chat";
+//import currentuser from '../../currentuser.json'
 
 interface CardData {
-    _id: string;
+    card: [{}]
     trainingCard: {
         checked: boolean;
         title: string;
-        tasks: { description: string; _id: string }[];
+        tasks: { _id: string; description: string }[];
     };
     mealsCard: {
         checked: boolean;
-        meals: { description: string; ingredients: string[]; _id: string }[];
+        meals: { _id: string; description: string }[];
     };
+    _id: string;
+    userId: string;
     name: string;
+    created_at: string;
+    updated_at: string;
+    __v: number;
 }
 
 const weekDays = [
@@ -37,7 +44,12 @@ export const FullCard = () => {
     const { id } = useParams();
     const selectedId = id ?? "1";
     const selectedDay = weekDays.find(day => day.id === parseInt(selectedId));
-    let userId = currentuser.id;
+
+    const { user } = useAuth();
+    // const { isLoggedIn, login, user } = useAuth();
+    // console.log(isLoggedIn, login, user, 'login');
+    const userId = String(user?._id);
+
     const [trainingCard, setTrainingCard] = useState<CardData['trainingCard']>({
         checked: false,
         title: '',
@@ -54,10 +66,11 @@ export const FullCard = () => {
     useEffect(() => {
         const fetchCardsData = async () => {
             try {
-                const response = await fetch(`http://localhost:3000/allcards/${userId}`);
-                const data: CardData[] = await response.json();
-                const currentCard = data.find((card) => card.name === selectedDay?.name);
-                console.log(currentCard);
+                const response = await fetch(`https://localhost:443/allcards/${userId}`);
+                const data = await response.json();
+
+                const currentCard = data.card.find((card: CardData) => card.name === selectedDay?.name);
+
                 if (currentCard) {
                     setTrainingCard(currentCard.trainingCard);
                     setMealsCard(currentCard.mealsCard);
@@ -76,14 +89,14 @@ export const FullCard = () => {
             checked: !trainingCard.checked,
         };
         setTrainingCard(updatedTrainingCard);
-
         try {
-            await fetch(`http://localhost:3000/card/${currently_card?._id}/trainingCard/check`, {
+            await fetch(`https://localhost:443/trainingCard/check`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
+                    cardId: currently_card?._id,
                     checked: updatedTrainingCard.checked,
                 }),
             });
@@ -100,12 +113,13 @@ export const FullCard = () => {
         setMealsCard(updatedMealsCard);
 
         try {
-            await fetch(`http://localhost:3000/card/${currently_card?._id}/mealsCard/check`, {
+            await fetch(`https://localhost:443/mealsCard/check`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
+                    cardId: currently_card?._id,
                     checked: updatedMealsCard.checked,
                 }),
             });
@@ -124,7 +138,7 @@ export const FullCard = () => {
         };
 
         try {
-            const response = await fetch(`http://localhost:3000/card/${currently_card?._id}/meal`, {
+            const response = await fetch(`https://localhost:443/card/${currently_card?._id}/meal`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -133,10 +147,9 @@ export const FullCard = () => {
             });
 
             if (response.ok) {
-                const updatedCardResponse = await fetch(`http://localhost:3000/allcards/${userId}`);
-                const updatedData: CardData[] = await updatedCardResponse.json();
-                const updatedCard = updatedData.find((card) => card.name === selectedDay?.name);
-
+                const updatedCardResponse = await fetch(`https://localhost:443/allcards/${userId}`);
+                const updatedData: any = await updatedCardResponse.json();
+                const updatedCard = updatedData.card.find((card: CardData) => card.name === selectedDay?.name);
                 if (updatedCard) {
                     setMealsCard(updatedCard.mealsCard);
                 }
@@ -159,7 +172,7 @@ export const FullCard = () => {
             description: newTrainingDescription,
         };
         try {
-            const response = await fetch(`http://localhost:3000/card/${currently_card?._id}/task`, {
+            const response = await fetch(`https://localhost:443/card/${currently_card?._id}/task`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -167,9 +180,9 @@ export const FullCard = () => {
                 body: JSON.stringify(newTraining),
             });
             if (response.ok) {
-                const updatedCardResponse = await fetch(`http://localhost:3000/allcards/${userId}`);
-                const updatedData: CardData[] = await updatedCardResponse.json();
-                const updatedCard = updatedData.find((card) => card.name === selectedDay?.name);
+                const updatedCardResponse = await fetch(`https://localhost:443/allcards/${userId}`);
+                const updatedData: any = await updatedCardResponse.json();
+                const updatedCard = updatedData.card.find((card: CardData) => card.name === selectedDay?.name);
 
                 if (updatedCard) {
                     setTrainingCard(updatedCard.trainingCard);
@@ -185,7 +198,7 @@ export const FullCard = () => {
     };
     const handleEditTrainingClick = (index: number) => {
         const description = trainingCard.tasks[index].description;
-        setEditedTaskDescription(description); 
+        setEditedTaskDescription(description);
         setIsEditingTraining(true);
         setShowEditButtons(true);
         setEditingTaskIndex(index);
@@ -194,7 +207,7 @@ export const FullCard = () => {
 
     const handleEditMealClick = (index: number) => {
         const description = mealsCard.meals[index].description;
-        setEditedMealDescription(description); 
+        setEditedMealDescription(description);
         setIsEditingMeal(true);
         setShowEditMealButtons(true);
         setEditingMealIndex(index);
@@ -204,17 +217,14 @@ export const FullCard = () => {
         const taskId = trainingCard.tasks[index]._id;
 
         try {
-            await fetch(`http://localhost:3000/card/${currently_card?._id}/task/${taskId}`, {
+            await fetch(`https://localhost:443/task/${taskId}`, {
                 method: 'DELETE',
             });
 
-            const updatedCardResponse = await fetch(`http://localhost:3000/allcards/${userId}`);
-            const updatedData: CardData[] = await updatedCardResponse.json();
-            const updatedCard = updatedData.find((card) => card.name === selectedDay?.name);
-
-            if (updatedCard) {
-                setTrainingCard(updatedCard.trainingCard);
-            }
+            const updatedCardResponse = await fetch(`https://localhost:443/allcards/${userId}`);
+            const updatedData: any = await updatedCardResponse.json();
+            const updatedCard = updatedData.card.find((card: CardData) => card.name === selectedDay?.name);
+            setTrainingCard(updatedCard.trainingCard);
         } catch (error) {
             console.error('Erro ao excluir treino', error);
         }
@@ -224,17 +234,15 @@ export const FullCard = () => {
         const mealId = mealsCard.meals[index]._id;
 
         try {
-            await fetch(`http://localhost:3000/card/${currently_card?._id}/meal/${mealId}`, {
+            await fetch(`https://localhost:443/meal/${mealId}`, {
                 method: 'DELETE',
             });
 
-            const updatedCardResponse = await fetch(`http://localhost:3000/allcards/${userId}`);
-            const updatedData: CardData[] = await updatedCardResponse.json();
-            const updatedCard = updatedData.find((card) => card.name === selectedDay?.name);
+            const updatedCardResponse = await fetch(`https://localhost:443/allcards/${userId}`);
+            const updatedData: any = await updatedCardResponse.json();
+            const updatedCard = updatedData.card.find((card: CardData) => card.name === selectedDay?.name);
+            setMealsCard(updatedCard.mealsCard);
 
-            if (updatedCard) {
-                setMealsCard(updatedCard.mealsCard);
-            }
         } catch (error) {
             console.error('Erro ao excluir refeição', error);
         }
@@ -265,23 +273,21 @@ export const FullCard = () => {
 
         const updatedTaskDescription = editedTaskDescription;
         const editingTaskId = trainingCard.tasks[editingTaskIndex]._id;
-        console.log(editingTaskId)
-        console.log(editingTaskIndex)
         try {
-            await fetch(`http://localhost:3000/card/${currently_card?._id}/task/${editingTaskId}`, {
+            await fetch(`https://localhost:443/updateTask`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    _id: editingTaskId,
+                    taskId: editingTaskId,
                     description: updatedTaskDescription,
                 }),
             });
 
-            const updatedCardResponse = await fetch(`http://localhost:3000/allcards/${userId}`);
-            const updatedData: CardData[] = await updatedCardResponse.json();
-            const updatedCard = updatedData.find((card) => card.name === selectedDay?.name);
+            const updatedCardResponse = await fetch(`https://localhost:443/allcards/${userId}`);
+            const updatedData: any = await updatedCardResponse.json();
+            const updatedCard = updatedData.card.find((card: CardData) => card.name === selectedDay?.name);
 
             if (updatedCard) {
                 setTrainingCard(updatedCard.trainingCard);
@@ -295,24 +301,24 @@ export const FullCard = () => {
         setIsEditingMeal(false);
         setShowEditMealButtons(false);
 
-        const updatedMealDescription = editedMealDescription; // Use o estado para obter o valor atualizado
+        const updatedMealDescription = editedMealDescription;
         const editingMealId = mealsCard.meals[editingMealIndex]._id;
 
         try {
-            await fetch(`http://localhost:3000/card/${currently_card?._id}/meal/${editingMealId}`, {
+            await fetch(`https://localhost:443/updateMeal`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    _id: editingMealId,
+                    mealId: editingMealId,
                     description: updatedMealDescription,
                 }),
             });
 
-            const updatedCardResponse = await fetch(`http://localhost:3000/allcards/${userId}`);
-            const updatedData: CardData[] = await updatedCardResponse.json();
-            const updatedCard = updatedData.find((card) => card.name === selectedDay?.name);
+            const updatedCardResponse = await fetch(`https://localhost:443/allcards/${userId}`);
+            const updatedData: any = await updatedCardResponse.json();
+            const updatedCard = updatedData.card.find((card: CardData) => card.name === selectedDay?.name);
 
             if (updatedCard) {
                 setMealsCard(updatedCard.mealsCard);
@@ -333,12 +339,10 @@ export const FullCard = () => {
     };
 
     const changeversion = () => {
-        if(showMiniCarrosel){
+        if (showMiniCarrosel) {
             setShowMiniCarrossel(false);
-            console.log(showMiniCarrosel)
-        }else{
+        } else {
             setShowMiniCarrossel(true);
-            console.log(showMiniCarrosel)
         }
     }
 
@@ -346,11 +350,12 @@ export const FullCard = () => {
         <div className="fullcard">
             <Header isLoggedIn={true} />
             <div className="structure-fullcard">
-            {!showMiniCarrosel ? (
-                <div className="message_box">
-                      <input type="button" className="buttoncarrossel" onClick={changeversion}></input>
-                </div>
-                ):(
+                {!showMiniCarrosel ? (
+                    <div className="message_box">
+                        <input type="button" className="buttoncarrossel" onClick={changeversion}></input>
+                        <Chat></Chat>
+                    </div>
+                ) : (
                     <input type="button" className="buttoncarrossel" onClick={changeversion}></input>
                 )}
                 <div className="background-card">
@@ -388,7 +393,7 @@ export const FullCard = () => {
                                 <input
                                     type="text"
                                     value={editedTaskDescription}
-                                    onChange={(e) => setEditedTaskDescription(e.target.value)} 
+                                    onChange={(e) => setEditedTaskDescription(e.target.value)}
                                 />
                                 <Button category="primary" label="Concluir" onClick={handleEditCardTrainingSubmit} />
                             </div>
@@ -445,7 +450,7 @@ export const FullCard = () => {
                             <div className="edit_form_meal">
                                 <input
                                     type="text"
-                                    value={editedMealDescription} 
+                                    value={editedMealDescription}
                                     onChange={(e) => setEditedMealDescription(e.target.value)}
                                 />
                                 <Button category="primary" label="Concluir" onClick={handleEditCardMealSubmit} />
@@ -478,25 +483,25 @@ export const FullCard = () => {
                     </div>
                 </div>
                 {showMiniCarrosel ? (
-                <div className="structure-carrossel">
-                    <DailyCard week_number={0} onClick={() => navigate('/fullcard/0')}></DailyCard>
-                    <DailyCard week_number={1} onClick={() => navigate('/fullcard/1')}></DailyCard>
-                    <DailyCard week_number={2} onClick={() => navigate('/fullcard/2')}></DailyCard>
-                    <DailyCard week_number={3} onClick={() => navigate('/fullcard/3')}></DailyCard>
-                    <DailyCard week_number={4} onClick={() => navigate('/fullcard/4')}></DailyCard>
-                    <DailyCard week_number={5} onClick={() => navigate('/fullcard/5')}></DailyCard>
-                    <DailyCard week_number={6} onClick={() => navigate('/fullcard/6')}></DailyCard>
-                </div>
+                    <div className="structure-carrossel">
+                        <DailyCard week_number={0} onClick={() => navigate('/fullcard/0')}></DailyCard>
+                        <DailyCard week_number={1} onClick={() => navigate('/fullcard/1')}></DailyCard>
+                        <DailyCard week_number={2} onClick={() => navigate('/fullcard/2')}></DailyCard>
+                        <DailyCard week_number={3} onClick={() => navigate('/fullcard/3')}></DailyCard>
+                        <DailyCard week_number={4} onClick={() => navigate('/fullcard/4')}></DailyCard>
+                        <DailyCard week_number={5} onClick={() => navigate('/fullcard/5')}></DailyCard>
+                        <DailyCard week_number={6} onClick={() => navigate('/fullcard/6')}></DailyCard>
+                    </div>
                 ) : (
                     <div className="structure-minicarrossel">
-                    <MiniCard week_number={0} onClick={() => navigate('/fullcard/0')}></MiniCard>
-                    <MiniCard week_number={1} onClick={() => navigate('/fullcard/1')}></MiniCard>
-                    <MiniCard week_number={2} onClick={() => navigate('/fullcard/2')}></MiniCard>
-                    <MiniCard week_number={3} onClick={() => navigate('/fullcard/3')}></MiniCard>
-                    <MiniCard week_number={4} onClick={() => navigate('/fullcard/4')}></MiniCard>
-                    <MiniCard week_number={5} onClick={() => navigate('/fullcard/5')}></MiniCard>
-                    <MiniCard week_number={6} onClick={() => navigate('/fullcard/6')}></MiniCard>
-                </div>
+                        <MiniCard week_number={0} onClick={() => navigate('/fullcard/0')}></MiniCard>
+                        <MiniCard week_number={1} onClick={() => navigate('/fullcard/1')}></MiniCard>
+                        <MiniCard week_number={2} onClick={() => navigate('/fullcard/2')}></MiniCard>
+                        <MiniCard week_number={3} onClick={() => navigate('/fullcard/3')}></MiniCard>
+                        <MiniCard week_number={4} onClick={() => navigate('/fullcard/4')}></MiniCard>
+                        <MiniCard week_number={5} onClick={() => navigate('/fullcard/5')}></MiniCard>
+                        <MiniCard week_number={6} onClick={() => navigate('/fullcard/6')}></MiniCard>
+                    </div>
                 )}
             </div>
         </div>
