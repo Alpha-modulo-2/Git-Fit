@@ -40,8 +40,7 @@ const Calc_IMC = ( weight_imc: number, height_imc:number) =>{
 
 export const Contact_profile = () => {
   //Ed, olhar aqui dps
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const navigate: NavigateFunction = useNavigate();
+    // const navigate: NavigateFunction = useNavigate();
     let userId = currentuser.id;
     const [userData, setUserData] = useState<any>(null);
     const [cardData, setCardData] = useState<any[]>([]);
