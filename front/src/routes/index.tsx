@@ -10,6 +10,7 @@ import { Contacts } from '../pages/ContactsAndRequests';
 import { SearchedResults } from "../pages/SearchResults";
 import { SearchedUsersProvider } from "../context/searchedUsersContext"; 
 import { FullCard } from "../pages/FullCards";
+import { Contact_profile } from "../pages/ContactProfile";
 import { useAuth } from '../context/authContext';
 // import { Error404 } from '../pages/Error404';
 
@@ -47,6 +48,7 @@ export const Router = () => {
           <Route path="/" element={<LandingPage />} />
           <Route path="/landing-page" element={<LandingPage />} />
           <Route path="/landing_page" element={<LandingPage />} />
+          <Route path="/contact_profile" element={<Contact_profile />} />
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login/>} />
           <Route path="/see-more" element={<SeeMore/>} />

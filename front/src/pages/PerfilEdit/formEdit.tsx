@@ -2,52 +2,66 @@ import React, { useState } from "react";
 
 interface FormProps {
   onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
-  handleUserNameChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  handlePasswordChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  handleEmailChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handlePhotoChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  handleGenderChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleUserNameChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleEmailChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleAgeChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleGenderChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+  handleNameChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleWeightChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleHeightChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handlePasswordChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleConfirmPasswordChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleOccupationChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  handleAgeChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  handleDeleteAccount: (e: React.ChangeEvent<HTMLInputElement>) => void;
-
-  inputsNameValue: string;
-  inputsEmailValue: string;
-  inputsPasswordValue: string;
+  handleDeleteAccount: () => void;
+  
   inputsPhotoValue: string;
+  inputsUserNameValue: string;
+  inputsEmailValue: string;
+  inputsAgeValue: string;
   inputsGenderValue: string;
+  inputNameValue: string;
   inputsWeightValue: string;
   inputsHeightValue: string;
+  inputsPasswordValue: string;
   inputsOccupationValue: string;
-  inputsAgeValue: string;
 }
 
-export default function RegisterForm(props: FormProps) {
-
+export default function EditForm(props: FormProps) {
   const [isProfessional, setIsProfessional] = useState(false);
+  const [weightValue, setWeightValue] = useState(""); 
+  const [heightValue, setHeightValue] = useState(""); 
 
   const handleOccupationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setIsProfessional(e.target.checked);
   };
 
+  const handleWeightChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value;
+    const formattedValue = value.replace(/[^0-9]/g, "") + " Kg";
+    setWeightValue(formattedValue);
+  };
+
+  const handleHeightChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value;
+    const formattedValue = value.replace(/[^0-9]/g, "") + " cm";
+    setHeightValue(formattedValue);
+  };
+
   return (
     <form onSubmit={props.onSubmit}>
-      <div className="menu-register">
-        <div className="container-first-content-register">
-          <form
-            encType="multipart/form-data"
-            method="POST"
-            action="/upload"
-          >
+      <div className="menu-edit">
+        <div className="container-first-content-edit">
+          <form encType="multipart/form-data" 
+            method="POST" 
+            action="/upload">
             <label
               htmlFor="photo-upload"
-              className="custom-file-label-register"
+              className="custom-file-label-edit"
             ></label>
             <input
               id="photo-upload"
-              className="custom-file-input-register"
+              className="custom-file-input-edit"
               type="file"
               name="photo"
               accept="image/*"
@@ -57,72 +71,82 @@ export default function RegisterForm(props: FormProps) {
 
           <input
             type="text"
-            className="input-register"
+            className="input-edit"
             placeholder="Nome Completo"
             onChange={props.handleUserNameChange}
           />
 
           <input
             type="text"
-            className="input-register"
+            className="input-edit"
             placeholder="E-mail"
             onChange={props.handleEmailChange}
           />
 
           <input
             type="number"
-            className="input-register"
+            className="input-edit"
             placeholder="Idade"
             onChange={props.handleAgeChange}
           />
 
-          <input
-            type="text"
-            className="input-register"
-            placeholder="Gênero"
+          <select
+            className="input-edit"
             onChange={props.handleGenderChange}
-          />
+            value={props.inputsGenderValue}
+          >
+            <option value="">Selecione o Gênero</option>
+            <option value="M">Masculino</option>
+            <option value="F">Feminino</option>
+          </select>
         </div>
 
-        <div className="container-second-content-register">
-          <div className="weightHight-register">
+        <div className="container-second-content-edit">
+          <div className="weightHight-edit">
+        <input
+            type="text"
+            className="input-edit"
+            placeholder="Apelido"
+            onChange={props.handleNameChange}
+          />
             <input
               type="text"
-              className="input-weight-register"
+              className="input-weight-edit"
               placeholder="Peso"
-              onChange={props.handleWeightChange}
+              value={weightValue}
+              onChange={handleWeightChange}
             />
             <input
               type="text"
-              className="input-hight-register"
+              className="input-hight-edit"
               placeholder="Altura"
-              onChange={props.handleHeightChange}
+              value={heightValue}
+              onChange={handleHeightChange}
             />
           </div>
 
           <input
             type="password"
-            className="input-register"
+            className="input-edit"
             placeholder="Senha"
             onChange={props.handlePasswordChange}
           />
 
           <input
             type="password"
-            className="input-register"
+            className="input-edit"
             placeholder="Confirme a senha"
+            onChange={props.handleConfirmPasswordChange}
           />
 
-          <div className="divregisterprofessionalProfile">
-            <label className="registerprofessionalProfile">
+          <div className="diveditprofessionalProfile">
+            <label className="editprofessionalProfile">
               Perfil Profissional?
             </label>
 
             <label className="switch">
-              <input
-                type="checkbox"
-                onChange={handleOccupationChange}
-              />
+              <input type="checkbox" 
+                onChange={handleOccupationChange} />
               <span className="sliderR-round"></span>
             </label>
           </div>
@@ -130,15 +154,26 @@ export default function RegisterForm(props: FormProps) {
           {isProfessional && (
             <input
               type="text"
-              className="input-register"
+              className="input-edit"
               placeholder="Profissão"
               onChange={props.handleOccupationChange}
             />
           )}
         </div>
       </div>
-      <div className="divButton-register">
-        <button className="buttonLogin" type="submit">Cadastrar</button>
+      <div className="divButton-edit">
+        <button className="buttonLogin" 
+          type="submit">
+          Salvar
+        </button>
+      </div>
+      <div className="divDeleteAccount-edit">
+        <button
+          className="deleteAccount-edit"
+          onClick={props.handleDeleteAccount}
+        >
+          Excluir Conta
+        </button>
       </div>
     </form>
   );

@@ -9,8 +9,11 @@ import { useParams } from "react-router-dom";
 export const PerfilEdit = () => {
   const { id } = useParams();
   const userId = id ?? "";
+
+  const [nameValue, setNameValue] = useState("");
   const [userNameValue, setUserNameValue] = useState("");
   const [passwordValue, setPasswordValue] = useState("");
+  const [confirmPasswordValue, setConfirmPasswordValue] = useState("");
   const [emailValue, setEmailValue] = useState("");
   const [photoValue, setPhotoValue] = useState("");
   const [genderValue, setGenderValue] = useState("");
@@ -27,17 +30,17 @@ export const PerfilEdit = () => {
       try {
         const response = await fetch(`https://localhost:443/users/${userId}`);
         if (response.ok) {
-          const userData = await response.json() as IUpdateUserData;
-
+          const userData = (await response.json()) as IUpdateUserData;
+          setNameValue(userData.name);
           setUserNameValue(userData.userName);
-          setPasswordValue(userData.password);
           setEmailValue(userData.email);
           setPhotoValue(userData.photo);
           setGenderValue(userData.gender);
           setWeightValue(userData.weight);
           setHeightValue(userData.height);
           setOccupationValue(userData.occupation);
-          setAgeValue(userData.age.toString());
+          setAgeValue(parseInt(userData.age, 10).toString());
+          
         } else {
           console.error("Erro ao buscar dados do usuário.");
         }
@@ -51,6 +54,8 @@ export const PerfilEdit = () => {
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
+    const name = nameValue;
     const userName = userNameValue;
     const password = passwordValue;
     const email = emailValue;
@@ -62,6 +67,7 @@ export const PerfilEdit = () => {
     const age = ageValue;
 
     const user: IUpdateUserData = {
+      name,
       userName,
       password,
       email,
@@ -70,8 +76,14 @@ export const PerfilEdit = () => {
       weight,
       height,
       occupation,
-      age,
+      age
     };
+    if (password !== confirmPasswordValue) {
+      console.log("As senhas não coincidem.");
+      alert("As senhas não coincidem.");
+      return;
+    }
+
     void fetch(`https://localhost:443/users/${userId}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
@@ -80,8 +92,7 @@ export const PerfilEdit = () => {
       if (response.ok) {
         console.log("Perfil atualizado com sucesso!");
         setIsLoggedIn(true);
-        console.log(isLoggedIn);
-        console.log(response);
+        navigate("/profile");
       } else {
         console.log(response);
         console.log(userId);
@@ -89,8 +100,14 @@ export const PerfilEdit = () => {
     });
   };
 
+  const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setNameValue(event.target.value);
+  };
   const handleUserNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setUserNameValue(event.target.value);
+    setNameValue(event.target.value);
+  };
+  const handleConfirmPasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setConfirmPasswordValue(event.target.value);
   };
   const handlePasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setPasswordValue(event.target.value);
@@ -101,9 +118,6 @@ export const PerfilEdit = () => {
   const handlePhotoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setPhotoValue(event.target.value);
   };
-  const handleGenderChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setGenderValue(event.target.value);
-  };
   const handleWeightChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setWeightValue(event.target.value);
   };
@@ -113,22 +127,36 @@ export const PerfilEdit = () => {
   const handleOccupationChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setOccupationValue(event.target.value);
   };
+  const handleGenderChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setGenderValue(event.target.value);
+  };
   const handleAgeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setAgeValue(event.target.value);
+    const newAgeValue = event.target.value;
+    setAgeValue(newAgeValue);
   };
 
-
-  
-  const handleDeleteAccount = async () => {
-    try {
-      await fetch(`https://localhost:443/users/${userId}`, {
+  const handleDeleteAccount = () => {
+    const confirmed = window.confirm(
+      "Tem certeza de que deseja excluir sua conta?"
+    );
+    if (confirmed) {
+      fetch(`https://localhost:443/users/${userId}`, {
         method: "DELETE",
-      });
-      console.log("Usuário excluído com sucesso!");
-      // Aqui você pode redirecionar o usuário para outra página, exibir uma mensagem de sucesso, etc.
-    } catch (error) {
-      console.error("Erro ao excluir usuário:", error);
-      // Aqui você pode tratar o erro de acordo com sua necessidade.
+      })
+        .then((response) => {
+          if (response.ok) {
+            console.log("Usuário excluído com sucesso!");
+            alert("usuário deletado com sucesso!");
+            navigate("/profile");
+          } else {
+            console.error("Erro ao excluir usuário:", response);
+            alert("erro ao deletar usuário");
+          }
+        })
+        .catch((error) => {
+          console.error("Erro ao excluir usuário:", error);
+          alert("erro ao deletar usuário");
+        });
     }
   };
 
@@ -142,27 +170,31 @@ export const PerfilEdit = () => {
       <div className="All-content-edit">
         <div className="container-edit-content">
           <Form
-            inputsNameValue={userNameValue}
+            inputsUserNameValue={userNameValue}
             inputsEmailValue={emailValue}
-            inputsPasswordValue={passwordValue}
+            inputsAgeValue={ageValue}
             inputsGenderValue={genderValue}
+            inputNameValue={nameValue}  
             inputsWeightValue={weightValue}
             inputsHeightValue={heightValue}
+            inputsPasswordValue={passwordValue}
             inputsOccupationValue={occupationValue}
-            inputsAgeValue={ageValue}
+
             onSubmit={handleSubmit}
-            handleUserNameChange={handleUserNameChange}
-            handlePasswordChange={handlePasswordChange}
-            handleEmailChange={handleEmailChange}
+            inputsPhotoValue={""} 
             handlePhotoChange={handlePhotoChange}
+            handleUserNameChange={handleUserNameChange}
+            handleEmailChange={handleEmailChange}
+            handleAgeChange={handleAgeChange}
             handleGenderChange={handleGenderChange}
+            handleNameChange={handleNameChange}
             handleWeightChange={handleWeightChange}
             handleHeightChange={handleHeightChange}
+            handlePasswordChange={handlePasswordChange}
+            handleConfirmPasswordChange={handleConfirmPasswordChange}
             handleOccupationChange={handleOccupationChange}
-            handleAgeChange={handleAgeChange}
             handleDeleteAccount={handleDeleteAccount}
-            inputsPhotoValue={""}
-          />
+                    />
         </div>
       </div>
     </div>
