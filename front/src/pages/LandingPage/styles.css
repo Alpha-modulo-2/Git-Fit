@@ -1,40 +1,58 @@
-.landing-page {
-  height: 100%;
+@import url('https://fonts.googleapis.com/css2?family=Italiana&display=swap');
+
+*{
+  margin: 0;
+  padding: 0;
 }
+
 .container-all-content {
   display: flex;
-  justify-content: flex-end;
-  color: #fff;
-  font-family: "Poppins", sans-serif;
-  height: 85%;
-}
-/* problema com essa altura */
-
-.container-content {
-  width: 26rem;
-  display: flex;
+  padding-right: 7rem;
+  justify-content: right;
   align-items: center;
-  padding-right: 8rem;
+  color: #fff;
+  height: 50rem;
+  font-family: "Poppins", sans-serif;
 }
 
 .logo-name {
-  display: flex;
-  flex-direction: column;
-  font-size: 3rem;
+  justify-content: center;
+  align-items: left;
+  color: #fff;
+  font-size: 6.5rem;
 }
 
 .logo-name-git {
+  font-family: 'Italiana', serif;
   padding-right: 1rem;
 }
 
 .logo-name-fit {
-  padding-left: 1rem;
+  font-family: 'Italiana', serif;
+  padding-left: 3rem;
 }
 
 .text-info {
-  font-size: 1rem;
+  padding-top: 3rem;
+  width:400px ;
+}
+
+.container-label{
+  padding-left: 3rem;
+  width:400px ;
+  height: 300px;
   display: flex;
+  align-items: center;
+  justify-content: center;
   flex-direction: column;
-  justify-content: flex-start;
-  gap: 2rem;
+}
+
+.text-content{
+  margin-top: 6rem;
+  letter-spacing: 0.2rem;
+  display: flex;
+  font-size: bold;
+  align-items: center;
+  width: 400px;
+  height: 500px;
 }

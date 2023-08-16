@@ -1,12 +1,14 @@
-import "./registerStyle.css";
+import React, { useState } from "react";
 import { Header } from "../../components/Header";
-import { useState } from "react";
 import RegisterForm from "./formRegister";
 import IUpdateUserData from "../../interfaces/IUpdateUserData";
+import "./registerStyle.css";
 
 export const Register = () => {
+  const [nameValue, setNameValue] = useState("");
   const [userNameValue, setUserNameValue] = useState("");
   const [passwordValue, setPasswordValue] = useState("");
+  const [confirmPasswordValue, setConfirmPasswordValue] = useState("");
   const [emailValue, setEmailValue] = useState("");
   const [photoValue, setPhotoValue] = useState("");
   const [genderValue, setGenderValue] = useState("");
@@ -17,6 +19,58 @@ export const Register = () => {
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
+    const emptyFields: string[] = [];
+
+    if (nameValue === "") {
+      emptyFields.push("Apelido");
+    }
+
+    if (userNameValue === "") {
+      emptyFields.push("Nome Completo");
+    }
+
+    if (emailValue === "") {
+      emptyFields.push("E-mail");
+    }
+
+    if (ageValue === "") {
+      emptyFields.push("Idade");
+    }
+
+    if (genderValue === "") {
+      emptyFields.push("Gênero");
+    }
+
+    if (weightValue === "") {
+      emptyFields.push("Peso");
+    }
+
+    if (heightValue === "") {
+      emptyFields.push("Altura");
+    }
+
+    if (passwordValue === "") {
+      emptyFields.push("Senha");
+    }
+
+    if (confirmPasswordValue === "") {
+      emptyFields.push("Confirmação de Senha");
+    }
+
+    if (emptyFields.length > 0) {
+      const fieldsString = emptyFields.join(", ");
+      console.log(`Campos não preenchidos: ${fieldsString}`);
+      alert(`Preencha os campos obrigatórios: ${fieldsString}`);
+      return;
+    }
+
+    if (passwordValue !== confirmPasswordValue) {
+      console.log("As senhas não coincidem.");
+      alert("As senhas não coincidem.");
+      return;
+    }
+    const name = nameValue;
     const userName = userNameValue;
     const password = passwordValue;
     const email = emailValue;
@@ -28,6 +82,7 @@ export const Register = () => {
     const age = ageValue;
 
     const user: IUpdateUserData = {
+      name,
       userName,
       password,
       email,
@@ -36,9 +91,10 @@ export const Register = () => {
       weight,
       height,
       occupation,
-      age
+      age,
     };
-    void fetch("https://localhost:443/users", { 
+
+    void fetch("https://localhost:443/users", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(user),
@@ -49,44 +105,61 @@ export const Register = () => {
       } else {
         console.log(response);
       }
-    });    
+    });
+  };
+
+  const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setNameValue(event.target.value);
   };
 
   const handleUserNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setUserNameValue(event.target.value);
   };
+
   const handlePasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setPasswordValue(event.target.value);
   };
+
+  const handleConfirmPasswordValue = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setConfirmPasswordValue(event.target.value);
+  };
+
   const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setEmailValue(event.target.value);
   };
+
   const handlePhotoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setPhotoValue(event.target.value);
   };
-  const handleGenderChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+
+  const handleGenderChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setGenderValue(event.target.value);
   };
+
   const handleWeightChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setWeightValue(event.target.value);
   };
+
   const handleHeightChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setHeightValue(event.target.value);
   };
+
   const handleOccupationChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setOccupationValue(event.target.value);
   };
+
   const handleAgeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setAgeValue(event.target.value);
   };
 
   return (
     <div className="Register">
-      <Header isLoggedIn={true} />
+      <Header isLoggedIn={false} />
       <div className="All-content-register">
         <div className="container-register-content">
           <RegisterForm
             onSubmit={handleSubmit}
+            handleNameChange={handleNameChange}
             handleUserNameChange={handleUserNameChange}
             handlePasswordChange={handlePasswordChange}
             handleEmailChange={handleEmailChange}
@@ -96,6 +169,13 @@ export const Register = () => {
             handleHeightChange={handleHeightChange}
             handleOccupationChange={handleOccupationChange}
             handleAgeChange={handleAgeChange}
+            handleConfirmPasswordValue={handleConfirmPasswordValue}
+
+            nameValue={nameValue}
+            userNameValue={userNameValue}
+            genderValue={genderValue}
+            weightValue={weightValue}
+            heightValue={heightValue}
           />
         </div>
       </div>
