@@ -8,6 +8,10 @@ import UserRepository from '../repositories/UserRepository';
 import cookieParser from 'cookie-parser';
 import mongoose from 'mongoose';
 import Redis from 'ioredis';
+import jwtLib from "jsonwebtoken";
+import bcrypt from "bcrypt";
+
+let redis: any
 
 const app = express();
 app.use(bodyParser.json());
@@ -16,36 +20,30 @@ app.use('/', router);
 
 beforeAll(async () => {
     await connectToTestDatabase();
-    await resetDatabase();
 });
+
+beforeEach(async () => {
+    redis = new Redis();
+})
 
 afterEach(async () => {
     jest.restoreAllMocks();
-    const redis = new Redis();
     await redis.flushdb();
     redis.disconnect();
+    await resetDatabase();
 });
 
 afterAll(async () => {
     await closeDatabase();
 });
 
-async function createLogin(username: string) {
-    const response = await request(app)
-    .post('/login')
-    .send({
-        userName: username,
-        password: 'test12345'
-    })
-    return response.body; 
-}
-
 async function createUser(username: string) {
+    const passwordHash = await bcrypt.hash('test12345', 10);
+    
     const user = {
-        _id: new mongoose.Types.ObjectId(),
         name: `${username} Surname`,
         userName: username,
-        password: 'test12345',
+        password: passwordHash,
         email: `${username}user@example.com`,
         friends: [],
         photo: 'path-to-photo',
@@ -56,14 +54,19 @@ async function createUser(username: string) {
         age: 30
     };
 
-    const response = await request(app)
-        .post('/users')
-        .send(user);
-    return response.body 
+    const result = await userModel.create(user)
+    
+    const jwt = jwtLib.sign(
+        { user: result },
+        process.env.JWTSECRET
+    );
+
+    const retrievedUsers = await userModel.find({});
+    //console.log('create', retrievedUsers)
+    return { jwt, result };
 }
 
 async function createFriendAndAccepts(requester: any, recipient: any) {
-    console.log(requester, recipient)
     await userModel.findByIdAndUpdate(requester._id, { $addToSet: { friends: recipient._id } });
     await userModel.findByIdAndUpdate(recipient._id, { $addToSet: { friends: requester._id } });
 
@@ -90,25 +93,6 @@ describe('POST /users/', () => {
         const response = await request(app)
             .post('/users')
             .send(user);
-        
-        const user2 = {
-            _id: '64db1deb1dfac4f2916ef716',
-            name: `Test Surname`,
-            userName: 'usertest',
-            password: 'test12345',
-            email: `testuser@example.com`,
-            friends: [],
-            photo: 'path-to-photo',
-            gender: 'M',
-            weight: '70kg',
-            height: '175cm',
-            occupation: 'Engineer',
-            age: 30
-        };
-        
-        await request(app)
-            .post('/users')
-            .send(user2);
 
         expect(response.status).toBe(201);
         expect(response.body.name).toBe('Test Surname');
@@ -208,12 +192,11 @@ describe('POST /users/', () => {
 
 describe('GET /users/search', () => {
     it('should successfully return a user by name', async () => {
-        const username = 'testuser'
-        await createUser(username)
-        const {token} = await createLogin(username);
+        const username = 'usuarioteste'
+        const { jwt } = await createUser(username)
         const response = await request(app)
             .get(`/users/search?name=${username}`)
-            .set('Cookie', [`session=${token}`]);
+            .set('Cookie', [`session=${jwt}`]);
 
         expect(response.status).toBe(200);
         expect(response.body[0]).toHaveProperty('userName');
@@ -230,11 +213,10 @@ describe('GET /users/search', () => {
     });
 
     it('should return 400 if no name is provided in the query', async () => {
-        await createUser('testuser')
-        const {token} = await createLogin('testuser');
+        const { jwt } = await createUser('usuarioteste')
         const response = await request(app)
             .get(`/users/search`)
-            .set('Cookie', [`session=${token}`]);
+            .set('Cookie', [`session=${jwt}`]);
         
         expect(response.status).toBe(400);
         expect(response.body).toMatchObject({ error: true, message: "O nome é obrigatório" });
@@ -242,12 +224,10 @@ describe('GET /users/search', () => {
 
     it('should return 500 for internal server error', async () => {
         jest.spyOn(UserRepository.prototype, 'getByName').mockRejectedValue(new Error('Forced error'));
-        await createUser('testuser')
-        const name = 'testuser Surname';
-        const {token} = await createLogin('testuser');
+        const { jwt, result } = await createUser('usuarioteste')
         const response = await request(app)
-            .get(`/users/search?name=${name}`)
-            .set('Cookie', [`session=${token}`]);
+            .get(`/users/search?name=usuarioteste`)
+            .set('Cookie', [`session=${jwt}`]);
         
         expect(response.status).toBe(500);
         expect(response.body).toContain("Forced error");
@@ -256,22 +236,20 @@ describe('GET /users/search', () => {
 
 describe('GET /users/:id', () => {
     it('should successfully return a user by ID', async () => {
-        await createUser('testuser')
-        const {token, user} = await createLogin('testuser');
+        const { jwt, result } = await createUser('testuser')
         const response = await request(app)
-            .get(`/users/${user._id}`)
-            .set('Cookie', [`session=${token}`]);
+            .get(`/users/${result._id}`)
+            .set('Cookie', [`session=${jwt}`]);
 
         expect(response.status).toBe(200);
-        expect(response.body.userName).toEqual(user.userName.toString());; 
-        expect(response.body._id).toEqual(user._id.toString());
+        expect(response.body.userName).toEqual(result.userName.toString());; 
+        expect(response.body._id).toEqual(result._id.toString());
     });
 
     it('should return 401 if not authenticated', async () => {
-        await createUser('testuser')
-        const {user} = await createLogin('testuser');
+        const { result } = await createUser('testuser')
         const response = await request(app)
-            .get(`/users/${user._id}`)
+            .get(`/users/${result._id}`)
             .set('Cookie', [`session=wrong`]);
         
         expect(response.status).toBe(401);
@@ -279,11 +257,10 @@ describe('GET /users/:id', () => {
     });
 
     it('should return 400 for invalid ID format', async () => {
-        await createUser('testuser')
-        const {token} = await createLogin('testuser');
+        const { jwt } = await createUser('testuser')
         const response = await request(app)
             .get(`/users/invalidIDformat`)
-            .set('Cookie', [`session=${token}`]);
+            .set('Cookie', [`session=${jwt}`]);
 
         expect(response.status).toBe(400);
         expect(response.body).toMatchObject({ error: true, message: "ID fornecido é inválido." });
@@ -293,11 +270,10 @@ describe('GET /users/:id', () => {
         UserRepository.prototype.getOne = jest.fn(() => {
             throw new Error('Forced error');
         });
-        await createUser('testuser')
-        const {token} = await createLogin('testuser');
+        const { jwt } = await createUser('testuser')
         const response = await request(app)
             .get(`/users/614a25f7e3a77c9f7f5e2488`)
-            .set('Cookie', [`session=${token}`]);
+            .set('Cookie', [`session=${jwt}`]);
 
         expect(response.status).toBe(500);
         expect(response.body).toContain("Forced error");
@@ -306,16 +282,15 @@ describe('GET /users/:id', () => {
 
 describe('GET /users/', () => {
     it('should successfully retrieve all users', async () => {
-        await createUser('testuser')
-        const {token, user} = await createLogin('testuser');
+        const { jwt, result } = await createUser('testuser')
         const response = await request(app)
             .get(`/users/`)
-            .set('Cookie', [`session=${token}`]);
+            .set('Cookie', [`session=${jwt}`]);
 
         expect(response.status).toBe(200);
         expect(Array.isArray(response.body)).toBe(true);
         expect(response.body[0]).toHaveProperty('name');
-        expect(response.body[0].name).toContain(user.name);
+        expect(response.body[0].name).toContain(result.name);
     });
 
     it('should return 401 if not authenticated', async () => {
@@ -330,11 +305,10 @@ describe('GET /users/', () => {
             .mockImplementationOnce(() => {
                 throw new Error('Forced internal server error');
             });
-        await createUser('testuser')
-        const {token} = await createLogin('testuser');
+        const { jwt } = await createUser('testuser')
         const response = await request(app)
             .get(`/users/`)
-            .set('Cookie', [`session=${token}`]);
+            .set('Cookie', [`session=${jwt}`]);
 
         expect(response.status).toBe(500);
         expect(response.body).toContain('Forced internal server error');
@@ -343,8 +317,7 @@ describe('GET /users/', () => {
 
 describe('PATCH /users/:id', () => {
     it('should successfully update user', async () => {
-        await createUser('testuser')
-        const { user, token } = await createLogin('testuser');
+        const { jwt, result } = await createUser('testuser')
         const updateData = {
             name: 'New Name',
             email: 'newname@example.com',
@@ -352,12 +325,12 @@ describe('PATCH /users/:id', () => {
         };
 
         const response = await request(app)
-            .patch(`/users/${user._id}`)
-            .set('Cookie', [`session=${token}`])
+            .patch(`/users/${result._id}`)
+            .set('Cookie', [`session=${jwt}`])
             .send(updateData);
 
         expect(response.status).toBe(200);
-        expect(response.body.userName).toEqual(user.userName);
+        expect(response.body.userName).toEqual(result.userName);
         expect(response.body.name).toEqual(updateData.name);
         expect(response.body.occupation).toEqual(updateData.occupation);
         expect(response.body.email).toEqual(updateData.email);
@@ -365,10 +338,9 @@ describe('PATCH /users/:id', () => {
     });
 
     it('should return 401 if not authenticated', async () => {
-        await createUser('testuser')
-        const {user} = await createLogin('testuser');
+        const { result } = await createUser('testuser')
         const response = await request(app)
-            .patch(`/users/${user._id}`)
+            .patch(`/users/${result._id}`)
             .set('Cookie', [`session=wrong`]);
         
         expect(response.status).toBe(401);
@@ -376,27 +348,25 @@ describe('PATCH /users/:id', () => {
     });
     
     it('should return 400 for invalid user ID', async () => {
-        await createUser('testuser')
-        const { token } = await createLogin('testuser');
+        const { jwt } = await createUser('testuser')
         const invalidId = '12345';
         const response = await request(app)
             .patch(`/users/${invalidId}`)
-            .set('Cookie', [`session=${token}`]);
+            .set('Cookie', [`session=${jwt}`]);
     
         expect(response.status).toBe(400);
         expect(response.body.message).toBe('ID fornecido é inválido.');
     });
 
     it('should return 400 for invalid name', async () => {
-        await createUser('testuser')
-        const { user, token } = await createLogin('testuser');
+        const { jwt, result } = await createUser('testuser')
         const invalidData = {
             name: '123456'
         };
     
         const response = await request(app)
-            .patch(`/users/${user._id}`)
-            .set('Cookie', [`session=${token}`])
+            .patch(`/users/${result._id}`)
+            .set('Cookie', [`session=${jwt}`])
             .send(invalidData);
     
         expect(response.status).toBe(400);
@@ -404,15 +374,14 @@ describe('PATCH /users/:id', () => {
     });
 
     it('should return 400 for invalid email', async () => {
-        await createUser('testuser')
-        const { user, token } = await createLogin('testuser');
+        const { jwt, result } = await createUser('testuser')
         const invalidData = {
             email: 'invalidEmail'
         };
     
         const response = await request(app)
-            .patch(`/users/${user._id}`)
-            .set('Cookie', [`session=${token}`])
+            .patch(`/users/${result._id}`)
+            .set('Cookie', [`session=${jwt}`])
             .send(invalidData);
     
         expect(response.status).toBe(400);
@@ -420,15 +389,14 @@ describe('PATCH /users/:id', () => {
     });
 
     it('should return 400 for invalid password', async () => {
-        await createUser('testuser')
-        const { user, token } = await createLogin('testuser');
+        const { jwt, result } = await createUser('testuser')
         const invalidData = {
             password: 'abc' 
         };
     
         const response = await request(app)
-            .patch(`/users/${user._id}`)
-            .set('Cookie', [`session=${token}`])
+            .patch(`/users/${result._id}`)
+            .set('Cookie', [`session=${jwt}`])
             .send(invalidData);
     
         expect(response.status).toBe(400);
@@ -440,11 +408,10 @@ describe('PATCH /users/:id', () => {
             .mockImplementationOnce(() => {
                 throw new Error('Forced internal server error');
             });
-        await createUser('testuser')
-        const {token, user} = await createLogin('testuser');
+            const { jwt, result } = await createUser('testuser')
         const response = await request(app)
-            .patch(`/users/${user._id}`)
-            .set('Cookie', [`session=${token}`]);
+            .patch(`/users/${result._id}`)
+            .set('Cookie', [`session=${jwt}`]);
 
         expect(response.status).toBe(500);
         expect(response.body).toContain('Forced internal server error');
@@ -453,26 +420,25 @@ describe('PATCH /users/:id', () => {
 
 describe('DELETE /user/:userId/friend/:friendId', () => {
     it('should remove a friend successfully', async () => {
-        const friend = await userModel.findById('64db1deb1dfac4f2916ef716')
-        const {token, user} = await createLogin('testuser');
-        await createFriendAndAccepts(user, friend);
+        const { jwt, result } = await createUser('testuser')
+        const friend = await createUser('friend')
+        await createFriendAndAccepts(result, friend.result);
         const response = await request(app)
-            .delete(`/user/${user._id}/friend/${friend?._id}`)
-            .set('Cookie', `session=${token}`);
+            .delete(`/user/${result._id}/friend/${friend.result._id}`)
+            .set('Cookie', `session=${jwt}`);
 
-        const checkUser = await userModel.findById(user._id)
+        const checkUser = await userModel.findById(result._id)
 
         expect(response.status).toBe(204);
         expect(checkUser?.friends).toEqual([]);
     });
 
     it('should return unauthorized if token is invalid', async () => {
-        await createUser('testuser')
-        const recipient = await createUser('friendtwo');
-        const {user} = await createLogin('testuser');
-        await createFriendAndAccepts(user, recipient);
+        const { result } = await createUser('testuser')
+        const friend = await createUser('friend')
+        await createFriendAndAccepts(result, friend.result);
         const response = await request(app)
-            .delete(`/user/${user._id}/friend/${recipient._id}`)
+            .delete(`/user/${result._id}/friend/${friend.result._id}`)
             .set('Cookie', 'session=invalid_token');
 
         expect(response.status).toBe(401);
@@ -480,26 +446,24 @@ describe('DELETE /user/:userId/friend/:friendId', () => {
     });
 
     it('should return not found if friend does not exist', async () => {
-        await createUser('testuser')
-        await createUser('friendtwo');
-        const {token, user} = await createLogin('testuser');
+        const { jwt, result } = await createUser('testuser')
         const response = await request(app)
-            .delete(`/user/${user._id}/friend/${new mongoose.Types.ObjectId()}`)
-            .set('Cookie', `session=${token}`);
+            .delete(`/user/${result._id}/friend/${new mongoose.Types.ObjectId()}`)
+            .set('Cookie', `session=${jwt}`);
 
         expect(response.status).toBe(500);
         expect(response.body).toBe('Usuário não encontrado.');
     });
 
-    it('should return bad request if user ID or friend ID is invalid', async () => {
-        await createUser('testuser')
-        const recipient = await createUser('friendtwo');
-        const {token, user} = await createLogin('testuser');
+    it('should return bad request if user logged is different', async () => {
+        const { jwt, result } = await createUser('testuser')
+        const friend = await createUser('friend')
+        await createFriendAndAccepts(result, friend.result);
         const response = await request(app)
-            .delete(`/user/invalid_id/friend/invalid_id`)
-            .set('Cookie', `session=${token}`);
+            .delete(`/user/${new mongoose.Types.ObjectId()}}/friend/${friend.result._id}`)
+            .set('Cookie', `session=${jwt}`);
 
         expect(response.status).toBe(500);
         expect(response.body.message).toBe("Erro ao remover amizade: Você não pode remover um amigo de outra pessoa.");
     });
-})
+}) 
