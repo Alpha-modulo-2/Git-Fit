@@ -5,7 +5,6 @@ import { ProgressBar } from "../../components/ProgressBar";
 import { CircleProgressBar } from "../../components/CircleProgressBar";
 import { PhotoProfile } from "../../components/PhotoProfile";
 // import { Carrossel } from "../../components/Carrossel";
-import {  NavigateFunction, useNavigate } from 'react-router-dom';
 import currentuser from '../../currentuser.json'
 
 
