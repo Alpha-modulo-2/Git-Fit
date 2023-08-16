@@ -29,7 +29,7 @@ export const Header = ({ isLoggedIn }: PropTypes) => {
   /***************    GET USERS FROM SEARCH    ********************/
   async function searchUsers(query: string){
     try {        
-        const response = await fetch(`http://localhost:3000/users/search?name=${query}`);
+        const response = await fetch(`https://localhost:443/users/search?name=${query}`);
         if (response.ok) {
             const data = await response.json() as UserData[];
             console.log(data, 'searchusers');

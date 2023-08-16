@@ -42,7 +42,7 @@ export const DailyCard = ({ week_number, onClick }: PropTypes) => {
     useEffect(() => {
         const fetchCardsData = async () => {
           try {
-            const response = await fetch(`http://localhost:3000/allcards/${userId}`);
+            const response = await fetch(`https://localhost:443/allcards/${userId}`);
             const data = await response.json();
             setCardData(data);
           } catch (error) {

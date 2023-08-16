@@ -26,7 +26,7 @@ export const PerfilEdit = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await fetch(`http://localhost:3000/users/${userId}`);
+        const response = await fetch(`https://localhost:443/users/${userId}`);
         if (response.ok) {
           const userData = (await response.json()) as IUpdateUserData;
 
@@ -80,7 +80,7 @@ export const PerfilEdit = () => {
       return;
     }
 
-    void fetch(`http://localhost:3000/users/${userId}`, {
+    void fetch(`https://localhost:443/users/${userId}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(user),
@@ -133,7 +133,7 @@ export const PerfilEdit = () => {
       "Tem certeza de que deseja excluir sua conta?"
     );
     if (confirmed) {
-      fetch(`http://localhost:3000/users/${userId}`, {
+      fetch(`https://localhost:443/users/${userId}`, {
         method: "DELETE",
       })
         .then((response) => {

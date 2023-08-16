@@ -88,7 +88,7 @@ export const Register = () => {
       age,
     };
 
-    void fetch("http://localhost:3000/users", {
+    void fetch("https://localhost:443/users", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(user),

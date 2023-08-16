@@ -12,7 +12,7 @@ const router: Router = Router();
 
 const userController = new UserController();
 
-router.post("/users/", authenticate, validateInsert, userController.insert);
+router.post("/users/", validateInsert, userController.insert);
 router.get("/users/search", authenticate, cacheMiddleware, validateQuery, userController.getByName);
 router.get("/users/:id", authenticate, cacheMiddleware, validateId, userController.getOne);
 router.get("/users/", authenticate, cacheMiddleware, userController.get);

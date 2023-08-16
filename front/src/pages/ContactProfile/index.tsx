@@ -5,7 +5,6 @@ import { ProgressBar } from "../../components/ProgressBar";
 import { CircleProgressBar } from "../../components/CircleProgressBar";
 import { PhotoProfile } from "../../components/PhotoProfile";
 // import { Carrossel } from "../../components/Carrossel";
-import { DailyCard } from "../../components/DailyCard";
 import {  NavigateFunction, useNavigate } from 'react-router-dom';
 import currentuser from '../../currentuser.json'
 
@@ -40,6 +39,8 @@ const Calc_IMC = ( weight_imc: number, height_imc:number) =>{
 
 
 export const Contact_profile = () => {
+  //Ed, olhar aqui dps
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const navigate: NavigateFunction = useNavigate();
     let userId = currentuser.id;
     const [userData, setUserData] = useState<any>(null);
@@ -48,7 +49,7 @@ export const Contact_profile = () => {
     useEffect(() => {
         const fetchUserData = async () => {
           try {
-            const response = await fetch(`http://localhost:3000/users/${userId}`);
+            const response = await fetch(`https://localhost:443/users/${userId}`);
             const data = await response.json();
             setUserData(data);
           } catch (error) {
@@ -58,7 +59,7 @@ export const Contact_profile = () => {
 
         const fetchCardsData = async () => {
           try {
-            const response = await fetch(`http://localhost:3000/allcards/${userId}`);
+            const response = await fetch(`https://localhost:443/allcards/${userId}`);
             const data = await response.json();
             setCardData(data);
           } catch (error) {
