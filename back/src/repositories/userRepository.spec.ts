@@ -115,7 +115,7 @@ describe('UserRepository', () => {
         const user = await userRepository.update(id, { userName: 'updated' });
 
 
-        expect(userModel.findByIdAndUpdate).toHaveBeenCalledWith(id, { $set: { userName: "updated" }, updated_at: fixedDate });
+        expect(userModel.findByIdAndUpdate).toHaveBeenCalledWith(id, { $set: { userName: "updated" }, updated_at: fixedDate }, {"new": true});
         expect(user).toEqual({ error: false, statusCode: 200, user: { ...user.user } });
     });
 

@@ -336,6 +336,14 @@ export default class CardController {
     async delTask(req: Request, res: Response) {
         const { taskId } = req.params;
 
+        if (!taskId || taskId.length !== 24 || !(/^[0-9a-fA-F]+$/).test(taskId)) {
+            return res.status(400).json({
+                error: true,
+                statusCode: 400,
+                message: "ID da tarefa inválido"
+            });
+        }
+
         try {
             const result = await this.service.delTask(taskId);
 
@@ -352,6 +360,14 @@ export default class CardController {
 
     async delMeal(req: Request, res: Response) {
         const { mealId } = req.params;
+
+        if (!mealId || mealId.length !== 24 || !(/^[0-9a-fA-F]+$/).test(mealId)) {
+            return res.status(400).json({
+                error: true,
+                statusCode: 400,
+                message: "ID da tarefa inválido"
+            });
+        }
 
         try {
             const result = await this.service.delMeal(mealId);

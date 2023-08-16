@@ -39,7 +39,7 @@ export default class LoginService {
                 const { password, ...restOfUser } = result.user as IUser
 
                 const sessionJWT = JWT.sign(
-                    { restOfUser },
+                    restOfUser,
                     process.env.JWTSECRET,
                     { expiresIn: "336h" }
                 );

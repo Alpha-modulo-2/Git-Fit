@@ -2,6 +2,7 @@ import IResult from "../interfaces/IResult";
 import IUpdateData from "../interfaces/IUpdateUserData";
 import IUser from "../interfaces/IUser";
 import UserRepository from "../repositories/UserRepository";
+import CardService from "./CardServices";
 import bcrypt from "bcrypt";
 
 export default class UserService {
@@ -45,6 +46,21 @@ export default class UserService {
                     }
                 }
                 throw error
+            }
+
+            const createdUser: IUser = result.user as IUser;
+
+            if (createdUser._id !== undefined) {
+                const cardService = new CardService();
+                const cardResult = await cardService.insert(createdUser._id);
+    
+                if (cardResult.error) {
+                    const error = {
+                        message: result.message,
+                        code: result.statusCode
+                    }
+                    throw error
+                }
             }
 
             return result

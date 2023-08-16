@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import jwtLib, { JwtPayload } from "jsonwebtoken";
 import ILogin from "../interfaces/ILogin";
 import loginService from "../services/loginService";
+require('dotenv').config();
 
 export default class LoginController {
     private service: loginService;
@@ -45,7 +46,7 @@ export default class LoginController {
                     {
                         message: `Usuário '${credentials.userName}' logado com sucesso.`,
                         user: result.user,
-                        token: result.data
+                        token: jwt
                     },
 
             );

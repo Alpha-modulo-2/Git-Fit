@@ -7,7 +7,6 @@ import path from 'path';
 import { Server } from 'socket.io';
 import SocketController from './controllers/socketController';
 
-// Verificar se as variáveis de ambiente estão definidas
 if (!process.env.SSL_KEY_PATH || !process.env.SSL_CERT_PATH) {
     throw new Error('As variáveis de ambiente SSL_KEY_PATH e SSL_CERT_PATH devem ser definidas.');
 }
