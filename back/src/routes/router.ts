@@ -9,33 +9,35 @@ import FriendRequestsController from "../controllers/FriendRequestsController";
 import cacheMiddleware from '../middleware/cacheMiddleware';
 import ConversationController from "../controllers/conversationController";
 import MessageController from "../controllers/messageController";
+import { clearCache, clearCacheForCards } from "../middleware/clearCacheMiddleware";
 
 const router: Router = Router();
 
 const userController = new UserController();
 
-router.post("/users/", validateInsert, userController.insert);
+router.post("/users/", validateInsert, clearCache, userController.insert);
 router.get("/users/search", authenticate, cacheMiddleware, validateQuery, userController.getByName);
 router.get("/users/:id", authenticate, cacheMiddleware, validateId, userController.getOne);
 router.get("/users/", authenticate, cacheMiddleware, userController.get);
-router.patch("/users/:id", authenticate, validateUpdate, validateId, userController.update);
-router.delete("/users/:id", authenticate, validateId, userController.delete);
-router.delete("/user/:userId/friend/:friendId", authenticate, validateRemoveFriend, userController.removeFriend)
+router.patch("/users/:id", authenticate, validateUpdate, validateId, clearCache, userController.update);
+router.delete("/users/:id", authenticate, validateId, clearCache, userController.delete);
+router.delete("/user/:userId/friend/:friendId", authenticate, validateRemoveFriend, clearCache, userController.removeFriend)
 
 const cardController = new CardController();
 
-router.post("/cards/:userId", authenticate, cardController.insert);
-router.get("/allcards/:userId", authenticate,cardController.getAllCardsByUser);
+//Card Routes
+router.post("/cards/:userId", authenticate, clearCacheForCards, cardController.insert);
+router.get("/allcards/:userId", authenticate, cacheMiddleware, cardController.getAllCardsByUser);
 router.get("/card/:cardId", authenticate, cardController.getOne);
-router.post("/card/:cardId/task", authenticate, cardController.addTask);
-router.post("/card/:cardId/meal", authenticate, cardController.addMeal);
-router.patch('/card/updateTitle', authenticate, cardController.updateTitle);
-router.patch("/trainingCard/check", authenticate, cardController.updateTrainingCardChecked);
-router.patch("/mealsCard/check", authenticate, cardController.updateMealsCardChecked);
-router.patch("/updateTask", authenticate, cardController.updateTask);
-router.patch("/updateMeal", authenticate, cardController.updateMeal);
-router.delete("/task/:taskId", authenticate, cardController.delTask);
-router.delete("/meal/:mealId", authenticate, cardController.delMeal);
+router.post("/card/:cardId/task", authenticate, clearCacheForCards, cardController.addTask);
+router.post("/card/:cardId/meal", authenticate, clearCacheForCards, cardController.addMeal);
+router.patch('/card/updateTitle', authenticate, clearCacheForCards, cardController.updateTitle);
+router.patch("/trainingCard/check", authenticate, clearCacheForCards, cardController.updateTrainingCardChecked);
+router.patch("/mealsCard/check", authenticate, clearCacheForCards, cardController.updateMealsCardChecked);
+router.patch("/updateTask", authenticate, clearCacheForCards, cardController.updateTask);
+router.patch("/updateMeal", authenticate, clearCacheForCards, cardController.updateMeal);
+router.delete("/task/:taskId", authenticate, clearCacheForCards, cardController.delTask);
+router.delete("/meal/:mealId", authenticate, clearCacheForCards, cardController.delMeal);
 
 const friendRequestsController = new FriendRequestsController();
 
