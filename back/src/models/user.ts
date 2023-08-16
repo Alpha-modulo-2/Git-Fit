@@ -46,7 +46,6 @@ const userSchema = new Schema<IUser>({
         type: String
     },
     age: Number,
-    _id: SchemaTypes.ObjectId,
 })
 
 const userModel = model("User", userSchema)
