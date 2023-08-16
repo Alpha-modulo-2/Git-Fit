@@ -56,13 +56,15 @@ async function createUser(username: string) {
 
     const result = await userModel.create(user)
     
-    const jwt = jwtLib.sign(
-        { user: result },
-        process.env.JWTSECRET
-    );
+    const response = await request(app)
+    .post('/login')
+    .send({
+        "userName": user.userName,
+        "password": "test12345"
+    });
 
-    const retrievedUsers = await userModel.find({});
-    //console.log('create', retrievedUsers)
+    const jwt = response.body.token
+
     return { jwt, result };
 }
 
