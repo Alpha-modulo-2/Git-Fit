@@ -4,5 +4,6 @@ module.exports = {
     "^.+\\.tsx?$": "ts-jest",
   },
   testRegex: "(/__tests__/.*|(\\.|/)(test|spec))\\.tsx?$",
+  setupFilesAfterEnv: ['./jest.setup.ioredis-mock.js'],
   moduleFileExtensions: ["ts", "tsx", "js", "jsx", "json", "node"],
 };

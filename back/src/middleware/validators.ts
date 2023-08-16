@@ -31,7 +31,7 @@ const loginSchema = yup.object().shape({
 });
 
 const idSchema = yup.object().shape({
-    id: yup.string().required("O id é obrigatório"),
+    id: yup.string().required("O id é obrigatório").matches(/^[0-9a-fA-F]{24}$/, 'ID fornecido é inválido.'),
 });
 
 const querySchema = yup.object().shape({
