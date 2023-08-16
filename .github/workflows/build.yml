@@ -24,7 +24,7 @@ jobs:
 
       - name: Run tests
         env:
-          JWTSECRET: test-secret
+          JWTSECRET: ${{ secrets.JWTSECRET }}
         run: npm run test
         working-directory: ./back
 
