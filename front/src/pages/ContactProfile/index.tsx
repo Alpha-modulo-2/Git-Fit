@@ -117,6 +117,9 @@ export const Contact_profile = () => {
          <Header isLoggedIn={true}/>
          <div className="structure-profile">
             <div className="container-profile">
+            <div className="div-buttonAdd">
+                <button className="buttonAdd">Adicionar ao Time</button>
+            </div>
                 <PhotoProfile user_name={user_name} url_photo={user_photo}/>
                 <div className="container-progress-bar">
                 <div className="div-progress-bar">
@@ -132,9 +135,6 @@ export const Contact_profile = () => {
                 <CircleProgressBar progress={progressIMCircle} title_bar={calcIMC.imc_media.toFixed(1)}/>
                 </div>
                 </div>
-            </div>
-            <div className="div-buttonAdd">
-                <button className="buttonAdd">Adicionar ao Time</button>
             </div>
          </div>
       </div>

@@ -5,6 +5,7 @@ import IUpdateUserData from "../../interfaces/IUpdateUserData";
 import "./registerStyle.css";
 
 export const Register = () => {
+  const [nameValue, setNameValue] = useState("");
   const [userNameValue, setUserNameValue] = useState("");
   const [passwordValue, setPasswordValue] = useState("");
   const [confirmPasswordValue, setConfirmPasswordValue] = useState("");
@@ -20,6 +21,10 @@ export const Register = () => {
     event.preventDefault();
 
     const emptyFields: string[] = [];
+
+    if (nameValue === "") {
+      emptyFields.push("Apelido");
+    }
 
     if (userNameValue === "") {
       emptyFields.push("Nome Completo");
@@ -65,7 +70,7 @@ export const Register = () => {
       alert("As senhas não coincidem.");
       return;
     }
-
+    const name = nameValue;
     const userName = userNameValue;
     const password = passwordValue;
     const email = emailValue;
@@ -77,6 +82,7 @@ export const Register = () => {
     const age = ageValue;
 
     const user: IUpdateUserData = {
+      name,
       userName,
       password,
       email,
@@ -100,6 +106,10 @@ export const Register = () => {
         console.log(response);
       }
     });
+  };
+
+  const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setNameValue(event.target.value);
   };
 
   const handleUserNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -149,6 +159,7 @@ export const Register = () => {
         <div className="container-register-content">
           <RegisterForm
             onSubmit={handleSubmit}
+            handleNameChange={handleNameChange}
             handleUserNameChange={handleUserNameChange}
             handlePasswordChange={handlePasswordChange}
             handleEmailChange={handleEmailChange}
@@ -160,6 +171,7 @@ export const Register = () => {
             handleAgeChange={handleAgeChange}
             handleConfirmPasswordValue={handleConfirmPasswordValue}
 
+            nameValue={nameValue}
             userNameValue={userNameValue}
             genderValue={genderValue}
             weightValue={weightValue}

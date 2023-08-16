@@ -2,6 +2,7 @@ import React, { useState } from "react";
 
 interface FormProps {
   onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
+  handleNameChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleUserNameChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handlePasswordChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleConfirmPasswordValue: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -13,6 +14,7 @@ interface FormProps {
   handleOccupationChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleAgeChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 
+  nameValue: string;
   userNameValue: string;
   genderValue: string;
   weightValue: string;
@@ -28,7 +30,7 @@ const RegisterForm: React.FC<FormProps> = (props) => {
 
   const handleWeightChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    const formattedValue = value.replace(/[^0-9]/g, "") + "Kg";
+    const formattedValue = value.replace(/[^0-9]/g, "") + "kg";
     props.handleWeightChange({
       target: { value: formattedValue },
     } as React.ChangeEvent<HTMLInputElement>);
@@ -46,9 +48,7 @@ const RegisterForm: React.FC<FormProps> = (props) => {
     <form onSubmit={props.onSubmit}>
       <div className="menu-register">
         <div className="container-first-content-register">
-          <form encType="multipart/form-data" 
-            method="POST" 
-            action="/upload">
+          <form encType="multipart/form-data" method="POST" action="/upload">
             <label
               htmlFor="photo-upload"
               className="custom-file-label-register"
@@ -98,6 +98,13 @@ const RegisterForm: React.FC<FormProps> = (props) => {
 
         <div className="container-second-content-register">
           <div className="weightHight-register">
+          <input
+            type="text"
+            className="input-register"
+            placeholder="Apelido"
+            onChange={props.handleNameChange}
+            value={props.nameValue}
+          />
             <input
               type="text"
               className="input-weight-register"
@@ -115,14 +122,14 @@ const RegisterForm: React.FC<FormProps> = (props) => {
           </div>
 
           <input
-            type="text"
+            type="password"
             className="input-register"
             placeholder="Senha"
             onChange={props.handlePasswordChange}
           />
 
           <input
-            type="text"
+            type="password"
             className="input-register"
             placeholder="Confirme a senha"
             onChange={props.handleConfirmPasswordValue}

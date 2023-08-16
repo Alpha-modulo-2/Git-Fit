@@ -51,3 +51,8 @@ body {
   background-color: rgb(135, 105, 199);
   cursor: pointer;
 }
+.div-buttonAdd{
+  width: 90%;
+  display: flex;
+  justify-content: right;
+}
