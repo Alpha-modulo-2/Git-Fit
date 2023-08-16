@@ -4,6 +4,7 @@ body {
 
 .structure-profile{
   display: flex;
+  position: relative;
 }
 
 .structure-carrossel{
@@ -20,7 +21,7 @@ body {
 
 .container-profile{
   font-family: "Poppins", sans-serif;
-  width: 75vw;
+  width: 72%;
   display: flex;
   flex-direction: column;
   align-items: center;

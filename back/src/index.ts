@@ -4,8 +4,8 @@ import { connectToDatabase } from "./database/database";
 import fs from 'fs';
 import https from 'https'
 import path from 'path';
-
-const port = process.env.PORT || 8000;
+import { Server } from 'socket.io';
+import SocketController from './controllers/socketController';
 
 // Verificar se as variáveis de ambiente estão definidas
 if (!process.env.SSL_KEY_PATH || !process.env.SSL_CERT_PATH) {
@@ -24,10 +24,12 @@ const options = {
     key: fs.readFileSync(path.resolve(process.env.SSL_KEY_PATH)),
     cert: fs.readFileSync(path.resolve(process.env.SSL_CERT_PATH)),
 };
-https.createServer(options, app).listen(443, () => {
-    console.log(`Server is running on port 443`)
-})
+const server = https.createServer(options, app);
 
-app.listen(port, () => {
-    console.log(`Server is running on port ${port}`);
+const io = new Server(server, { cors: { origin: "*" } });
+
+new SocketController(io);
+
+server.listen(process.env.PORT, () => {
+    console.log(`Server is running on port ${process.env.PORT}`);
 });

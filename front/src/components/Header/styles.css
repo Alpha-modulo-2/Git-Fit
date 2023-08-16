@@ -50,3 +50,17 @@
   background-color: #fff;
   border: 1px solid #fff;
 }
+
+.icon-logout {
+  transition: transform ease 0.1s;
+}
+.icon-logout:hover {
+  cursor: pointer;
+  transform: scale(1.1);
+}
+
+@media (max-width: 780px) {
+  .header-menu-items {
+    gap: 2.5rem;
+  }
+}

@@ -2,6 +2,7 @@ import IResult from "../interfaces/IResult";
 import IUpdateData from "../interfaces/IUpdateUserData";
 import IUser from "../interfaces/IUser";
 import UserRepository from "../repositories/UserRepository";
+import bcrypt from "bcrypt";
 
 export default class UserService {
     private repository: UserRepository;
@@ -13,12 +14,35 @@ export default class UserService {
     async insert(user: IUser): Promise<IResult> {
 
         try {
-            const result = await this.repository.insert(user);
+
+            if (!user || !user.password) {
+                const error = {
+                    message: "Corpo da requisição nao contem os campos necessários.",
+                    code: 500
+                }
+
+                throw error
+            }
+
+            const passwordHash = await bcrypt.hash(user.password, 10);
+
+            const result = await this.repository.insert({ ...user, password: passwordHash });
+            let error;
 
             if (result.error) {
-                const error = {
-                    message: result.message,
-                    code: result.statusCode
+
+                const message = result.message as string
+                if (message.includes("E11000")) {
+                    error = {
+                        message: "Username já esta sendo utilizado",
+                        code: 500
+                    }
+
+                } else {
+                    error = {
+                        message: result.message,
+                        code: result.statusCode
+                    }
                 }
                 throw error
             }
@@ -82,7 +106,14 @@ export default class UserService {
     async update(id: string, updateData: IUpdateData): Promise<IResult> {
 
         try {
-            const result = await this.repository.update(id, updateData);
+            let reqData = { ...updateData }
+
+            if (updateData.password) {
+                const passwordHash = await bcrypt.hash(updateData.password, 10);
+                reqData = { ...updateData, password: passwordHash }
+            }
+
+            const result = await this.repository.update(id, { ...reqData });
 
             if (result.error) {
                 const error = {
