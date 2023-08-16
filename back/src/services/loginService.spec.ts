@@ -73,9 +73,7 @@ describe('LoginService', () => {
 
         expect(loginRepository.login).toHaveBeenCalledWith(mockCredentials);
         expect(bcrypt.compare).toHaveBeenCalledWith(mockCredentials.password, mockUser.password);
-        expect(jwt.sign).toHaveBeenCalledWith({
-            restOfUser: restOfUser
-        }, process.env.JWTSECRET, { expiresIn: "336h" });
+        expect(jwt.sign).toHaveBeenCalledWith(restOfUser, process.env.JWTSECRET, { expiresIn: "336h" });
         expect(result).toEqual({
             error: false, user: restOfUser, statusCode: 200, data: 'token'
         });

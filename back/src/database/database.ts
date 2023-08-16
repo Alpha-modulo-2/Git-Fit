@@ -1,6 +1,3 @@
-// External Dependencies
-// import * as mongoDB from "mongodb";
-
 const mongoose = require("mongoose")
 
 export async function connectToDatabase() {

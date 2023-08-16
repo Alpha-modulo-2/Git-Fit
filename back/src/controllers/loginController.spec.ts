@@ -38,7 +38,7 @@ describe('LoginController', () => {
     });
 
     it('should login a user', async () => {
-        loginService.login.mockResolvedValue({ error: false, statusCode: 200, user: { userName: 'test' } });
+        loginService.login.mockResolvedValue({ error: false, statusCode: 200, user: { userName: 'test' }, token: "token" });
 
         await loginController.login(req, res);
 
@@ -46,7 +46,7 @@ describe('LoginController', () => {
         expect(jwt.sign).toHaveBeenCalledWith({ user: { userName: 'test' } }, process.env.JWTSECRET);
         expect(res.cookie).toHaveBeenCalledWith('session', 'token');
         expect(res.status).toHaveBeenCalledWith(200);
-        expect(res.json).toHaveBeenCalledWith({ message: "Usuário 'test' logado com sucesso.", user: { userName: "test" } });
+        expect(res.json).toHaveBeenCalledWith({ message: "Usuário 'test' logado com sucesso.", token: "token", user: { userName: "test" } });
     });
 
     it('should fail to login when service throws an error', async () => {
