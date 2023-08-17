@@ -3,9 +3,10 @@ import React from 'react';
 import { XCircle, Check, UserCirclePlus } from "@phosphor-icons/react";
 import { Friend, UserData } from '../../interfaces/IUser';
 
+
 interface ContactCardProps{
   requesterInfo?: UserData | Friend;
-  requestId?: string; // Recebe o request._id da página principal
+  requestId?: string; 
   recipientId?: string;
   onUpdateFriends?: (requestId: string, requesterId: string) => void;
   onRemoveFriends?: (requestId: string) => void;
@@ -13,11 +14,15 @@ interface ContactCardProps{
   typeOfCard: "request" | "contact" | "addUser";
 }
 
+
 const ContactCard: React.FC<ContactCardProps> = ({ requesterInfo, requestId, onUpdateFriends, onRemoveFriends, onAddFriend, recipientId, typeOfCard }) => {
+  const imageId = requesterInfo?.photo;
+  const image = imageId ? `../src/assets/images/${imageId}` : 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/User-avatar.svg/2048px-User-avatar.svg.png';
+
   return (
     <div className="contact-card">
       <div className="img-card-contacts">
-        <img src={'https://1.bp.blogspot.com/-KLg5TEY1v6U/T6P9I6YPZwI/AAAAAAAABEc/iYpstw_ouMQ/s1600/Mr_bean.jpg'} alt="" />
+        <img src={image} alt="Texto" />
       </div>
 
       <div className="user-contacts-info">

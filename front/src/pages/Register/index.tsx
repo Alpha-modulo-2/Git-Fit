@@ -5,6 +5,7 @@ import { User } from "../../interfaces/IUser";
 import "./registerStyle.css";
 import { useNavigate } from "react-router-dom";
 import { Modal } from "../../components/Modal";
+import  uuid  from 'uuidv4';
 
 
 export interface ApiResponseRequests {
@@ -26,6 +27,7 @@ export const Register = () => {
   const [heightValue, setHeightValue] = useState("");
   const [occupationValue, setOccupationValue] = useState("");
   const [ageValue, setAgeValue] = useState("");
+  const [fileName, setFileName] = useState('')
 
   function openModal() {
     setModalIsOpen(true);
@@ -102,13 +104,14 @@ export const Register = () => {
     formData.append("password", passwordValue);
     formData.append("email", emailValue);
     if (photoValue !== null && photoValue !== undefined) {
-      formData.append("photo", photoValue, photoValue.name);
+      formData.append("photo", photoValue, fileName);
     }
     formData.append("gender", genderValue);
     formData.append("weight", weightValue);
     formData.append("height", heightValue);
     formData.append("occupation", occupationValue);
     formData.append("age", ageValue);
+
     
     fetch("https://localhost:443/users", {
 
@@ -117,6 +120,7 @@ export const Register = () => {
     }).then((response) => {
       if (response.ok) {
         console.log("Perfil CRIADO com sucesso!");
+
         setMessageModal("Perfil CRIADO com sucesso!");
         openModal();
         navigate("/login");
@@ -130,7 +134,7 @@ export const Register = () => {
       if (data) {
         console.log(data, 'data')
       }
-      console.log(data, 'data from login')
+      console.log(data, 'data from register')
     }).catch((err) => {
       console.log(err)
     });
@@ -161,7 +165,12 @@ export const Register = () => {
   const handlePhotoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
       const file = event.target.files[0];
-      setPhotoValue(file);
+      const fileExtension = file.name.split('.').pop(); 
+      if(fileExtension){
+        const fileName = `${uuid()}.${fileExtension}`; // Gera o nome de arquivo com UUID e extensão
+        setFileName(fileName);
+        setPhotoValue(file);
+      }
     }
   };
 
