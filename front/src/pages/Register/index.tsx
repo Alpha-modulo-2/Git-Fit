@@ -3,6 +3,8 @@ import { Header } from "../../components/Header";
 import RegisterForm from "./formRegister";
 import { User } from "../../interfaces/IUser";
 import "./registerStyle.css";
+import { useNavigate } from "react-router-dom";
+import { Modal } from "../../components/Modal";
 
 export interface ApiResponseRequests {
   error?: string;
@@ -23,17 +25,29 @@ export const Register = () => {
   const [occupationValue, setOccupationValue] = useState("");
   const [ageValue, setAgeValue] = useState("");
 
+  function openModal() {
+    setModalIsOpen(true);
+  }
+  function closeModal() {
+    setModalIsOpen(false);
+  }
+
+  const navigate = useNavigate();
+
+  const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
+  const [messageModal, setMessageModal] = useState<string>("");
+
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     const emptyFields: string[] = [];
 
     if (nameValue === "") {
-      emptyFields.push("Apelido");
+      emptyFields.push("Nome Completo");
     }
 
     if (userNameValue === "") {
-      emptyFields.push("Nome Completo");
+      emptyFields.push("Nome de Usuário");
     }
 
     if (emailValue === "") {
@@ -66,14 +80,15 @@ export const Register = () => {
 
     if (emptyFields.length > 0) {
       const fieldsString = emptyFields.join(", ");
-      console.log(`Campos não preenchidos: ${fieldsString}`);
-      alert(`Preencha os campos obrigatórios: ${fieldsString}`);
+      setMessageModal(`Preencha os campos obrigatórios: ${fieldsString}`);
+      openModal();
       return;
     }
 
     if (passwordValue !== confirmPasswordValue) {
-      console.log("As senhas não coincidem.");
-      alert("As senhas não coincidem.");
+      console.log("As senhas não coincidem");
+      setMessageModal(`As senhas não coincidem`);
+      openModal();
       return;
     }
     const formData = new FormData();
@@ -98,8 +113,11 @@ export const Register = () => {
     }).then((response) => {
       if (response.ok) {
         console.log("Perfil CRIADO com sucesso!");
-        console.log(response);
+        setMessageModal("Perfil CRIADO com sucesso!");
+        openModal();
+        navigate("/login");
         return response.json() as Promise<ApiResponseRequests>;
+
       } else {
         console.log(response,'response');
       }
@@ -126,7 +144,9 @@ export const Register = () => {
     setPasswordValue(event.target.value);
   };
 
-  const handleConfirmPasswordValue = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleConfirmPasswordValue = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     setConfirmPasswordValue(event.target.value);
   };
 
@@ -153,7 +173,9 @@ export const Register = () => {
     setHeightValue(event.target.value);
   };
 
-  const handleOccupationChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleOccupationChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     setOccupationValue(event.target.value);
   };
 
@@ -179,7 +201,6 @@ export const Register = () => {
             handleOccupationChange={handleOccupationChange}
             handleAgeChange={handleAgeChange}
             handleConfirmPasswordValue={handleConfirmPasswordValue}
-
             nameValue={nameValue}
             userNameValue={userNameValue}
             genderValue={genderValue}
@@ -188,6 +209,7 @@ export const Register = () => {
           />
         </div>
       </div>
+      {modalIsOpen && <Modal children={messageModal} onClick={closeModal} />}
     </div>
   );
 };
