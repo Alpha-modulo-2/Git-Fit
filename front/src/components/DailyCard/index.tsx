@@ -72,11 +72,7 @@ export const DailyCard = ({ week_number, onClick }: PropTypes) => {
     const [cardData, setCardData] = useState<CardData[]>([]);
     const [dataResponse, setDataResponse] = useState(false);
 
-    const urlPath = import.meta.env.VITE_URL_PATH;
-
-    if (!urlPath) {
-      throw new Error('URL_PATH is not defined');
-    }
+    // const urlPath = import.meta.env.VITE_URL_PATH||"";
 
     useEffect(() => {
         const fetchCardsData = async () => {

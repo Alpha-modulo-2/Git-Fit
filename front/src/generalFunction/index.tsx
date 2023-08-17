@@ -1,8 +1,8 @@
 
 type method = 'GET' | 'POST' | 'PATCH' | 'DELETE';
 
-const urlPath = import.meta.env.VITE_URL_PATH ;
-console.log(urlPath)
+const urlPath = import.meta.env.VITE_URL_PATH || ""
+
 function getCookie(name: string) {
     const value = `; ${document.cookie}`;
     const parts = value.split(`; ${name}=`);
@@ -11,9 +11,6 @@ function getCookie(name: string) {
 
 export async function generalRequest<T>(endpoint: string, body?:object, method: method = 'GET'){
     try {
-        if (!urlPath) {
-            throw new Error('URL_PATH is not defined');
-        }
 
         const token = getCookie('session')
 
