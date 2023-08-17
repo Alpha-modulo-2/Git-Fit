@@ -76,8 +76,6 @@ export const FullCard = () => {
     const selectedDay = weekDays.find(day => day.id === parseInt(selectedId));
 
     const { user } = useAuth();
-    // const { isLoggedIn, login, user } = useAuth();
-    // console.log(isLoggedIn, login, user, 'login');
     const userId = String(user?._id);
 
     const [trainingCard, setTrainingCard] = useState<CardData['trainingCard']>({
@@ -93,11 +91,6 @@ export const FullCard = () => {
 
     const [currently_card, set_currently_card_id] = useState<CardDataTest['card'][0] | undefined>();
 
-    const urlPath = process.env.URL_PATH;
-
-    if (!urlPath) {
-    throw new Error('URL_PATH is not defined');
-    }
 
     useEffect(() => {
         const fetchCardsData = async () => {
@@ -145,7 +138,6 @@ export const FullCard = () => {
                 cardId: currently_card?._id,
                 checked: updatedMealsCard.checked,
             }, 'PATCH');
-
         } catch (error) {
             console.error('Erro ao atualizar o checkbox das refeições', error);
         }
@@ -189,7 +181,6 @@ export const FullCard = () => {
                 const updatedCardResponse = await generalRequest(`/allcards/${userId}`) as CardDataTest;
                 const updatedData = updatedCardResponse;
                 const updatedCard = updatedData.card.find((card) => card.name === selectedDay?.name);
-
                 if (updatedCard) {
                     setTrainingCard(updatedCard.trainingCard);
                 }
@@ -287,7 +278,6 @@ export const FullCard = () => {
             const updatedCardResponse = await generalRequest(`/allcards/${userId}`) as CardDataTest;
             const updatedData = updatedCardResponse;
             const updatedCard = updatedData.card.find((card) => card.name === selectedDay?.name);
-
             if (updatedCard) {
                 setTrainingCard(updatedCard.trainingCard);
             }
@@ -312,7 +302,6 @@ export const FullCard = () => {
             const updatedCardResponse = await generalRequest(`/allcards/${userId}`) as CardDataTest;
             const updatedData = updatedCardResponse;
             const updatedCard = updatedData.card.find((card) => card.name === selectedDay?.name);
-
             if (updatedCard) {
                 setMealsCard(updatedCard.mealsCard);
             }

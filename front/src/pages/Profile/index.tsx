@@ -72,18 +72,10 @@ export const Profile = () => {
   const navigate: NavigateFunction = useNavigate();
 
   const { user } = useAuth();
-  // const { isLoggedIn, login, user } = useAuth();
-  // console.log(isLoggedIn, login, user, 'login');
   const userId = String(user?._id);
 
   const [userData, setUserData] = useState<any>(null);
   const [cardData, setCardData] = useState<any>([]);
-
-  const urlPath = process.env.URL_PATH;
-
-  if (!urlPath) {
-    throw new Error('URL_PATH is not defined');
-  }
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -99,10 +91,8 @@ export const Profile = () => {
 
     const fetchCardsData = async () => {
       try {
-
         const response = await generalRequest(`/allcards/${userId}`) as CardData;
         const data = response;
-
         setCardData(data.card);
       } catch (error) {
         console.error('Erro ao buscar dados dos cards', error);

@@ -72,7 +72,7 @@ export const DailyCard = ({ week_number, onClick }: PropTypes) => {
     const [cardData, setCardData] = useState<CardData[]>([]);
     const [dataResponse, setDataResponse] = useState(false);
 
-    const urlPath = process.env.URL_PATH;
+    const urlPath = import.meta.env.VITE_URL_PATH;
 
     if (!urlPath) {
       throw new Error('URL_PATH is not defined');
@@ -83,7 +83,7 @@ export const DailyCard = ({ week_number, onClick }: PropTypes) => {
           try {
             const response = await generalRequest(`/allcards/${userId}`) as CardDataTest;
             const data = response;
-
+            
             setCardData(data.card);
             if(data){
               setDataResponse(true);
