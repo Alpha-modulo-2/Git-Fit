@@ -125,7 +125,7 @@ export const Register = () => {
         console.log("Perfil CRIADO com sucesso!");
         setMessageModal("Perfil CRIADO com sucesso!");
         openModal();
-        navigate("/login");
+        navigate("/profile");
       } else {
         console.log(response);
       }
