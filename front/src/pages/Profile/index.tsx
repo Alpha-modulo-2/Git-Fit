@@ -4,11 +4,9 @@ import { Header } from "../../components/Header";
 import { ProgressBar } from "../../components/ProgressBar";
 import { CircleProgressBar } from "../../components/CircleProgressBar";
 import { PhotoProfile } from "../../components/PhotoProfile";
-// import { Carrossel } from "../../components/Carrossel";
 import { DailyCard } from "../../components/DailyCard";
 import { NavigateFunction, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/authContext';
-//import currentuser from '../../currentuser.json';
 import { generalRequest } from "../../generalFunction";
 import { UserData } from "../../interfaces/IUser";
 
@@ -81,11 +79,18 @@ export const Profile = () => {
   const [userData, setUserData] = useState<any>(null);
   const [cardData, setCardData] = useState<any>([]);
 
+  const urlPath = process.env.URL_PATH;
+
+  if (!urlPath) {
+    throw new Error('URL_PATH is not defined');
+  }
+
   useEffect(() => {
     const fetchUserData = async () => {
       try {
         const response = await generalRequest(`/users/${userId}`) as UserData;
         const data = response;
+
         setUserData(data);
       } catch (error) {
         console.error('Erro ao buscar dados do usuário', error);
@@ -94,8 +99,10 @@ export const Profile = () => {
 
     const fetchCardsData = async () => {
       try {
+
         const response = await generalRequest(`/allcards/${userId}`) as CardData;
         const data = response;
+
         setCardData(data.card);
       } catch (error) {
         console.error('Erro ao buscar dados dos cards', error);

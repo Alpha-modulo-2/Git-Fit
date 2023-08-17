@@ -42,9 +42,15 @@ export const Login = () => {
     const password = passwordValue;
     const user: ILogin = { userName, password };
 
-    fetch("https://localhost:443/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
+    const urlPath = process.env.URL_PATH;
+
+    if (!urlPath) {
+      throw new Error('URL_PATH is not defined');
+    }
+
+    fetch(`${urlPath}/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(user),
     })
       .then((response) => {

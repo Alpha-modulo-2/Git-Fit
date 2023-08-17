@@ -6,6 +6,7 @@ import "./registerStyle.css";
 import { useNavigate } from "react-router-dom";
 import { Modal } from "../../components/Modal";
 
+
 export const Register = () => {
   const [nameValue, setNameValue] = useState("");
   const [userNameValue, setUserNameValue] = useState("");
@@ -109,7 +110,13 @@ export const Register = () => {
       age,
     };
 
-    void fetch("https://localhost:443/users", {
+    const urlPath = process.env.URL_PATH;
+
+    if (!urlPath) {
+      throw new Error('URL_PATH is not defined');
+    }
+
+    void fetch(`${urlPath}/users`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(user),

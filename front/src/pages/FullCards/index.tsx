@@ -9,8 +9,6 @@ import { useParams } from 'react-router-dom';
 import { useAuth } from '../../context/authContext';
 import { Chat } from "../../components/Chat";
 import { generalRequest } from "../../generalFunction";
-// import { UserData } from "../../interfaces/IUser";
-//import currentuser from '../../currentuser.json'
 
 interface CardData {
     card: [{}]
@@ -95,6 +93,12 @@ export const FullCard = () => {
 
     const [currently_card, set_currently_card_id] = useState<CardDataTest['card'][0] | undefined>();
 
+    const urlPath = process.env.URL_PATH;
+
+    if (!urlPath) {
+    throw new Error('URL_PATH is not defined');
+    }
+
     useEffect(() => {
         const fetchCardsData = async () => {
             try {
@@ -141,6 +145,7 @@ export const FullCard = () => {
                 cardId: currently_card?._id,
                 checked: updatedMealsCard.checked,
             }, 'PATCH');
+
         } catch (error) {
             console.error('Erro ao atualizar o checkbox das refeições', error);
         }
@@ -243,7 +248,6 @@ export const FullCard = () => {
             if (updatedCard) {
                 setMealsCard(updatedCard.mealsCard);
             }
-            
         } catch (error) {
             console.error('Erro ao excluir refeição', error);
         }

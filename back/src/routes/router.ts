@@ -50,12 +50,10 @@ router.delete("/rejectFriend/:requestId", authenticate, friendRequestsController
 const loginController = new LoginController();
 
 router.post("/login", validateLogin, loginController.login);
-// router.delete("/logout", loginController.logout);
 
 const conversationController = new ConversationController();
 const messageController = new MessageController();
 
-//Chat Routes
 router.post("/conversations", conversationController.create)
 router.get("/conversations/:userId", conversationController.get)
 
