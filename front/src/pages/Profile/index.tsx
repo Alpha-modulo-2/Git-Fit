@@ -4,17 +4,46 @@ import { Header } from "../../components/Header";
 import { ProgressBar } from "../../components/ProgressBar";
 import { CircleProgressBar } from "../../components/CircleProgressBar";
 import { PhotoProfile } from "../../components/PhotoProfile";
-// import { Carrossel } from "../../components/Carrossel";
 import { DailyCard } from "../../components/DailyCard";
 import { NavigateFunction, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/authContext';
-//import currentuser from '../../currentuser.json'
+import { generalRequest } from "../../generalFunction";
+import { UserData } from "../../interfaces/IUser";
 
 const convertToNumber = (stringValue: string) => {
   const numericValue = stringValue ? stringValue.replace(/\D/g, '') : '';
   const numberValue = parseFloat(numericValue) / (stringValue && stringValue.includes('cm') ? 100 : 1);
   return numberValue;
 };
+interface Task {
+  _id: string;
+  description: string;
+}
+
+interface Meal {
+  _id: string;
+  description: string;
+}
+
+interface CardData {
+  card: {
+      trainingCard: {
+          checked: boolean;
+          title: string;
+          tasks: Task[];
+      };
+      mealsCard: {
+          checked: boolean;
+          meals: Meal[];
+      };
+      _id: string;
+      userId: string;
+      name: string;
+      created_at: string;
+      updated_at: string;
+      __v: number;
+  }[];
+}
 
 const Calc_IMC = (weight_imc: number, height_imc: number) => {
   const imc = weight_imc / (height_imc * height_imc);
@@ -43,24 +72,17 @@ export const Profile = () => {
   const navigate: NavigateFunction = useNavigate();
 
   const { user } = useAuth();
-  // const { isLoggedIn, login, user } = useAuth();
-  // console.log(isLoggedIn, login, user, 'login');
   const userId = String(user?._id);
 
   const [userData, setUserData] = useState<any>(null);
   const [cardData, setCardData] = useState<any>([]);
 
-  const urlPath = import.meta.env.VITE_URL_PATH;
-
-  if (!urlPath) {
-    throw new Error('URL_PATH is not defined');
-  }
-
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await fetch(`${urlPath}/users/${userId}`);
-        const data = await response.json();
+        const response = await generalRequest(`/users/${userId}`) as UserData;
+        const data = response;
+
         setUserData(data);
       } catch (error) {
         console.error('Erro ao buscar dados do usuário', error);
@@ -69,8 +91,8 @@ export const Profile = () => {
 
     const fetchCardsData = async () => {
       try {
-        const response = await fetch(`${urlPath}/allcards/${userId}`);
-        const data = await response.json();
+        const response = await generalRequest(`/allcards/${userId}`) as CardData;
+        const data = response;
         setCardData(data.card);
       } catch (error) {
         console.error('Erro ao buscar dados dos cards', error);

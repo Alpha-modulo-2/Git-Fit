@@ -4,7 +4,6 @@ import { Header } from "../../components/Header";
 import { ProgressBar } from "../../components/ProgressBar";
 import { CircleProgressBar } from "../../components/CircleProgressBar";
 import { PhotoProfile } from "../../components/PhotoProfile";
-// import { Carrossel } from "../../components/Carrossel";
 import currentuser from '../../currentuser.json'
 
 
@@ -43,7 +42,6 @@ export const Contact_profile = () => {
     const userId = currentuser.id;
     const [userData, setUserData] = useState<any>(null);
     const [cardData, setCardData] = useState<any[]>([]);
-
     const urlPath = import.meta.env.VITE_URL_PATH;
 
     if (!urlPath) {

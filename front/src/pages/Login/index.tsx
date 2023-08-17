@@ -44,13 +44,6 @@ export const Login = () => {
 
     const urlPath = import.meta.env.VITE_URL_PATH
 
-    console.log(urlPath);
-    
-
-    if (!urlPath) {
-      throw new Error('URL_PATH is not defined');
-    }
-
     fetch(`${urlPath}/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
