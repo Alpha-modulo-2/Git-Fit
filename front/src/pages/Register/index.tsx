@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Header } from "../../components/Header";
 import RegisterForm from "./formRegister";
-import IUpdateUserData from "../../interfaces/IUpdateUserData";
 import "./registerStyle.css";
 
 export const Register = () => {
