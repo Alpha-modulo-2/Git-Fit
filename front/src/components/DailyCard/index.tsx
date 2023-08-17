@@ -47,10 +47,16 @@ export const DailyCard = ({ week_number, onClick }: PropTypes) => {
     const [cardData, setCardData] = useState<CardData[]>([]);
     const [dataResponse, setDataResponse] = useState(false);
 
+    const urlPath = process.env.URL_PATH;
+
+    if (!urlPath) {
+      throw new Error('URL_PATH is not defined');
+    }
+
     useEffect(() => {
         const fetchCardsData = async () => {
           try {
-            const response = await fetch(`https://localhost:443/allcards/${userId}`);
+            const response = await fetch(`${urlPath}/allcards/${userId}`);
             const data = await response.json();
             setCardData(data.card);
             if(data.error){

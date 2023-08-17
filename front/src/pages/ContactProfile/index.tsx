@@ -44,10 +44,16 @@ export const Contact_profile = () => {
     const [userData, setUserData] = useState<any>(null);
     const [cardData, setCardData] = useState<any[]>([]);
 
+    const urlPath = process.env.URL_PATH;
+
+    if (!urlPath) {
+      throw new Error('URL_PATH is not defined');
+    }
+
     useEffect(() => {
         const fetchUserData = async () => {
           try {
-            const response = await fetch(`https://localhost:443/users/${userId}`);
+            const response = await fetch(`${urlPath}/users/${userId}`);
             const data = await response.json();
             setUserData(data);
           } catch (error) {
@@ -57,7 +63,7 @@ export const Contact_profile = () => {
 
         const fetchCardsData = async () => {
           try {
-            const response = await fetch(`https://localhost:443/allcards/${userId}`);
+            const response = await fetch(`${urlPath}/allcards/${userId}`);
             const data = await response.json();
             setCardData(data);
           } catch (error) {

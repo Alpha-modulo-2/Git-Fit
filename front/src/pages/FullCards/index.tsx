@@ -63,10 +63,16 @@ export const FullCard = () => {
 
     const [currently_card, set_currently_card_id] = useState<CardData | undefined>();
 
+    const urlPath = process.env.URL_PATH;
+
+    if (!urlPath) {
+    throw new Error('URL_PATH is not defined');
+    }
+
     useEffect(() => {
         const fetchCardsData = async () => {
             try {
-                const response = await fetch(`https://localhost:443/allcards/${userId}`);
+                const response = await fetch(`${urlPath}/allcards/${userId}`);
                 const data = await response.json();
 
                 const currentCard = data.card.find((card: CardData) => card.name === selectedDay?.name);
@@ -90,7 +96,7 @@ export const FullCard = () => {
         };
         setTrainingCard(updatedTrainingCard);
         try {
-            await fetch(`https://localhost:443/trainingCard/check`, {
+            await fetch(`${urlPath}/trainingCard/check`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
@@ -113,7 +119,7 @@ export const FullCard = () => {
         setMealsCard(updatedMealsCard);
 
         try {
-            await fetch(`https://localhost:443/mealsCard/check`, {
+            await fetch(`${urlPath}/mealsCard/check`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
@@ -138,7 +144,7 @@ export const FullCard = () => {
         };
 
         try {
-            const response = await fetch(`https://localhost:443/card/${currently_card?._id}/meal`, {
+            const response = await fetch(`${urlPath}/card/${currently_card?._id}/meal`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -147,7 +153,7 @@ export const FullCard = () => {
             });
 
             if (response.ok) {
-                const updatedCardResponse = await fetch(`https://localhost:443/allcards/${userId}`);
+                const updatedCardResponse = await fetch(`${urlPath}/allcards/${userId}`);
                 const updatedData: any = await updatedCardResponse.json();
                 const updatedCard = updatedData.card.find((card: CardData) => card.name === selectedDay?.name);
                 if (updatedCard) {
@@ -172,7 +178,7 @@ export const FullCard = () => {
             description: newTrainingDescription,
         };
         try {
-            const response = await fetch(`https://localhost:443/card/${currently_card?._id}/task`, {
+            const response = await fetch(`${urlPath}/card/${currently_card?._id}/task`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -180,7 +186,7 @@ export const FullCard = () => {
                 body: JSON.stringify(newTraining),
             });
             if (response.ok) {
-                const updatedCardResponse = await fetch(`https://localhost:443/allcards/${userId}`);
+                const updatedCardResponse = await fetch(`${urlPath}/allcards/${userId}`);
                 const updatedData: any = await updatedCardResponse.json();
                 const updatedCard = updatedData.card.find((card: CardData) => card.name === selectedDay?.name);
 
@@ -217,11 +223,11 @@ export const FullCard = () => {
         const taskId = trainingCard.tasks[index]._id;
 
         try {
-            await fetch(`https://localhost:443/task/${taskId}`, {
+            await fetch(`${urlPath}/task/${taskId}`, {
                 method: 'DELETE',
             });
 
-            const updatedCardResponse = await fetch(`https://localhost:443/allcards/${userId}`);
+            const updatedCardResponse = await fetch(`${urlPath}/allcards/${userId}`);
             const updatedData: any = await updatedCardResponse.json();
             const updatedCard = updatedData.card.find((card: CardData) => card.name === selectedDay?.name);
             setTrainingCard(updatedCard.trainingCard);
@@ -234,11 +240,11 @@ export const FullCard = () => {
         const mealId = mealsCard.meals[index]._id;
 
         try {
-            await fetch(`https://localhost:443/meal/${mealId}`, {
+            await fetch(`${urlPath}/meal/${mealId}`, {
                 method: 'DELETE',
             });
 
-            const updatedCardResponse = await fetch(`https://localhost:443/allcards/${userId}`);
+            const updatedCardResponse = await fetch(`${urlPath}/allcards/${userId}`);
             const updatedData: any = await updatedCardResponse.json();
             const updatedCard = updatedData.card.find((card: CardData) => card.name === selectedDay?.name);
             setMealsCard(updatedCard.mealsCard);
@@ -274,7 +280,7 @@ export const FullCard = () => {
         const updatedTaskDescription = editedTaskDescription;
         const editingTaskId = trainingCard.tasks[editingTaskIndex]._id;
         try {
-            await fetch(`https://localhost:443/updateTask`, {
+            await fetch(`${urlPath}/updateTask`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
@@ -285,7 +291,7 @@ export const FullCard = () => {
                 }),
             });
 
-            const updatedCardResponse = await fetch(`https://localhost:443/allcards/${userId}`);
+            const updatedCardResponse = await fetch(`${urlPath}/allcards/${userId}`);
             const updatedData: any = await updatedCardResponse.json();
             const updatedCard = updatedData.card.find((card: CardData) => card.name === selectedDay?.name);
 
@@ -305,7 +311,7 @@ export const FullCard = () => {
         const editingMealId = mealsCard.meals[editingMealIndex]._id;
 
         try {
-            await fetch(`https://localhost:443/updateMeal`, {
+            await fetch(`${urlPath}/updateMeal`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
@@ -316,7 +322,7 @@ export const FullCard = () => {
                 }),
             });
 
-            const updatedCardResponse = await fetch(`https://localhost:443/allcards/${userId}`);
+            const updatedCardResponse = await fetch(`${urlPath}/allcards/${userId}`);
             const updatedData: any = await updatedCardResponse.json();
             const updatedCard = updatedData.card.find((card: CardData) => card.name === selectedDay?.name);
 
