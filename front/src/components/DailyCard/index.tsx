@@ -1,9 +1,7 @@
-// import React from 'react';
 import { MouseEventHandler } from 'react';
 import { useEffect, useState } from 'react';
-// import data from '../../data.json';
-//import currentuser from '../../currentuser.json'
 import { useAuth } from '../../context/authContext';
+import { generalRequest } from "../../generalFunction";
 import "./styles.css"
 
 interface CardData {
@@ -20,6 +18,35 @@ interface CardData {
   name: string;
 }
 
+interface Task {
+  _id: string;
+  description: string;
+}
+
+interface Meal {
+  _id: string;
+  description: string;
+}
+
+interface CardDataTest {
+  card: {
+      trainingCard: {
+          checked: boolean;
+          title: string;
+          tasks: Task[];
+      };
+      mealsCard: {
+          checked: boolean;
+          meals: Meal[];
+      };
+      _id: string;
+      userId: string;
+      name: string;
+      created_at: string;
+      updated_at: string;
+      __v: number;
+  }[];
+}
 
 interface PropTypes {
   week_number: number;
@@ -40,23 +67,28 @@ const weekDays = [
 export const DailyCard = ({ week_number, onClick }: PropTypes) => {
 
   const { user } = useAuth();
-  // const { isLoggedIn, login, user } = useAuth();
-  // console.log(isLoggedIn, login, user, 'login');
   const userId = String(user?._id);
   
     const [cardData, setCardData] = useState<CardData[]>([]);
     const [dataResponse, setDataResponse] = useState(false);
 
+    const urlPath = import.meta.env.VITE_URL_PATH;
+
+    if (!urlPath) {
+      throw new Error('URL_PATH is not defined');
+    }
+
     useEffect(() => {
         const fetchCardsData = async () => {
           try {
-            const response = await fetch(`https://localhost:443/allcards/${userId}`);
-            const data = await response.json();
+            const response = await generalRequest(`/allcards/${userId}`) as CardDataTest;
+            const data = response;
+            
             setCardData(data.card);
-            if(data.error){
-              setDataResponse(false);
-            }else{
+            if(data){
               setDataResponse(true);
+            }else{
+              setDataResponse(false);
             }
           } catch (error) {
             setDataResponse(false);

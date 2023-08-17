@@ -42,9 +42,11 @@ export const Login = () => {
     const password = passwordValue;
     const user: ILogin = { userName, password };
 
-    fetch("https://localhost:443/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
+    const urlPath = import.meta.env.VITE_URL_PATH
+
+    fetch(`${urlPath}/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(user),
     })
       .then((response) => {

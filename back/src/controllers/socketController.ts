@@ -17,18 +17,16 @@ export default class SocketController {
         console.log('A user connected');
 
         socket.on('joinRoom', async (chatId) => {
-
             try {
                 await retryOperation(async () => {
-                    socket.join(chatId);
                     const chatHistory = await this.service.get(chatId);
+                    socket.join(chatId);
                     socket.emit('chatHistory', chatHistory);
                 });
             } catch (error) {
                 console.error('Error occurred after max retries:', error);
                 socket.emit('error', { message: 'An error occurred. Please try again later.' });
             }
-
         });
 
         socket.on('sendMessage', async (data) => {

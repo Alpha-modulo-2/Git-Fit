@@ -6,11 +6,13 @@ import "./registerStyle.css";
 import { useNavigate } from "react-router-dom";
 import { Modal } from "../../components/Modal";
 
+
 export interface ApiResponseRequests {
   error?: string;
   user: User;
   statusCode?: string;
 }
+
 
 export const Register = () => {
   const [nameValue, setNameValue] = useState("");
@@ -91,6 +93,7 @@ export const Register = () => {
       openModal();
       return;
     }
+
     const formData = new FormData();
 
     // Adicione os campos ao FormData
@@ -108,6 +111,7 @@ export const Register = () => {
     formData.append("age", ageValue);
     
     fetch("https://localhost:443/users", {
+
       method: "POST",
       body: formData,
     }).then((response) => {

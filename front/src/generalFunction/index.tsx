@@ -1,9 +1,15 @@
-// const url = 'https://localhost:443'
+
 type method = 'GET' | 'POST' | 'PATCH' | 'DELETE';
+
+const urlPath = import.meta.env.VITE_URL_PATH ;
 
 export async function generalRequest<T>(endpoint: string, body?:object, method: method = 'GET'){
     try {
-        const req = await fetch(`https://localhost:443${endpoint}`, {
+        if (!urlPath) {
+            throw new Error('URL_PATH is not defined');
+        }
+
+        const req = await fetch(`${urlPath}${endpoint}`, {
             method: method,
             headers: {
                 "Content-Type": "application/json"

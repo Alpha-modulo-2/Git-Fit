@@ -4,7 +4,6 @@ import { Header } from "../../components/Header";
 import { ProgressBar } from "../../components/ProgressBar";
 import { CircleProgressBar } from "../../components/CircleProgressBar";
 import { PhotoProfile } from "../../components/PhotoProfile";
-// import { Carrossel } from "../../components/Carrossel";
 import currentuser from '../../currentuser.json'
 
 
@@ -15,8 +14,8 @@ const convertToNumber = (stringValue: string) => {
   };
 
 const Calc_IMC = ( weight_imc: number, height_imc:number) =>{
-   let imc = weight_imc / (height_imc*height_imc);
-   let imc_obj = {
+   const imc = weight_imc / (height_imc*height_imc);
+   const imc_obj = {
       imc_media: imc,
       imc_class: "",
       imc_color: "#00ff3c"
@@ -40,14 +39,19 @@ const Calc_IMC = ( weight_imc: number, height_imc:number) =>{
 export const Contact_profile = () => {
   //Ed, olhar aqui dps
     // const navigate: NavigateFunction = useNavigate();
-    let userId = currentuser.id;
+    const userId = currentuser.id;
     const [userData, setUserData] = useState<any>(null);
     const [cardData, setCardData] = useState<any[]>([]);
+    const urlPath = import.meta.env.VITE_URL_PATH;
+
+    if (!urlPath) {
+      throw new Error('URL_PATH is not defined');
+    }
 
     useEffect(() => {
         const fetchUserData = async () => {
           try {
-            const response = await fetch(`https://localhost:443/users/${userId}`);
+            const response = await fetch(`${urlPath}/users/${userId}`);
             const data = await response.json();
             setUserData(data);
           } catch (error) {
@@ -57,7 +61,7 @@ export const Contact_profile = () => {
 
         const fetchCardsData = async () => {
           try {
-            const response = await fetch(`https://localhost:443/allcards/${userId}`);
+            const response = await fetch(`${urlPath}/allcards/${userId}`);
             const data = await response.json();
             setCardData(data);
           } catch (error) {
@@ -81,9 +85,9 @@ export const Contact_profile = () => {
         user_photo = userData.photo;
     }
    }
-   let calcIMC = Calc_IMC(weight, heigth);
-   let progressIMC = (calcIMC.imc_media*100)/40;
-   let progressIMCircle = parseInt(progressIMC.toFixed(0));
+   const calcIMC = Calc_IMC(weight, heigth);
+   const progressIMC = (calcIMC.imc_media*100)/40;
+   const progressIMCircle = parseInt(progressIMC.toFixed(0));
 
    //consoles
    console.log(heigth);
@@ -92,8 +96,8 @@ export const Contact_profile = () => {
    console.log(cardData);
    //-------------------------
     const countTrainingCheckboxes = () => {
-        let totalDays = cardData.length;
-        let checkedDays = cardData.filter((day) => day.trainingCard.checked).length;
+        const totalDays = cardData.length;
+        const checkedDays = cardData.filter((day) => day.trainingCard.checked).length;
         return (checkedDays / totalDays) * 100;
     };
 
@@ -104,13 +108,13 @@ export const Contact_profile = () => {
    //-------------------------
     // Função para contar a quantidade de checkboxes marcados para alimentação
     const countMealCheckboxes = () => {
-        let totalDays = cardData.length;
-        let checkedDays = cardData.filter((day) => day.mealsCard.checked).length;
+        const totalDays = cardData.length;
+        const checkedDays = cardData.filter((day) => day.mealsCard.checked).length;
         return (checkedDays / totalDays) * 100;
     };
 
-    let progress1 = parseInt(countMealCheckboxes().toFixed(0));
-    let progress2 = parseInt(countTrainingCheckboxes().toFixed(0));
+    const progress1 = parseInt(countMealCheckboxes().toFixed(0));
+    const progress2 = parseInt(countTrainingCheckboxes().toFixed(0));
 
     return (
       <div className="profile">
