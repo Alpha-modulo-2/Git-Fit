@@ -10,7 +10,7 @@ export const Register = () => {
   const [passwordValue, setPasswordValue] = useState("");
   const [confirmPasswordValue, setConfirmPasswordValue] = useState("");
   const [emailValue, setEmailValue] = useState("");
-  const [photoValue, setPhotoValue] = useState("");
+  const [photoValue, setPhotoValue] = useState<File>();
   const [genderValue, setGenderValue] = useState("");
   const [weightValue, setWeightValue] = useState("");
   const [heightValue, setHeightValue] = useState("");
@@ -70,41 +70,35 @@ export const Register = () => {
       alert("As senhas não coincidem.");
       return;
     }
-    const name = nameValue;
-    const userName = userNameValue;
-    const password = passwordValue;
-    const email = emailValue;
-    const photo = photoValue;
-    const gender = genderValue;
-    const weight = weightValue;
-    const height = heightValue;
-    const occupation = occupationValue;
-    const age = ageValue;
+    const formData = new FormData();
 
-    const user: IUpdateUserData = {
-      name,
-      userName,
-      password,
-      email,
-      photo,
-      gender,
-      weight,
-      height,
-      occupation,
-      age,
-    };
-
+    // Adicione os campos ao FormData
+    formData.append("name", nameValue);
+    formData.append("userName", userNameValue);
+    formData.append("password", passwordValue);
+    formData.append("email", emailValue);
+    if (photoValue !== null && photoValue !== undefined) {
+      formData.append("photo", photoValue, photoValue.name);
+    }
+    formData.append("gender", genderValue);
+    formData.append("weight", weightValue);
+    formData.append("height", heightValue);
+    formData.append("occupation", occupationValue);
+    formData.append("age", ageValue);
+    
     void fetch("https://localhost:443/users", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(user),
+      body: formData,
     }).then((response) => {
       if (response.ok) {
         console.log("Perfil CRIADO com sucesso!");
         console.log(response);
       } else {
-        console.log(response);
+        console.log(response,'response');
       }
+    
+    }).catch((err) => {
+      console.log(err)
     });
   };
 
@@ -129,7 +123,10 @@ export const Register = () => {
   };
 
   const handlePhotoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setPhotoValue(event.target.value);
+    if (event.target.files && event.target.files.length > 0) {
+      const file = event.target.files[0];
+      setPhotoValue(file);
+    }
   };
 
   const handleGenderChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
