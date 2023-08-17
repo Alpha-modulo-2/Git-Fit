@@ -10,12 +10,17 @@ import cacheMiddleware from '../middleware/cacheMiddleware';
 import ConversationController from "../controllers/conversationController";
 import MessageController from "../controllers/messageController";
 import { clearCache, clearCacheForCards } from "../middleware/clearCacheMiddleware";
+import multer from 'multer';
+import multerConfig from "../middleware/multer";
 
 const router: Router = Router();
 
 const userController = new UserController();
 
-router.post("/users/", validateInsert, clearCache, userController.insert);
+const uploadMiddleware = multer(multerConfig);
+
+// router.post("/users/", validateInsert, clearCache, userController.insert);
+router.post("/users/", uploadMiddleware.single('photo'), validateInsert, clearCache, userController.insert);
 router.get("/users/search", authenticate, cacheMiddleware, validateQuery, userController.getByName);
 router.get("/users/:id", authenticate, cacheMiddleware, validateId, userController.getOne);
 router.get("/users/", authenticate, cacheMiddleware, userController.get);
