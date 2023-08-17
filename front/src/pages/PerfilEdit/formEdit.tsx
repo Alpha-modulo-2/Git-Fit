@@ -72,7 +72,7 @@ export default function EditForm(props: FormProps) {
           <input
             type="text"
             className="input-edit"
-            placeholder="Nome Completo"
+            placeholder="Nome do Usuário"
             onChange={props.handleUserNameChange}
           />
 
@@ -106,7 +106,7 @@ export default function EditForm(props: FormProps) {
         <input
             type="text"
             className="input-edit"
-            placeholder="Apelido"
+            placeholder="Nome Completo"
             onChange={props.handleNameChange}
           />
             <input

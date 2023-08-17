@@ -66,7 +66,7 @@ const RegisterForm: React.FC<FormProps> = (props) => {
           <input
             type="text"
             className="input-register"
-            placeholder="Nome Completo"
+            placeholder="Nome do Usuário"
             onChange={props.handleUserNameChange}
             value={props.userNameValue}
           />
@@ -101,7 +101,7 @@ const RegisterForm: React.FC<FormProps> = (props) => {
           <input
             type="text"
             className="input-register"
-            placeholder="Apelido"
+            placeholder="Nome Completo"
             onChange={props.handleNameChange}
             value={props.nameValue}
           />
