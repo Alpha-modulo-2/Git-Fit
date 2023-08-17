@@ -5,6 +5,8 @@ import { useEffect, useState } from "react";
 import Form from "./formEdit";
 import IUpdateUserData from "../../interfaces/IUpdateUserData";
 import { useParams } from "react-router-dom";
+import { Modal } from "../../components/Modal";
+
 
 export const PerfilEdit = () => {
   const { id } = useParams();
@@ -23,7 +25,18 @@ export const PerfilEdit = () => {
   const [ageValue, setAgeValue] = useState("");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
+  
+  function openModal() {
+    setModalIsOpen(true);
+  }
+  function closeModal() {
+    setModalIsOpen(false);
+  }
+
   const navigate: NavigateFunction = useNavigate();
+
+  const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
+  const [messageModal, setMessageModal] = useState<string>("");
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -80,7 +93,8 @@ export const PerfilEdit = () => {
     };
     if (password !== confirmPasswordValue) {
       console.log("As senhas não coincidem.");
-      alert("As senhas não coincidem.");
+      setMessageModal("As senhas não coincidem.");
+      openModal();
       return;
     }
 
@@ -90,12 +104,12 @@ export const PerfilEdit = () => {
       body: JSON.stringify(user),
     }).then((response) => {
       if (response.ok) {
-        console.log("Perfil atualizado com sucesso!");
+        setMessageModal("Perfil atualizado com sucesso!");
+        openModal();
         setIsLoggedIn(true);
         navigate("/profile");
       } else {
         console.log(response);
-        console.log(userId);
       }
     });
   };
@@ -145,17 +159,19 @@ export const PerfilEdit = () => {
       })
         .then((response) => {
           if (response.ok) {
-            console.log("Usuário excluído com sucesso!");
-            alert("usuário deletado com sucesso!");
+            setMessageModal("Usuário excluído com sucesso!");
+            openModal();
             navigate("/profile");
           } else {
             console.error("Erro ao excluir usuário:", response);
-            alert("erro ao deletar usuário");
+            setMessageModal("Erro ao excluir usuário:");
+            openModal();
           }
         })
         .catch((error) => {
-          console.error("Erro ao excluir usuário:", error);
-          alert("erro ao deletar usuário");
+          console.error("Erro ao excluir usuário:",error);
+          setMessageModal("Erro ao excluir usuário:");
+          openModal();
         });
     }
   };
@@ -197,6 +213,7 @@ export const PerfilEdit = () => {
                     />
         </div>
       </div>
+      {modalIsOpen && <Modal children={messageModal} onClick={closeModal} />}
     </div>
   );
 };
