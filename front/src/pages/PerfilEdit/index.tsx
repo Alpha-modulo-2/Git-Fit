@@ -35,13 +35,19 @@ export const PerfilEdit = () => {
 
   const navigate: NavigateFunction = useNavigate();
 
+  const urlPath = import.meta.env.VITE_URL_PATH;
+
+  if (!urlPath) {
+    throw new Error('URL_PATH is not defined');
+  }
+
   const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
   const [messageModal, setMessageModal] = useState<string>("");
 
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await fetch(`https://localhost:443/users/${userId}`);
+        const response = await fetch(`${urlPath}/users/${userId}`);
         if (response.ok) {
           const userData = (await response.json()) as IUpdateUserData;
           setNameValue(userData.name);
@@ -98,7 +104,7 @@ export const PerfilEdit = () => {
       return;
     }
 
-    void fetch(`https://localhost:443/users/${userId}`, {
+    void fetch(`${urlPath}/users/${userId}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(user),
@@ -154,7 +160,7 @@ export const PerfilEdit = () => {
       "Tem certeza de que deseja excluir sua conta?"
     );
     if (confirmed) {
-      fetch(`https://localhost:443/users/${userId}`, {
+      fetch(`${urlPath}/users/${userId}`, {
         method: "DELETE",
       })
         .then((response) => {

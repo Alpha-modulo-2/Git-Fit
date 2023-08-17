@@ -55,12 +55,10 @@ router.delete("/rejectFriend/:requestId", authenticate, friendRequestsController
 const loginController = new LoginController();
 
 router.post("/login", validateLogin, loginController.login);
-// router.delete("/logout", loginController.logout);
 
 const conversationController = new ConversationController();
 const messageController = new MessageController();
 
-//Chat Routes
 router.post("/conversations", conversationController.create)
 router.get("/conversations/:userId", conversationController.get)
 
@@ -68,7 +66,7 @@ router.post("/messages", messageController.create)
 router.get("/messages/:chatId", messageController.get)
 
 router.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public/index.html'));
+    res.sendFile(path.join(__dirname, '../public/index.html'));
 });
 
 export { router };

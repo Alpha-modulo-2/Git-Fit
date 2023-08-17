@@ -1,8 +1,5 @@
-// import React from 'react';
 import { MouseEventHandler } from 'react';
 import { useEffect, useState } from 'react';
-// import data from '../../data.json';
-//import currentuser from '../../currentuser.json'
 import { useAuth } from '../../context/authContext';
 import { generalRequest } from "../../generalFunction";
 import "./styles.css"
@@ -70,18 +67,23 @@ const weekDays = [
 export const DailyCard = ({ week_number, onClick }: PropTypes) => {
 
   const { user } = useAuth();
-  // const { isLoggedIn, login, user } = useAuth();
-  // console.log(isLoggedIn, login, user, 'login');
   const userId = String(user?._id);
   
     const [cardData, setCardData] = useState<CardData[]>([]);
     const [dataResponse, setDataResponse] = useState(false);
+
+    const urlPath = import.meta.env.VITE_URL_PATH;
+
+    if (!urlPath) {
+      throw new Error('URL_PATH is not defined');
+    }
 
     useEffect(() => {
         const fetchCardsData = async () => {
           try {
             const response = await generalRequest(`/allcards/${userId}`) as CardDataTest;
             const data = response;
+            
             setCardData(data.card);
             if(data){
               setDataResponse(true);

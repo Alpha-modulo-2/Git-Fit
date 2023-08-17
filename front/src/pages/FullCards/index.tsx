@@ -9,8 +9,6 @@ import { useParams } from 'react-router-dom';
 import { useAuth } from '../../context/authContext';
 import { Chat } from "../../components/Chat";
 import { generalRequest } from "../../generalFunction";
-// import { UserData } from "../../interfaces/IUser";
-//import currentuser from '../../currentuser.json'
 
 interface CardData {
     card: [{}]
@@ -78,8 +76,6 @@ export const FullCard = () => {
     const selectedDay = weekDays.find(day => day.id === parseInt(selectedId));
 
     const { user } = useAuth();
-    // const { isLoggedIn, login, user } = useAuth();
-    // console.log(isLoggedIn, login, user, 'login');
     const userId = String(user?._id);
 
     const [trainingCard, setTrainingCard] = useState<CardData['trainingCard']>({
@@ -94,6 +90,7 @@ export const FullCard = () => {
     });
 
     const [currently_card, set_currently_card_id] = useState<CardDataTest['card'][0] | undefined>();
+
 
     useEffect(() => {
         const fetchCardsData = async () => {
@@ -184,7 +181,6 @@ export const FullCard = () => {
                 const updatedCardResponse = await generalRequest(`/allcards/${userId}`) as CardDataTest;
                 const updatedData = updatedCardResponse;
                 const updatedCard = updatedData.card.find((card) => card.name === selectedDay?.name);
-
                 if (updatedCard) {
                     setTrainingCard(updatedCard.trainingCard);
                 }
@@ -243,7 +239,6 @@ export const FullCard = () => {
             if (updatedCard) {
                 setMealsCard(updatedCard.mealsCard);
             }
-            
         } catch (error) {
             console.error('Erro ao excluir refeição', error);
         }
@@ -283,7 +278,6 @@ export const FullCard = () => {
             const updatedCardResponse = await generalRequest(`/allcards/${userId}`) as CardDataTest;
             const updatedData = updatedCardResponse;
             const updatedCard = updatedData.card.find((card) => card.name === selectedDay?.name);
-
             if (updatedCard) {
                 setTrainingCard(updatedCard.trainingCard);
             }
@@ -308,7 +302,6 @@ export const FullCard = () => {
             const updatedCardResponse = await generalRequest(`/allcards/${userId}`) as CardDataTest;
             const updatedData = updatedCardResponse;
             const updatedCard = updatedData.card.find((card) => card.name === selectedDay?.name);
-
             if (updatedCard) {
                 setMealsCard(updatedCard.mealsCard);
             }

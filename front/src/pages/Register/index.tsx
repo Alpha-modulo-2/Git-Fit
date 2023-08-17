@@ -7,11 +7,13 @@ import { useNavigate } from "react-router-dom";
 import { Modal } from "../../components/Modal";
 import  uuid  from 'uuidv4';
 
+
 export interface ApiResponseRequests {
   error?: string;
   user: User;
   statusCode?: string;
 }
+
 
 export const Register = () => {
   const [nameValue, setNameValue] = useState("");
@@ -93,6 +95,7 @@ export const Register = () => {
       openModal();
       return;
     }
+
     const formData = new FormData();
 
     // Adicione os campos ao FormData
@@ -111,6 +114,7 @@ export const Register = () => {
 
     
     fetch("https://localhost:443/users", {
+
       method: "POST",
       body: formData,
     }).then((response) => {
@@ -121,6 +125,7 @@ export const Register = () => {
         openModal();
         navigate("/login");
         return response.json() as Promise<ApiResponseRequests>;
+
       } else {
         console.log(response,'response');
       }

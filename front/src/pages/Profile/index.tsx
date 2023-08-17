@@ -4,11 +4,9 @@ import { Header } from "../../components/Header";
 import { ProgressBar } from "../../components/ProgressBar";
 import { CircleProgressBar } from "../../components/CircleProgressBar";
 import { PhotoProfile } from "../../components/PhotoProfile";
-// import { Carrossel } from "../../components/Carrossel";
 import { DailyCard } from "../../components/DailyCard";
 import { NavigateFunction, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/authContext';
-//import currentuser from '../../currentuser.json';
 import { generalRequest } from "../../generalFunction";
 import { UserData } from "../../interfaces/IUser";
 
@@ -74,8 +72,6 @@ export const Profile = () => {
   const navigate: NavigateFunction = useNavigate();
 
   const { user } = useAuth();
-  // const { isLoggedIn, login, user } = useAuth();
-  // console.log(isLoggedIn, login, user, 'login');
   const userId = String(user?._id);
 
   const [userData, setUserData] = useState<any>(null);
@@ -86,6 +82,7 @@ export const Profile = () => {
       try {
         const response = await generalRequest(`/users/${userId}`) as UserData;
         const data = response;
+
         setUserData(data);
       } catch (error) {
         console.error('Erro ao buscar dados do usuário', error);
