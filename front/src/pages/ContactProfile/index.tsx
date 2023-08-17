@@ -42,11 +42,7 @@ export const Contact_profile = () => {
     const userId = currentuser.id;
     const [userData, setUserData] = useState<any>(null);
     const [cardData, setCardData] = useState<any[]>([]);
-    const urlPath = import.meta.env.VITE_URL_PATH;
-
-    if (!urlPath) {
-      throw new Error('URL_PATH is not defined');
-    }
+    const urlPath = import.meta.env.VITE_URL_PATH||"";
 
     useEffect(() => {
         const fetchUserData = async () => {

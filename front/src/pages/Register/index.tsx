@@ -110,12 +110,9 @@ export const Register = () => {
       age,
     };
 
-    const urlPath = import.meta.env.VITE_URL_PATH;
+    const urlPath = import.meta.env.VITE_URL_PATH||"";
 
-    if (!urlPath) {
-      throw new Error('URL_PATH is not defined');
-    }
-
+    
     void fetch(`${urlPath}/users`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
