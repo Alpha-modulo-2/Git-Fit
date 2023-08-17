@@ -31,7 +31,7 @@ export const Login = () => {
 
   useEffect(() => {
     if (isLoggedIn) {
-      navigate("/contacts");
+      navigate("/profile");
     }
   }, [isLoggedIn, navigate]);
 
