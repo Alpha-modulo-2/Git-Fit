@@ -1,9 +1,9 @@
-// const url = 'https://localhost:443'
+const url = 'https://localhost:443'
 type method = 'GET' | 'POST' | 'PATCH' | 'DELETE';
 
 export async function generalRequest<T>(endpoint: string, body?:object, method: method = 'GET'){
     try {
-        const req = await fetch(`https://localhost:443${endpoint}`, {
+        const req = await fetch(`${url}${endpoint}`, {
             method: method,
             headers: {
                 "Content-Type": "application/json"
