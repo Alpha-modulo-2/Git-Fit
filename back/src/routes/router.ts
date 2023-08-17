@@ -61,7 +61,7 @@ router.post("/messages", messageController.create)
 router.get("/messages/:chatId", messageController.get)
 
 router.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public/index.html'));
+    res.sendFile(path.join(__dirname, '../public/index.html'));
 });
 
 export { router };
