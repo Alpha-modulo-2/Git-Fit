@@ -1,6 +1,6 @@
 type method = 'GET' | 'POST' | 'PATCH' | 'DELETE';
 
-const urlPath = process.env.URL_PATH;
+const urlPath = import.meta.env.VITE_URL_PATH ;
 
 export async function generalRequest<T>(endpoint: string, body?:object, method: method = 'GET'){
     try {

@@ -63,7 +63,7 @@ export const FullCard = () => {
 
     const [currently_card, set_currently_card_id] = useState<CardData | undefined>();
 
-    const urlPath = process.env.URL_PATH;
+    const urlPath = import.meta.env.VITE_URL_PATH;
 
     if (!urlPath) {
     throw new Error('URL_PATH is not defined');
