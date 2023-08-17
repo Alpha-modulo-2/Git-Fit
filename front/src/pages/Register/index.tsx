@@ -1,10 +1,17 @@
 import React, { useState } from "react";
 import { Header } from "../../components/Header";
 import RegisterForm from "./formRegister";
-import IUpdateUserData from "../../interfaces/IUpdateUserData";
+import { User } from "../../interfaces/IUser";
 import "./registerStyle.css";
 import { useNavigate } from "react-router-dom";
 import { Modal } from "../../components/Modal";
+
+
+export interface ApiResponseRequests {
+  error?: string;
+  user: User;
+  statusCode?: string;
+}
 
 
 export const Register = () => {
@@ -13,7 +20,7 @@ export const Register = () => {
   const [passwordValue, setPasswordValue] = useState("");
   const [confirmPasswordValue, setConfirmPasswordValue] = useState("");
   const [emailValue, setEmailValue] = useState("");
-  const [photoValue, setPhotoValue] = useState("");
+  const [photoValue, setPhotoValue] = useState<File>();
   const [genderValue, setGenderValue] = useState("");
   const [weightValue, setWeightValue] = useState("");
   const [heightValue, setHeightValue] = useState("");
@@ -86,49 +93,46 @@ export const Register = () => {
       openModal();
       return;
     }
-    const name = nameValue;
-    const userName = userNameValue;
-    const password = passwordValue;
-    const email = emailValue;
-    const photo = photoValue;
-    const gender = genderValue;
-    const weight = weightValue;
-    const height = heightValue;
-    const occupation = occupationValue;
-    const age = ageValue;
 
-    const user: IUpdateUserData = {
-      name,
-      userName,
-      password,
-      email,
-      photo,
-      gender,
-      weight,
-      height,
-      occupation,
-      age,
-    };
+    const formData = new FormData();
 
-    const urlPath = import.meta.env.VITE_URL_PATH;
-
-    if (!urlPath) {
-      throw new Error('URL_PATH is not defined');
+    // Adicione os campos ao FormData
+    formData.append("name", nameValue);
+    formData.append("userName", userNameValue);
+    formData.append("password", passwordValue);
+    formData.append("email", emailValue);
+    if (photoValue !== null && photoValue !== undefined) {
+      formData.append("photo", photoValue, photoValue.name);
     }
+    formData.append("gender", genderValue);
+    formData.append("weight", weightValue);
+    formData.append("height", heightValue);
+    formData.append("occupation", occupationValue);
+    formData.append("age", ageValue);
+    
+    fetch("https://localhost:443/users", {
 
-    void fetch(`${urlPath}/users`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(user),
+      body: formData,
     }).then((response) => {
       if (response.ok) {
         console.log("Perfil CRIADO com sucesso!");
         setMessageModal("Perfil CRIADO com sucesso!");
         openModal();
         navigate("/login");
+        return response.json() as Promise<ApiResponseRequests>;
+
       } else {
-        console.log(response);
+        console.log(response,'response');
       }
+    })
+    .then((data) => {
+      if (data) {
+        console.log(data, 'data')
+      }
+      console.log(data, 'data from login')
+    }).catch((err) => {
+      console.log(err)
     });
   };
 
@@ -155,7 +159,10 @@ export const Register = () => {
   };
 
   const handlePhotoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setPhotoValue(event.target.value);
+    if (event.target.files && event.target.files.length > 0) {
+      const file = event.target.files[0];
+      setPhotoValue(file);
+    }
   };
 
   const handleGenderChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
