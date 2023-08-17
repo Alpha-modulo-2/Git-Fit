@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
 import { useAuth } from '../../context/authContext';
 import { Chat } from "../../components/Chat";
-//import currentuser from '../../currentuser.json'
+import { generalRequest } from "../../generalFunction";
 
 interface CardData {
     card: [{}]
@@ -27,6 +27,36 @@ interface CardData {
     created_at: string;
     updated_at: string;
     __v: number;
+}
+
+interface Task {
+    _id: string;
+    description: string;
+}
+
+interface Meal {
+    _id: string;
+    description: string;
+}
+
+interface CardDataTest {
+    card: {
+        trainingCard: {
+            checked: boolean;
+            title: string;
+            tasks: Task[];
+        };
+        mealsCard: {
+            checked: boolean;
+            meals: Meal[];
+        };
+        _id: string;
+        userId: string;
+        name: string;
+        created_at: string;
+        updated_at: string;
+        __v: number;
+    }[];
 }
 
 const weekDays = [
@@ -61,7 +91,7 @@ export const FullCard = () => {
         meals: [],
     });
 
-    const [currently_card, set_currently_card_id] = useState<CardData | undefined>();
+    const [currently_card, set_currently_card_id] = useState<CardDataTest['card'][0] | undefined>();
 
     const urlPath = process.env.URL_PATH;
 
@@ -72,11 +102,9 @@ export const FullCard = () => {
     useEffect(() => {
         const fetchCardsData = async () => {
             try {
-                const response = await fetch(`${urlPath}/allcards/${userId}`);
-                const data = await response.json();
-
-                const currentCard = data.card.find((card: CardData) => card.name === selectedDay?.name);
-
+                const response = await generalRequest(`/allcards/${userId}`) as CardDataTest;
+                const data = response;
+                const currentCard = data.card.find((card) => card.name === selectedDay?.name);
                 if (currentCard) {
                     setTrainingCard(currentCard.trainingCard);
                     setMealsCard(currentCard.mealsCard);
@@ -96,16 +124,10 @@ export const FullCard = () => {
         };
         setTrainingCard(updatedTrainingCard);
         try {
-            await fetch(`${urlPath}/trainingCard/check`, {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    cardId: currently_card?._id,
-                    checked: updatedTrainingCard.checked,
-                }),
-            });
+            await generalRequest('/trainingCard/check', {
+                cardId: currently_card?._id,
+                checked: updatedTrainingCard.checked,
+            }, 'PATCH');
         } catch (error) {
             console.error('Erro ao atualizar o checkbox do treino', error);
         }
@@ -119,16 +141,11 @@ export const FullCard = () => {
         setMealsCard(updatedMealsCard);
 
         try {
-            await fetch(`${urlPath}/mealsCard/check`, {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    cardId: currently_card?._id,
-                    checked: updatedMealsCard.checked,
-                }),
-            });
+            await generalRequest('/mealsCard/check', {
+                cardId: currently_card?._id,
+                checked: updatedMealsCard.checked,
+            }, 'PATCH');
+
         } catch (error) {
             console.error('Erro ao atualizar o checkbox das refeições', error);
         }
@@ -144,23 +161,12 @@ export const FullCard = () => {
         };
 
         try {
-            const response = await fetch(`${urlPath}/card/${currently_card?._id}/meal`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(newMeal),
-            });
-
-            if (response.ok) {
-                const updatedCardResponse = await fetch(`${urlPath}/allcards/${userId}`);
-                const updatedData: any = await updatedCardResponse.json();
-                const updatedCard = updatedData.card.find((card: CardData) => card.name === selectedDay?.name);
-                if (updatedCard) {
-                    setMealsCard(updatedCard.mealsCard);
-                }
-            } else {
-                console.error('Erro ao adicionar nova refeição', response);
+            await generalRequest(`/card/${currently_card?._id}/meal`, newMeal, 'POST');
+            const updatedCardResponse = await generalRequest(`/allcards/${userId}`) as CardDataTest;
+            const updatedData = updatedCardResponse;
+            const updatedCard = updatedData.card.find((card) => card.name === selectedDay?.name);
+            if (updatedCard) {
+                setMealsCard(updatedCard.mealsCard);
             }
         } catch (error) {
             console.error('Erro ao adicionar nova refeição', error);
@@ -178,17 +184,11 @@ export const FullCard = () => {
             description: newTrainingDescription,
         };
         try {
-            const response = await fetch(`${urlPath}/card/${currently_card?._id}/task`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(newTraining),
-            });
-            if (response.ok) {
-                const updatedCardResponse = await fetch(`${urlPath}/allcards/${userId}`);
-                const updatedData: any = await updatedCardResponse.json();
-                const updatedCard = updatedData.card.find((card: CardData) => card.name === selectedDay?.name);
+            const response = await generalRequest(`/card/${currently_card?._id}/task`, newTraining, 'POST')
+            if (response) {
+                const updatedCardResponse = await generalRequest(`/allcards/${userId}`) as CardDataTest;
+                const updatedData = updatedCardResponse;
+                const updatedCard = updatedData.card.find((card) => card.name === selectedDay?.name);
 
                 if (updatedCard) {
                     setTrainingCard(updatedCard.trainingCard);
@@ -223,14 +223,14 @@ export const FullCard = () => {
         const taskId = trainingCard.tasks[index]._id;
 
         try {
-            await fetch(`${urlPath}/task/${taskId}`, {
-                method: 'DELETE',
-            });
+            await generalRequest(`/task/${taskId}`, {}, 'DELETE');
 
-            const updatedCardResponse = await fetch(`${urlPath}/allcards/${userId}`);
-            const updatedData: any = await updatedCardResponse.json();
-            const updatedCard = updatedData.card.find((card: CardData) => card.name === selectedDay?.name);
-            setTrainingCard(updatedCard.trainingCard);
+            const updatedCardResponse = await generalRequest(`/allcards/${userId}`) as CardDataTest;
+            const updatedData = updatedCardResponse;
+            const updatedCard = updatedData.card.find((card) => card.name === selectedDay?.name);
+            if (updatedCard) {
+                setTrainingCard(updatedCard.trainingCard);
+            }
         } catch (error) {
             console.error('Erro ao excluir treino', error);
         }
@@ -240,15 +240,14 @@ export const FullCard = () => {
         const mealId = mealsCard.meals[index]._id;
 
         try {
-            await fetch(`${urlPath}/meal/${mealId}`, {
-                method: 'DELETE',
-            });
-
-            const updatedCardResponse = await fetch(`${urlPath}/allcards/${userId}`);
-            const updatedData: any = await updatedCardResponse.json();
-            const updatedCard = updatedData.card.find((card: CardData) => card.name === selectedDay?.name);
-            setMealsCard(updatedCard.mealsCard);
-
+            await generalRequest(`/meal/${mealId}`, {}, 'DELETE')
+            
+            const updatedCardResponse = await generalRequest(`/allcards/${userId}`) as CardDataTest;
+            const updatedData = updatedCardResponse;
+            const updatedCard = updatedData.card.find((card) => card.name === selectedDay?.name);
+            if (updatedCard) {
+                setMealsCard(updatedCard.mealsCard);
+            }
         } catch (error) {
             console.error('Erro ao excluir refeição', error);
         }
@@ -280,20 +279,14 @@ export const FullCard = () => {
         const updatedTaskDescription = editedTaskDescription;
         const editingTaskId = trainingCard.tasks[editingTaskIndex]._id;
         try {
-            await fetch(`${urlPath}/updateTask`, {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    taskId: editingTaskId,
-                    description: updatedTaskDescription,
-                }),
-            });
+            await generalRequest(`/updateTask`, {
+                taskId: editingTaskId,
+                description: updatedTaskDescription,
+            }, 'PATCH');
 
-            const updatedCardResponse = await fetch(`${urlPath}/allcards/${userId}`);
-            const updatedData: any = await updatedCardResponse.json();
-            const updatedCard = updatedData.card.find((card: CardData) => card.name === selectedDay?.name);
+            const updatedCardResponse = await generalRequest(`/allcards/${userId}`) as CardDataTest;
+            const updatedData = updatedCardResponse;
+            const updatedCard = updatedData.card.find((card) => card.name === selectedDay?.name);
 
             if (updatedCard) {
                 setTrainingCard(updatedCard.trainingCard);
@@ -311,20 +304,14 @@ export const FullCard = () => {
         const editingMealId = mealsCard.meals[editingMealIndex]._id;
 
         try {
-            await fetch(`${urlPath}/updateMeal`, {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    mealId: editingMealId,
-                    description: updatedMealDescription,
-                }),
-            });
+            await generalRequest(`/updateMeal`, {
+                mealId: editingMealId,
+                description: updatedMealDescription,
+            }, 'PATCH');
 
-            const updatedCardResponse = await fetch(`${urlPath}/allcards/${userId}`);
-            const updatedData: any = await updatedCardResponse.json();
-            const updatedCard = updatedData.card.find((card: CardData) => card.name === selectedDay?.name);
+            const updatedCardResponse = await generalRequest(`/allcards/${userId}`) as CardDataTest;
+            const updatedData = updatedCardResponse;
+            const updatedCard = updatedData.card.find((card) => card.name === selectedDay?.name);
 
             if (updatedCard) {
                 setMealsCard(updatedCard.mealsCard);
