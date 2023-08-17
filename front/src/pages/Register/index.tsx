@@ -1,7 +1,14 @@
 import React, { useState } from "react";
 import { Header } from "../../components/Header";
 import RegisterForm from "./formRegister";
+import { User } from "../../interfaces/IUser";
 import "./registerStyle.css";
+
+export interface ApiResponseRequests {
+  error?: string;
+  user: User;
+  statusCode?: string;
+}
 
 export const Register = () => {
   const [nameValue, setNameValue] = useState("");
@@ -85,17 +92,23 @@ export const Register = () => {
     formData.append("occupation", occupationValue);
     formData.append("age", ageValue);
     
-    void fetch("https://localhost:443/users", {
+    fetch("https://localhost:443/users", {
       method: "POST",
       body: formData,
     }).then((response) => {
       if (response.ok) {
         console.log("Perfil CRIADO com sucesso!");
         console.log(response);
+        return response.json() as Promise<ApiResponseRequests>;
       } else {
         console.log(response,'response');
       }
-    
+    })
+    .then((data) => {
+      if (data) {
+        console.log(data, 'data')
+      }
+      console.log(data, 'data from login')
     }).catch((err) => {
       console.log(err)
     });

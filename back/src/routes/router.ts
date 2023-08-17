@@ -20,7 +20,7 @@ const userController = new UserController();
 const uploadMiddleware = multer(multerConfig);
 
 // router.post("/users/", validateInsert, clearCache, userController.insert);
-router.post("/users/", uploadMiddleware.single('photo'),  clearCache, userController.insert);
+router.post("/users/", uploadMiddleware.single('photo'), validateInsert, clearCache, userController.insert);
 router.get("/users/search", authenticate, cacheMiddleware, validateQuery, userController.getByName);
 router.get("/users/:id", authenticate, cacheMiddleware, validateId, userController.getOne);
 router.get("/users/", authenticate, cacheMiddleware, userController.get);
