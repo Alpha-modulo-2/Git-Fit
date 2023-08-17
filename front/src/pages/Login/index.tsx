@@ -42,6 +42,8 @@ export const Login = () => {
     const password = passwordValue;
     const user: ILogin = { userName, password };
 
+    const urlPath = process.env.URL_PATH
+
     if (!urlPath) {
       throw new Error('URL_PATH is not defined');
     }
