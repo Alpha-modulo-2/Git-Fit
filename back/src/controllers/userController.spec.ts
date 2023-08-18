@@ -1,4 +1,4 @@
-/* import mongoose from 'mongoose';
+import mongoose from 'mongoose';
 import UserController from '../controllers/UserController';
 import jwt from "jsonwebtoken"
 import UserService from '../services/UserServices';
@@ -29,11 +29,12 @@ describe('UserController', () => {
     const mockUserId = new mongoose.Types.ObjectId().toString()
 
     const mockUser = {
+        name: "Name",
         userName: "teste",
-        name: "",
         password: "teste",
         email: "teste@teste.com",
         friends: [mockFriendID,],
+        photo: "",
         gender: "M",
         weight: "90kg",
         height: "180cm",
@@ -66,24 +67,13 @@ describe('UserController', () => {
     });
 
     it('should insert a user', async () => {
-        userService.insert.mockResolvedValue({
-            error: false, statusCode: 200, user: {
-                ...mockUser,
-                photo: ""
-            }
-        });
+        userService.insert.mockResolvedValue({ error: false, statusCode: 200, user: mockUser });
 
         await userController.insert(req, res);
 
-        expect(userService.insert).toHaveBeenCalledWith({
-            ...mockUser,
-            photo: ""
-        });
+        expect(userService.insert).toHaveBeenCalledWith(mockUser);
         expect(res.status).toHaveBeenCalledWith(200);
-        expect(res.json).toHaveBeenCalledWith({
-            ...mockUser,
-            photo: ""
-        });
+        expect(res.json).toHaveBeenCalledWith(mockUser);
     });
 
     it('should get one user', async () => {
@@ -108,18 +98,20 @@ describe('UserController', () => {
     });
 
     it('should update a user', async () => {
+        const mockUser1 = {...mockUser, _id: mockUserId}
+        //const { _id, ...restOfUser } = mockUser
         const req = {
             params: {
                 id: mockUserId,
             },
-            body: { ...mockUser }
+            body: { ...mockUser1 }
         }
-        userService.update.mockResolvedValue({ error: false, statusCode: 200, user: mockUser, });
+        userService.update.mockResolvedValue({ error: false, statusCode: 200, user: mockUser1, });
 
         await userController.update(req, res);
 
         expect(res.status).toHaveBeenCalledWith(200);
-        expect(res.json).toHaveBeenCalledWith(mockUser);
+        expect(res.json).toHaveBeenCalledWith({ error: false, statusCode: 200, user: mockUser1, });
     });
 
     it('should delete a user', async () => {
@@ -144,10 +136,7 @@ describe('UserController', () => {
 
         await userController.insert(req, res);
 
-        expect(userService.insert).toHaveBeenCalledWith({
-            ...mockUser,
-            photo: ""
-        });
+        expect(userService.insert).toHaveBeenCalledWith(mockUser);
         expect(res.status).toHaveBeenCalledWith(500);
         expect(res.json).toHaveBeenCalledWith({ error: true, message: `Erro ao inserir a conta ${error.message}`, statusCode: 500 });
     });
@@ -313,4 +302,4 @@ describe('UserController', () => {
             message: 'Erro ao remover amizade: JWTSECRET nao definido'
         });
     });
-}); */
+});
