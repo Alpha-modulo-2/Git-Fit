@@ -4,9 +4,11 @@ import { Header } from "../../components/Header";
 import { ProgressBar } from "../../components/ProgressBar";
 import { CircleProgressBar } from "../../components/CircleProgressBar";
 import { PhotoProfile } from "../../components/PhotoProfile";
+// import { Carrossel } from "../../components/Carrossel";
 import { DailyCard } from "../../components/DailyCard";
 import { NavigateFunction, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/authContext';
+//import currentuser from '../../currentuser.json';
 import { generalRequest } from "../../generalFunction";
 import { UserData } from "../../interfaces/IUser";
 
@@ -72,6 +74,8 @@ export const Profile = () => {
   const navigate: NavigateFunction = useNavigate();
 
   const { user } = useAuth();
+  // const { isLoggedIn, login, user } = useAuth();
+  // console.log(isLoggedIn, login, user, 'login');
   const userId = String(user?._id);
 
   const [userData, setUserData] = useState<any>(null);
@@ -82,7 +86,6 @@ export const Profile = () => {
       try {
         const response = await generalRequest(`/users/${userId}`) as UserData;
         const data = response;
-
         setUserData(data);
       } catch (error) {
         console.error('Erro ao buscar dados do usuário', error);
@@ -147,7 +150,7 @@ export const Profile = () => {
       <Header isLoggedIn={true} />
       <div className="structure-profile">
         <div className="container-profile">
-          <PhotoProfile user_name={user_name} url_photo={`/uploads/${user_photo}`} />
+          <PhotoProfile user_name={user_name} url_photo={user_photo} />
           <div className="container-progress-bar">
             <div className="div-progress-bar">
               <ProgressBar progress={progress1} title_bar="Alimentação" />
@@ -163,7 +166,7 @@ export const Profile = () => {
             </div>
           </div>
         </div>
-        <div className="structure-carrossel">
+        <div className="structure-carrossel-fc">
           <DailyCard week_number={0} onClick={() => navigate('/fullcard/0')}></DailyCard>
           <DailyCard week_number={1} onClick={() => navigate('/fullcard/1')}></DailyCard>
           <DailyCard week_number={2} onClick={() => navigate('/fullcard/2')}></DailyCard>

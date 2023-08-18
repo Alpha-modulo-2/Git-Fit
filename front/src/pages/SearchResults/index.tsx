@@ -203,7 +203,7 @@ export const SearchedResults = () => {
         <div className="search-page">
             <Header isLoggedIn={true} />
             <div className="container-search">
-                <Chat/>
+                <Chat onChatOpen={false}/>
                 <div className="search-box">
                     <input type="text" className="search-text" placeholder="Pesquisar usuários..."
                     onChange={(e)=> setQuery(e.target.value)}/>
