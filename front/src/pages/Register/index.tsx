@@ -167,6 +167,8 @@ export const Register = () => {
   const handlePhotoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
       const file = event.target.files[0];
+      console.log(file);
+      
       const fileExtension = file.name.split('.').pop(); 
       if(fileExtension){
         const fileName = `${uuid()}.${fileExtension}`; // Gera o nome de arquivo com UUID e extensão

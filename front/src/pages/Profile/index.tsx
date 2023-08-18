@@ -147,7 +147,7 @@ export const Profile = () => {
       <Header isLoggedIn={true} />
       <div className="structure-profile">
         <div className="container-profile">
-          <PhotoProfile user_name={user_name} url_photo={user_photo} />
+          <PhotoProfile user_name={user_name} url_photo={`/uploads/${user_photo}`} />
           <div className="container-progress-bar">
             <div className="div-progress-bar">
               <ProgressBar progress={progress1} title_bar="Alimentação" />

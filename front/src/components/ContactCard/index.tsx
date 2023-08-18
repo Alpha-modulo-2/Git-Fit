@@ -2,6 +2,7 @@
 import React from 'react';
 import { XCircle, Check, UserCirclePlus } from "@phosphor-icons/react";
 import { Friend, UserData } from '../../interfaces/IUser';
+// import path from 'path';
 
 
 interface ContactCardProps{
@@ -17,8 +18,8 @@ interface ContactCardProps{
 
 const ContactCard: React.FC<ContactCardProps> = ({ requesterInfo, requestId, onUpdateFriends, onRemoveFriends, onAddFriend, recipientId, typeOfCard }) => {
   const imageId = requesterInfo?.photo;
-  const image = imageId ? `../src/assets/images/${imageId}` : 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/User-avatar.svg/2048px-User-avatar.svg.png';
-
+  const image = imageId ? `/uploads/${imageId}` : 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/User-avatar.svg/2048px-User-avatar.svg.png';
+// const image =path.join('/uploads', imageId!)
   return (
     <div className="contact-card">
       <div className="img-card-contacts">
