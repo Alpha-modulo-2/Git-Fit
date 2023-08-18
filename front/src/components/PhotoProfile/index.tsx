@@ -1,3 +1,6 @@
+import { useNavigate } from "react-router-dom";
+import { PencilSimpleLine } from "phosphor-react";
+import { useAuth } from "../../context/authContext";
 import "./styles.css"
 
 interface PropTypes {
@@ -6,9 +9,21 @@ interface PropTypes {
 }
 
 export const PhotoProfile = ({url_photo, user_name}:PropTypes) => {
+    const navigate = useNavigate();
+    const { user } = useAuth();
+
+    function verifyUser(){
+        if(user){
+            navigate(`/edit/${user._id}`)
+        }
+    }
+
     return (
     <div className="structure-photo-profile">
         <div className="moldure-photo">
+            <div className="icon-edit-container">
+                <PencilSimpleLine size={20} color="black" onClick={verifyUser} className="icon-editpage" />
+            </div>
             <img className="photo-profile" src={url_photo} />
         </div>
         <div className="name-profile">
