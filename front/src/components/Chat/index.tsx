@@ -21,7 +21,7 @@ interface ContactsProps {
 let socket: any;
 let currentChatId: any = null;
 
-export const Chat = ({ onChatOpen }) => {
+export const Chat = ({ onChatOpen }: { onChatOpen: any }) => {
     const { user } = useAuth();
     const userId = String(user?._id);
 
