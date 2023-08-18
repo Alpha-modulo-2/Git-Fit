@@ -6,7 +6,7 @@ services:
       dockerfile: Dockerfile
     ports:
       - 3000:3000
-      - 443:443
+      - 444:444
     restart: always
     env_file:
       - ./back/.env
