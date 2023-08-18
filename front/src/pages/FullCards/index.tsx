@@ -9,7 +9,6 @@ import { useParams } from 'react-router-dom';
 import { useAuth } from '../../context/authContext';
 import { Chat } from "../../components/Chat";
 import { generalRequest } from "../../generalFunction";
-import { ChatCircleText } from "@phosphor-icons/react";
 // import { UserData } from "../../interfaces/IUser";
 //import currentuser from '../../currentuser.json'
 

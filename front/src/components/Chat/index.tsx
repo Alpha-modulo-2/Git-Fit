@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { generalRequest } from "../../generalFunction";
 import { UserData } from "../../interfaces/IUser";
 import { useAuth } from '../../context/authContext';
-import { io, Socket } from "socket.io-client";
+import { io } from "socket.io-client";
 import "./styles.css"
 import { ChatCircleText, X } from "@phosphor-icons/react";
 
@@ -233,7 +233,5 @@ export const Chat = ({ onChatOpen }) => {
 
     );
 };
-function getUserNameById(sender: any) {
-    throw new Error("Function not implemented.");
-}
+
 
