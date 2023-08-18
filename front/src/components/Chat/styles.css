@@ -80,6 +80,14 @@
   background-color: #f2f2f2;
 }
 
+.msg-card:hover{
+  background-color: #afadad;
+}
+
+.msg-card:active{
+  background-color: #ec9cfc;
+}
+
 .img-card-msgs {
   width: 15%;
   height: 80%;
@@ -117,6 +125,66 @@
   width: 1rem;
   height: 1rem;
   text-align: center;
+}
+
+.box-open-msgs{
+  width: 17rem;
+  height: 100%;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.header_open_msg{
+  width: 16rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+}
+
+.body_box_msgs{
+  width: 16.3rem;
+  height: 80%;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+  border: 1px solid black;
+  overflow-y: scroll;
+  padding: 5px;
+  border: 2px solid rgb(70, 69, 70);
+  background-color: #cdc4e1;
+  border-radius: 0.5rem;
+}
+
+.div_send_message{
+  width: 17rem;
+  display: flex;
+}
+
+.input_send_message{
+  width: 14rem;
+  height: 2rem;
+  border: 2px solid rgb(70, 69, 70);
+  background-color: #cdc4e1;
+  border-radius: 0.5rem;
+}
+
+.button_send_message{
+  width: 2rem;
+  height: 2rem;
+  margin-left: 5px;
+  border-radius: 5%;
+}
+
+.button_send_message:hover{
+  background-color: #dadbdc;
+}
+
+.button_send_message:active{
+  border: 2px solid rgb(157, 156, 157);
+  background-color: #c7b4f2;
+  border-radius: 0.5rem;
 }
 
 /* Estilizando a barra de rolagem */

@@ -7,10 +7,10 @@ body {
   position: relative;
 }
 
-.structure-carrossel{
+.structure-carrossel-fc{
   position: absolute;
   right: 0.1rem;
-  width: 30vw;
+  width: 25%;
   height: 88vh;
   overflow: scroll;
 }

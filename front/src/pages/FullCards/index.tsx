@@ -9,6 +9,9 @@ import { useParams } from 'react-router-dom';
 import { useAuth } from '../../context/authContext';
 import { Chat } from "../../components/Chat";
 import { generalRequest } from "../../generalFunction";
+import { ChatCircleText } from "@phosphor-icons/react";
+// import { UserData } from "../../interfaces/IUser";
+//import currentuser from '../../currentuser.json'
 
 interface CardData {
     card: [{}]
@@ -76,6 +79,8 @@ export const FullCard = () => {
     const selectedDay = weekDays.find(day => day.id === parseInt(selectedId));
 
     const { user } = useAuth();
+    // const { isLoggedIn, login, user } = useAuth();
+    // console.log(isLoggedIn, login, user, 'login');
     const userId = String(user?._id);
 
     const [trainingCard, setTrainingCard] = useState<CardData['trainingCard']>({
@@ -90,7 +95,6 @@ export const FullCard = () => {
     });
 
     const [currently_card, set_currently_card_id] = useState<CardDataTest['card'][0] | undefined>();
-
 
     useEffect(() => {
         const fetchCardsData = async () => {
@@ -181,6 +185,7 @@ export const FullCard = () => {
                 const updatedCardResponse = await generalRequest(`/allcards/${userId}`) as CardDataTest;
                 const updatedData = updatedCardResponse;
                 const updatedCard = updatedData.card.find((card) => card.name === selectedDay?.name);
+
                 if (updatedCard) {
                     setTrainingCard(updatedCard.trainingCard);
                 }
@@ -239,6 +244,7 @@ export const FullCard = () => {
             if (updatedCard) {
                 setMealsCard(updatedCard.mealsCard);
             }
+            
         } catch (error) {
             console.error('Erro ao excluir refeição', error);
         }
@@ -278,6 +284,7 @@ export const FullCard = () => {
             const updatedCardResponse = await generalRequest(`/allcards/${userId}`) as CardDataTest;
             const updatedData = updatedCardResponse;
             const updatedCard = updatedData.card.find((card) => card.name === selectedDay?.name);
+
             if (updatedCard) {
                 setTrainingCard(updatedCard.trainingCard);
             }
@@ -302,6 +309,7 @@ export const FullCard = () => {
             const updatedCardResponse = await generalRequest(`/allcards/${userId}`) as CardDataTest;
             const updatedData = updatedCardResponse;
             const updatedCard = updatedData.card.find((card) => card.name === selectedDay?.name);
+
             if (updatedCard) {
                 setMealsCard(updatedCard.mealsCard);
             }
@@ -327,18 +335,22 @@ export const FullCard = () => {
             setShowMiniCarrossel(true);
         }
     }
-
+    const [isChatOpen, setIsChatOpen] = useState(true);
+    const handleChatToggle = (isOpen: any) => {
+        setIsChatOpen(isOpen);
+    };
     return (
         <div className="fullcard">
             <Header isLoggedIn={true} />
             <div className="structure-fullcard">
-                {!showMiniCarrosel ? (
+                {isChatOpen ? (
                     <div className="message_box">
-                        <input type="button" className="buttoncarrossel" onClick={changeversion}></input>
-                        <Chat></Chat>
+                        <Chat onChatOpen={handleChatToggle}></Chat>
                     </div>
                 ) : (
-                    <input type="button" className="buttoncarrossel" onClick={changeversion}></input>
+                    <div className="buttoncarrossel" onClick={changeversion}>
+                        <Chat onChatOpen={handleChatToggle}></Chat>
+                    </div>
                 )}
                 <div className="background-card">
                     <h2>{selectedDay?.name}</h2>
@@ -464,8 +476,8 @@ export const FullCard = () => {
                         )}
                     </div>
                 </div>
-                {showMiniCarrosel ? (
-                    <div className="structure-carrossel">
+                {!isChatOpen ? (
+                    <div className="structure-carrossel-fc">
                         <DailyCard week_number={0} onClick={() => navigate('/fullcard/0')}></DailyCard>
                         <DailyCard week_number={1} onClick={() => navigate('/fullcard/1')}></DailyCard>
                         <DailyCard week_number={2} onClick={() => navigate('/fullcard/2')}></DailyCard>
