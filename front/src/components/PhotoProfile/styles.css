@@ -1,30 +1,45 @@
-.structure-photo-profile{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+.structure-photo-profile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
 }
 
-.name-profile{
-    border-radius: 5rem;
-    background-color: #C7D3EB;
-    width: 170px;
-    text-align: center;
-    padding: 0.5rem;
-    border: 1px solid rgb(0, 0, 0);
+.name-profile {
+  border-radius: 5rem;
+  background-color: #c7d3eb;
+  width: 170px;
+  text-align: center;
+  padding: 0.5rem;
+  border: 1px solid rgb(0, 0, 0);
 }
 
-.moldure-photo{
-    background-color: #C7D3EB;
-    width: 200px;
-    height: 200px;
-    border-radius: 25rem;
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 0.5rem #7353BA solid;
+.moldure-photo {
+  background-color: #c7d3eb;
+  width: 200px;
+  height: 200px;
+  border-radius: 25rem;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 0.5rem #7353ba solid;
 }
 
-.photo-profile{
-    height: 100%;
+.photo-profile {
+  height: 100%;
 }
+
+.icon-edit-container {
+  background-color: azure;
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  bottom: 40px;
+  right: 0;
+  border-radius: 30px;
+}
+

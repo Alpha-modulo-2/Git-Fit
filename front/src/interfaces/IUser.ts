@@ -1,6 +1,7 @@
 export interface User {
     _id: string;
     userName: string;
+    name?: string;
     password: string;
     email: string;
     friends: Friend[];

@@ -91,7 +91,8 @@ export const SearchedResults = () => {
                 setMessageModal(data.message)
                 openModal();  
                 addUserAsFriend(requesterId);
-            }}).catch(error => {
+            }
+        }).catch(error => {
                 console.error('Erro na requisição:', error);
         });
       

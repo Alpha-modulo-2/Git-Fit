@@ -40,9 +40,10 @@ export const Login = () => {
     const userName = userNameValue;
     const password = passwordValue;
     const user: ILogin = { userName, password };
-    
-    const urlPath = import.meta.env.VITE_URL_PATH || ""
-    
+
+    const urlPath = import.meta.env.VITE_URL_PATH
+
+
     fetch(`${urlPath}/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

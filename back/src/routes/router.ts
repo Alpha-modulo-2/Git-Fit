@@ -24,7 +24,7 @@ router.post("/users/", uploadMiddleware.single('photo'), validateInsert, clearCa
 router.get("/users/search", authenticate, cacheMiddleware, validateQuery, userController.getByName);
 router.get("/users/:id", authenticate, cacheMiddleware, validateId, userController.getOne);
 router.get("/users/", authenticate, cacheMiddleware, userController.get);
-router.patch("/users/:id", authenticate, validateUpdate, validateId, clearCache, userController.update);
+router.patch("/users/:id", uploadMiddleware.single('photo'), authenticate, validateUpdate, validateId, clearCache, userController.update);
 router.delete("/users/:id", authenticate, validateId, clearCache, userController.delete);
 router.delete("/user/:userId/friend/:friendId", authenticate, validateRemoveFriend, clearCache, userController.removeFriend)
 
