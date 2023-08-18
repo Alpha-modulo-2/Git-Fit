@@ -31,6 +31,22 @@ export default function EditForm(props: FormProps) {
   const [isProfessional, setIsProfessional] = useState(false);
   const [weightValue, setWeightValue] = useState(""); 
   const [heightValue, setHeightValue] = useState(""); 
+  const [selectedPhoto, setSelectedPhoto] = useState<string | null>(null);
+
+  const handleLocalPhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+
+    if (file) {
+      const reader = new FileReader();
+
+      reader.onload = () => {
+        setSelectedPhoto(reader.result as string);
+        props.handlePhotoChange(e);
+      };
+
+      reader.readAsDataURL(file);
+    }
+  };
 
   const handleOccupationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setIsProfessional(e.target.checked);
@@ -55,17 +71,29 @@ export default function EditForm(props: FormProps) {
           <form encType="multipart/form-data" 
             method="POST" 
             action="/upload">
-            <label
-              htmlFor="photo-upload"
-              className="custom-file-label-edit"
-            ></label>
+            {selectedPhoto ? (
+              <img
+                src={selectedPhoto}
+                alt="Selected"
+                className="custom-file-label-edit"
+                onClick={() => {
+                  const input = document.getElementById("photo-upload");
+                  if (input) {
+                    input.click();
+                  }
+                }}
+              />
+            ) : (
+              <label htmlFor="photo-upload" className="custom-file-label-edit">
+              </label>
+            )}
             <input
               id="photo-upload"
               className="custom-file-input-edit"
               type="file"
               name="photo"
               accept="image/*"
-              onChange={props.handlePhotoChange}
+              onChange={handleLocalPhotoChange}
             />
           </form>
 

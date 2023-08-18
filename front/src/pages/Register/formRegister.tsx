@@ -7,7 +7,7 @@ interface FormProps {
   handlePasswordChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleConfirmPasswordValue: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleEmailChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  handlePhotoChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handlePhotoChange: (e: React.ChangeEvent<HTMLInputElement>) => void; // ajustado para corresponder à sua implementação
   handleGenderChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
   handleWeightChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleHeightChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -23,6 +23,22 @@ interface FormProps {
 
 const RegisterForm: React.FC<FormProps> = (props) => {
   const [isProfessional, setIsProfessional] = useState(false);
+  const [selectedPhoto, setSelectedPhoto] = useState<string | null>(null);
+
+  const handleLocalPhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+
+    if (file) {
+      const reader = new FileReader();
+
+      reader.onload = () => {
+        setSelectedPhoto(reader.result as string);
+        props.handlePhotoChange(e); // Chamando a função passada via prop
+      };
+
+      reader.readAsDataURL(file);
+    }
+  };
 
   const handleOccupationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setIsProfessional(e.target.checked);
@@ -49,17 +65,29 @@ const RegisterForm: React.FC<FormProps> = (props) => {
       <div className="menu-register">
         <div className="container-first-content-register">
           <form encType="multipart/form-data" method="POST" action="/upload">
-            <label
-              htmlFor="photo-upload"
-              className="custom-file-label-register"
-            ></label>
+            {selectedPhoto ? (
+              <img
+                src={selectedPhoto}
+                alt="Selected"
+                className="custom-file-label-register"
+                onClick={() => {
+                  const input = document.getElementById("photo-upload");
+                  if (input) {
+                    input.click();
+                  }
+                }}
+              />
+            ) : (
+              <label htmlFor="photo-upload" className="custom-file-label-register">
+              </label>
+            )}
             <input
               id="photo-upload"
               className="custom-file-input-register"
               type="file"
               name="photo"
               accept="image/*"
-              onChange={props.handlePhotoChange}
+              onChange={handleLocalPhotoChange}
             />
           </form>
 
@@ -98,13 +126,13 @@ const RegisterForm: React.FC<FormProps> = (props) => {
 
         <div className="container-second-content-register">
           <div className="weightHight-register">
-          <input
-            type="text"
-            className="input-register"
-            placeholder="Nome Completo"
-            onChange={props.handleNameChange}
-            value={props.nameValue}
-          />
+            <input
+              type="text"
+              className="input-register"
+              placeholder="Nome Completo"
+              onChange={props.handleNameChange}
+              value={props.nameValue}
+            />
             <input
               type="text"
               className="input-weight-register"

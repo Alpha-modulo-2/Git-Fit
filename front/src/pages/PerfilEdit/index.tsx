@@ -46,7 +46,7 @@ export const PerfilEdit = () => {
       try {
         const response = await fetch(`${urlPath}/users/${userId}`);
         if (response.ok) {
-          const userData = (await response.json()) as IUpdateUserData;
+          const userData = await response.json() as IUpdateUserData;
           setNameValue(userData.name);
           setUserNameValue(userData.userName);
           setEmailValue(userData.email);
@@ -58,17 +58,17 @@ export const PerfilEdit = () => {
           setAgeValue(parseInt(userData.age, 10).toString());
           
         } else {
-          console.error("Erro ao buscar dados do usuário.");
+          console.error("Erro ao buscar dados do usuário:", response.status);
         }
       } catch (error) {
         console.error("Erro na requisição:", error);
       }
     };
-
+  
     void fetchUserData();
   }, [userId]);
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     const name = nameValue;
@@ -101,20 +101,28 @@ export const PerfilEdit = () => {
       return;
     }
 
-    void fetch(`${urlPath}/users/${userId}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(user),
-    }).then((response) => {
+    try {
+      const response = await fetch(`${urlPath}/users/${userId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(user),
+      });
+  
       if (response.ok) {
         setMessageModal("Perfil atualizado com sucesso!");
         openModal();
         setIsLoggedIn(true);
         navigate("/profile");
       } else {
-        console.log(response);
+        console.error("Erro ao atualizar perfil:", response.status);
       }
-    });
+    } catch (error) {
+      console.error("Erro na requisição:", error);
+    }
+  };
+
+  const handleSubmitWrapper = (event: React.FormEvent<HTMLFormElement>) => {
+    void handleSubmit(event);
   };
 
   const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -152,32 +160,35 @@ export const PerfilEdit = () => {
     setAgeValue(newAgeValue);
   };
 
-  const handleDeleteAccount = () => {
+  const handleDeleteAccount = (): void => {
     const confirmed = window.confirm(
       "Tem certeza de que deseja excluir sua conta?"
     );
     if (confirmed) {
-      fetch(`${urlPath}/users/${userId}`, {
-        method: "DELETE",
-      })
-        .then((response) => {
+      void (async () => {
+        try {
+          const response = await fetch(`${urlPath}/users/${userId}`, {
+            method: "DELETE",
+          });
+  
           if (response.ok) {
             setMessageModal("Usuário excluído com sucesso!");
             openModal();
             navigate("/profile");
           } else {
-            console.error("Erro ao excluir usuário:", response);
-            setMessageModal("Erro ao excluir usuário:");
+            console.error("Erro ao excluir usuário:", response.status);
+            setMessageModal("Erro ao excluir usuário.");
             openModal();
           }
-        })
-        .catch((error) => {
-          console.error("Erro ao excluir usuário:",error);
-          setMessageModal("Erro ao excluir usuário:");
+        } catch (error) {
+          console.error("Erro na requisição:", error);
+          setMessageModal("Erro ao excluir usuário.");
           openModal();
-        });
+        }
+      })();
     }
   };
+  
 
   if (isLoggedIn) {
     navigate("/profile");
@@ -199,7 +210,7 @@ export const PerfilEdit = () => {
             inputsPasswordValue={passwordValue}
             inputsOccupationValue={occupationValue}
 
-            onSubmit={handleSubmit}
+            onSubmit={handleSubmitWrapper}
             inputsPhotoValue={""} 
             handlePhotoChange={handlePhotoChange}
             handleUserNameChange={handleUserNameChange}
