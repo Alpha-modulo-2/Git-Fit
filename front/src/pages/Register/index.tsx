@@ -122,23 +122,26 @@ export const Register = () => {
     }).then((response) => {
       if (response.ok) {
         console.log("Perfil CRIADO com sucesso!");
-
         setMessageModal("Perfil CRIADO com sucesso!");
         openModal();
         navigate("/profile");
         return response.json() as Promise<ApiResponseRequests>;
 
       } else {
-        console.log(response,'response');
-      }
+        console.log(response.status, response.statusText);
+        setMessageModal("Ocorreu um erro ao criar o perfil.");
+        openModal();
+        throw new Error("Erro na requisição");      }
     })
     .then((data) => {
       if (data) {
         console.log(data, 'data')
       }
       console.log(data, 'data from register')
-    }).catch((err) => {
-      console.log(err)
+    }).catch((error) => {
+      console.error("Erro na requisição:", error);
+      setMessageModal("Ocorreu um erro na requisição. Por favor, tente novamente mais tarde.");
+      openModal();
     });
   };
 
@@ -168,15 +171,20 @@ export const Register = () => {
     if (event.target.files && event.target.files.length > 0) {
       const file = event.target.files[0];
       console.log(file);
-      
+      try{
       const fileExtension = file.name.split('.').pop(); 
-      if(fileExtension){
-        const fileName = `${uuid()}.${fileExtension}`; // Gera o nome de arquivo com UUID e extensão
+      if (fileExtension) {
+        const fileName = `${uuid()}.${fileExtension}`;
         setFileName(fileName);
         setPhotoValue(file);
+      } else {
+        console.error("Erro ao obter a extensão do arquivo");
       }
+    } catch (error) {
+      console.error("Erro ao processar a foto:", error);
     }
-  };
+  }
+};
 
   const handleGenderChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setGenderValue(event.target.value);
