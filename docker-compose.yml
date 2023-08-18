@@ -6,13 +6,15 @@ services:
       dockerfile: Dockerfile
     ports:
       - 3000:3000
-      - 443:443
+      - 444:444
     restart: always
     env_file:
       - ./back/.env
     links:
       - mongo
       - redis
+    volumes:                
+      - uploads_data:/uploads
   mongo:
     image: mongo
     volumes:
@@ -28,3 +30,4 @@ services:
 volumes:
   mongo_data:
   redis_data:
+  uploads_data: 

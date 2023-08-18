@@ -24,7 +24,6 @@ async function clearCacheKeysWithPattern(pattern: string) {
 }
 
 export async function clearCache(req: Request, res: Response, next: NextFunction) {
-    console.log('Inside clearCache middleware');
     const patterns = [
         `/users/search?name=*`,
         `/users/*`,

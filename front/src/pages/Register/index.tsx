@@ -113,7 +113,9 @@ export const Register = () => {
     formData.append("age", ageValue);
 
     
-    fetch("https://localhost:443/users", {
+    const urlPath = import.meta.env.VITE_URL_PATH||"";
+
+    void fetch(`${urlPath}/users`, {
 
       method: "POST",
       body: formData,
@@ -123,7 +125,7 @@ export const Register = () => {
 
         setMessageModal("Perfil CRIADO com sucesso!");
         openModal();
-        navigate("/login");
+        navigate("/profile");
         return response.json() as Promise<ApiResponseRequests>;
 
       } else {
@@ -165,6 +167,8 @@ export const Register = () => {
   const handlePhotoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
       const file = event.target.files[0];
+      console.log(file);
+      
       const fileExtension = file.name.split('.').pop(); 
       if(fileExtension){
         const fileName = `${uuid()}.${fileExtension}`; // Gera o nome de arquivo com UUID e extensão
