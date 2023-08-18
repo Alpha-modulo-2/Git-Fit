@@ -21,17 +21,22 @@ export default class UserController {
 
     async insert(req: Request, res: Response) {
         try {
-            const {userName, password, email, friends, gender, weight, height, occupation, age, name, } = req.body
+            const { userName, password, email, friends, gender, weight, height, occupation, age, name, } = req.body
 
-            if(!req.file?.filename){
-                return
-            }
-            const file = req.file?.filename
-            // const photoPath = `../../assets/images/${file}`
             const user = {
-                userName, password, email, friends, photo: file, gender, weight, height, occupation, age, name
+                userName,
+                password,
+                email,
+                friends,
+                photo: req.file?.filename || "",
+                gender,
+                weight,
+                height,
+                occupation,
+                age,
+                name
             }
-    
+
             const result = await this.service.insert(user);
 
             return res.status(result.statusCode).json(result.statusCode >= 300 ? result.message : result.user);
@@ -74,11 +79,25 @@ export default class UserController {
     }
 
     async update(req: Request, res: Response) {
-        const { id } = req.params
-
         try {
-            const result = await this.service.update(id, req.body);
-            return res.status(result.statusCode).json(result.statusCode >= 300 ? result.message : result.user);
+            const { id } = req.params
+            const { userName, password, email, friends, gender, weight, height, occupation, age, name, photo } = req.body
+
+            const user = {
+                userName,
+                password,
+                email,
+                friends,
+                photo: req.file?.filename || "",
+                gender,
+                weight,
+                height,
+                occupation,
+                age,
+                name
+            }
+            const result = await this.service.update(id, user);
+            return res.status(result.statusCode).json(result.statusCode >= 300 ? result.message : result);
         } catch (error: any) {
             return res.status(500).json({
                 error: true,

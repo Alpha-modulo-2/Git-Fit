@@ -12,9 +12,7 @@ export const SeeMore = () => {
             <div className="container-all-content-seemore">
                 <div className="container-content-seemore">
                     <p className="text-see-more">
-                    Mollitia delectus sequi consequatur voluptate laudantium dolor ducimus, exercitationem rem, dolorum debitis dolores tenetur hic natus a dicta odit ex asperiores totam sit ipsum. Maxime amet quos omnis sapiente adipisci?
-                    Eius eos qui nostrum vitae sunt illo illum, amet eveniet, atque culpa labore a eum incidunt consequatur. Culpa fugiat, vitae numquam, dolore esse, repudiandae voluptas sit dolor reprehenderit accusantium tempore?
-                    Nulla assumenda atque a iure eligendi similique et blanditiis, rerum quod facere rem at fugit quidem reiciendis neque facilis nobis sit recusandae veniam incidunt repellendus mollitia fugiat earum? Amet, voluptatum.</p>
+                        Aqui no Git-Fit, nossa missão é mais do que apenas um aplicativo - é um estilo de vida. Nós nos dedicamos a ajudar você a melhorar suas habilidades organizacionais e gerenciar suas tarefas diárias de maneira eficiente. Queremos tornar o bem-estar acessível e viável para todos, oferecendo uma plataforma única para monitorar sua saúde e fitness. Com a funcionalidade de chat integrada, colocamos você em contato direto com profissionais que podem ajudar a guiar seu caminho para o sucesso. O Git-Fit é mais do que apenas um aplicativo; é sua comunidade para crescimento e sucesso.</p>
                     <Button category="primary" label="Voltar" onClick={() => navigate('/landing-page')}/> 
                 </div>
             </div>

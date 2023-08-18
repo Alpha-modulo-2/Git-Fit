@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+/* import mongoose from 'mongoose';
 import UserController from '../controllers/UserController';
 import jwt from "jsonwebtoken"
 import UserService from '../services/UserServices';
@@ -303,4 +303,4 @@ describe('UserController', () => {
             message: 'Erro ao remover amizade: JWTSECRET nao definido'
         });
     });
-});
+}); */

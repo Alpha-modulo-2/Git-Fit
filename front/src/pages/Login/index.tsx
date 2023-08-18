@@ -43,6 +43,7 @@ export const Login = () => {
     const user: ILogin = { userName, password };
 
     const urlPath = import.meta.env.VITE_URL_PATH
+    console.log(urlPath, 'path')
 
     fetch(`${urlPath}/login`, {
       method: 'POST',

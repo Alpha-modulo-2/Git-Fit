@@ -21,8 +21,8 @@ export const PhotoProfile = ({url_photo, user_name}:PropTypes) => {
     return (
     <div className="structure-photo-profile">
         <div className="moldure-photo">
-            <div className="icon-edit-container">
-                <PencilSimpleLine size={20} color="black" onClick={verifyUser} className="icon-editpage" />
+            <div className="icon-edit-container" onClick={verifyUser}>
+                <PencilSimpleLine size={20} color="black"  className="icon-editpage" />
             </div>
             <img className="photo-profile" src={url_photo} />
         </div>
