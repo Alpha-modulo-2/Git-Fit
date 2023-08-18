@@ -29,14 +29,11 @@ describe('UserController', () => {
     const mockUserId = new mongoose.Types.ObjectId().toString()
 
     const mockUser = {
-        _id: mockUserId,
         userName: "teste",
+        name: "",
         password: "teste",
         email: "teste@teste.com",
         friends: [mockFriendID,],
-        created_at: new Date,
-        updated_at: new Date,
-        photo: "url",
         gender: "M",
         weight: "90kg",
         height: "180cm",
@@ -69,13 +66,24 @@ describe('UserController', () => {
     });
 
     it('should insert a user', async () => {
-        userService.insert.mockResolvedValue({ error: false, statusCode: 200, user: mockUser });
+        userService.insert.mockResolvedValue({
+            error: false, statusCode: 200, user: {
+                ...mockUser,
+                photo: ""
+            }
+        });
 
         await userController.insert(req, res);
 
-        expect(userService.insert).toHaveBeenCalledWith(mockUser);
+        expect(userService.insert).toHaveBeenCalledWith({
+            ...mockUser,
+            photo: ""
+        });
         expect(res.status).toHaveBeenCalledWith(200);
-        expect(res.json).toHaveBeenCalledWith(mockUser);
+        expect(res.json).toHaveBeenCalledWith({
+            ...mockUser,
+            photo: ""
+        });
     });
 
     it('should get one user', async () => {
@@ -100,19 +108,18 @@ describe('UserController', () => {
     });
 
     it('should update a user', async () => {
-        const { _id, ...restOfUser } = mockUser
         const req = {
             params: {
-                id: _id,
+                id: mockUserId,
             },
-            body: { ...restOfUser }
+            body: { ...mockUser }
         }
-        userService.update.mockResolvedValue({ error: false, statusCode: 200, user: restOfUser, });
+        userService.update.mockResolvedValue({ error: false, statusCode: 200, user: mockUser, });
 
         await userController.update(req, res);
 
         expect(res.status).toHaveBeenCalledWith(200);
-        expect(res.json).toHaveBeenCalledWith(restOfUser);
+        expect(res.json).toHaveBeenCalledWith(mockUser);
     });
 
     it('should delete a user', async () => {
@@ -137,7 +144,10 @@ describe('UserController', () => {
 
         await userController.insert(req, res);
 
-        expect(userService.insert).toHaveBeenCalledWith(mockUser);
+        expect(userService.insert).toHaveBeenCalledWith({
+            ...mockUser,
+            photo: ""
+        });
         expect(res.status).toHaveBeenCalledWith(500);
         expect(res.json).toHaveBeenCalledWith({ error: true, message: `Erro ao inserir a conta ${error.message}`, statusCode: 500 });
     });

@@ -31,42 +31,41 @@ export const Login = () => {
 
   useEffect(() => {
     if (isLoggedIn) {
-      navigate("/contacts");
+      navigate("/profile");
     }
   }, [isLoggedIn, navigate]);
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
     const userName = userNameValue;
     const password = passwordValue;
     const user: ILogin = { userName, password };
 
     const urlPath = import.meta.env.VITE_URL_PATH
-    console.log(urlPath, 'path')
+
 
     fetch(`${urlPath}/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(user),
     })
-      .then((response) => {
-        if (response.ok) {
-          navigate("/profile");
-          return response.json() as Promise<ApiResponseRequests>;
-        } else {
-          console.log("Failed to Login");
-          setMessageModal("Dados incorretos");
-          openModal();
-        }
-      })
-      .then((data) => {
-        if (data) {
-          login(user);
-          setCookie(data.token);
-          setLoggedUser(data.user);
-        }
-      })
+    .then((response) => {
+      if (response.ok) {
+        navigate("/profile");
+        return response.json() as Promise<ApiResponseRequests>;
+      } else {
+        console.log("Failed to Login");
+        setMessageModal("Dados incorretos");
+        openModal();
+      }
+    })
+    .then((data) => {
+      if (data) {
+        login(user);
+        setCookie(data.token);
+        setLoggedUser(data.user);
+      }
+    })
       .catch((error) => {
         console.error("Error:", error);
       });
@@ -96,8 +95,8 @@ export const Login = () => {
             onSubmit={handleSubmit}
             handleUserNameChange={handleUserNameChange}
             handlePasswordChange={handlePasswordChange}
-          />
-          <div className="divButton-edit">
+            />
+          <div className="divButton-login">
             <label>
               Não possuí conta ainda?{" "}
               <span className="registerOption">Cadastre-se</span>

@@ -1,244 +1,257 @@
 .structure-fullcard{
-    display: flex;
-    justify-content: flex-start;
-    max-width: 100%;
-    position: relative;
+  display: flex;
+  justify-content: flex-start;
+  max-width: 100%;
+  position: relative;
 }  
 
 .fullcard{
-  width: 100%;
-  height: 100%;
+width: 100%;
+height: 100%;
 }
 
-.structure-carrossel{
-    position: absolute;
-    width: 25%;
-    overflow-y: scroll;
-    overflow-x: hidden;
-    right: 5%;
-  }
-  
-.structure-carrossel::-webkit-scrollbar-track{
-  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
-	border-radius: 10px;
-	background-color: #151b228f;
-}
-
-.structure-carrossel::-webkit-scrollbar
-{
-	width: 12px;
-	background-color: #ffffff00;
-}
-
-.structure-carrossel::-webkit-scrollbar-thumb
-{
-	border-radius: 10px;
-	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
-	background-color: #949191;
-}
-
-  .background-card{
-    font-family: "Poppins", sans-serif;
-    width: 55%;
-    height: 87vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-evenly;
-    background-color: #151b228f;
-    margin-left: 4%;
-    border: 1.5px solid rgb(255, 255, 255);
-    border-radius: 1.5rem;
-    align-self: center;
-  }
-  
-.background-card h2{
-  line-height: 1.5rem;
-  color: rgb(255, 255, 255);
-}
-
-.div_training_card{
-  border: 1.5px solid rgb(255, 255, 255);
-  background-color: #151b228f;
-  border-radius: 1.5rem;
-  width: 80%;
-  height: 40%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-}
-
-.div_meal_card{
-  border: 1.5px solid rgb(255, 255, 255);
-  background-color: #151b228f;
-  border-radius: 1.5rem;
-  width: 80%;
-  height: 40%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-}
-
-.title_training_card, .title_meal_card{
-  color: white;
-  width: 90%;
-  padding: 1rem;
-  display: flex;
-  justify-content: space-between;
-  border-bottom: white solid 1px;
-}
-
-.body_training_card{
-  color: white;
-  width: 90%;
-  padding: 1rem;
-  height: 75%;
-  overflow-y: scroll;
-  overflow-x: hidden;
-}
-
-.body_training_card h3{
-  font-size: 1rem;
-  margin-bottom: 0.8rem;
-}
-
-.body_training_card li{
-  font-size: 0.8rem;
-}
-
-.daily_training_check, .daily_meal_check{
-  width: 90%;
-  height: 25%;
-  display: flex;
-  justify-content: end;
-  align-items: center;
-}
-
-.daily_training_check Button, .daily_meal_check Button{
-  margin-right: 30%;
-}
-
-.edit_form_meal, .edit_form_training{
-  width: 90%;
-  height: 15%;
-  display: flex;
-  justify-content: space-evenly;
-  margin-bottom: 1rem;
-  align-items: center;
-}
-
-.edit_form_meal input, .edit_form_training input{
-  width: 68%;
-  border-radius: 5rem;
-  padding: 0.3rem;
-  font-size: 90%;
-}
-
-.add_form_meal input{
-  width: 68%;
-  border-radius: 5rem;
-  font-size: 90%;
-  padding: 0.3rem;
-}
-
-.add_form_training input{
-  width: 68%;
-  border-radius: 5rem;
-  font-size: 90%;
-  padding: 0.3rem;
-}
-
-.daily_training_checkbox, .daily_meal_checkbox{
-  width: 1.2rem;
-  height: 1.2rem;
-}
-
-.body_training_card ul li {
-  position: relative;
-}
-
-.edit_buttons {
-  display: flex;
-  gap: 8px;
-}
-
-.button_edit_training{
-  width: 15px;
-  height: 15px;
-}
-
-.button_edit_training:active{
-  width: 14px;
-  height: 14px;
-  background-color: rgb(106, 99, 99);
-}
-
-.task_line, .meal_line{
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-}
-
-.task_line p{
-  width: 36%;
-}
-
-.meal_line h3{
-  width: 80%;
-}
-
-.body_meal_card{
-  color: white;
-  width: 80%;
-  height: 75%;
-  padding: 1rem;
-  display: flex;
-  flex-direction: column;
-  overflow-y: scroll;
-  overflow-x: hidden;
-}
-
-.body_training_card::-webkit-scrollbar-track{
-  background-color: transparent;
-}
-
-.body_meal_card::-webkit-scrollbar-track{
-  background-color: transparent;
-}
-
-.body_meal_card h3{
-  font-size: 0.8rem;
-}
-
-.body_meal_card li{
-  font-size: 0.8rem;
-}
-
-.structure-minicarrossel{
+.structure-carrossel-fc{
   position: absolute;
-  right: 1%;
-  top: 12%;
-  display: flex;
-  flex-direction: column;
+  width: 25%;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  right: 5%;
 }
 
-.message_box{
-  width: 25%;
-  height: 40vw;
-  border: 1px solid black;
-  background-color: #151b22e7;
-  border-radius: 2.5rem;
-  margin-left: 70px;
+.structure-carrossel-fc::-webkit-scrollbar-track{
+-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+border-radius: 10px;
+background-color: #151b228f;
+}
+
+.structure-carrossel-fc::-webkit-scrollbar
+{
+width: 12px;
+background-color: #ffffff00;
+}
+
+.structure-carrossel-fc::-webkit-scrollbar-thumb
+{
+border-radius: 10px;
+-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+background-color: #949191;
+}
+
+.background-card{
+  font-family: "Poppins", sans-serif;
+  width: 55%;
+  height: 87vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-evenly;
+  background-color: #151b228f;
+  margin-left: 4%;
+  border: 1.5px solid rgb(255, 255, 255);
+  border-radius: 1.5rem;
   align-self: center;
 }
 
+.background-card h2{
+line-height: 1.5rem;
+color: rgb(255, 255, 255);
+}
+
+.div_training_card{
+border: 1.5px solid rgb(255, 255, 255);
+background-color: #151b228f;
+border-radius: 1.5rem;
+width: 80%;
+height: 40%;
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: flex-start;
+}
+
+.div_meal_card{
+border: 1.5px solid rgb(255, 255, 255);
+background-color: #151b228f;
+border-radius: 1.5rem;
+width: 80%;
+height: 40%;
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: flex-start;
+}
+
+.title_training_card, .title_meal_card{
+color: white;
+width: 90%;
+padding: 1rem;
+display: flex;
+justify-content: space-between;
+border-bottom: white solid 1px;
+}
+
+.body_training_card{
+color: white;
+width: 90%;
+padding: 1rem;
+height: 75%;
+overflow-y: scroll;
+overflow-x: hidden;
+}
+
+.body_training_card h3{
+font-size: 1rem;
+margin-bottom: 0.8rem;
+}
+
+.body_training_card li{
+font-size: 0.8rem;
+}
+
+.daily_training_check, .daily_meal_check{
+width: 90%;
+height: 25%;
+display: flex;
+justify-content: end;
+align-items: center;
+}
+
+.daily_training_check Button, .daily_meal_check Button{
+margin-right: 30%;
+}
+
+.edit_form_meal, .edit_form_training{
+width: 90%;
+height: 15%;
+display: flex;
+justify-content: space-evenly;
+margin-bottom: 1rem;
+align-items: center;
+}
+
+.edit_form_meal input, .edit_form_training input{
+width: 68%;
+border-radius: 5rem;
+padding: 0.3rem;
+font-size: 90%;
+}
+
+.add_form_meal input{
+width: 68%;
+border-radius: 5rem;
+font-size: 90%;
+padding: 0.3rem;
+}
+
+.add_form_training input{
+width: 68%;
+border-radius: 5rem;
+font-size: 90%;
+padding: 0.3rem;
+}
+
+.daily_training_checkbox, .daily_meal_checkbox{
+width: 1.2rem;
+height: 1.2rem;
+}
+
+.body_training_card ul li {
+position: relative;
+}
+
+.edit_buttons {
+display: flex;
+gap: 8px;
+}
+
+.button_edit_training{
+width: 15px;
+height: 15px;
+}
+
+.button_edit_training:active{
+width: 14px;
+height: 14px;
+background-color: rgb(106, 99, 99);
+}
+
+.task_line, .meal_line{
+display: flex;
+align-items: center;
+justify-content: flex-start;
+}
+
+.task_line p{
+width: 36%;
+}
+
+.meal_line h3{
+width: 80%;
+}
+
+.body_meal_card{
+color: white;
+width: 80%;
+height: 75%;
+padding: 1rem;
+display: flex;
+flex-direction: column;
+overflow-y: scroll;
+overflow-x: hidden;
+}
+
+.body_training_card::-webkit-scrollbar-track{
+background-color: transparent;
+}
+
+.body_meal_card::-webkit-scrollbar-track{
+background-color: transparent;
+}
+
+.body_meal_card h3{
+font-size: 0.8rem;
+}
+
+.body_meal_card li{
+font-size: 0.8rem;
+}
+
+.structure-minicarrossel{
+position: absolute;
+right: 1%;
+top: 12%;
+display: flex;
+flex-direction: column;
+}
+
+.message_box{
+width: 25%;
+height: 40vw;
+border-radius: 2.5rem;
+margin-left: 70px;
+align-self: center;
+}
+
 .buttoncarrossel{
-  margin: 15px;
-  width: 50px;
-  height: 50px;
-  background-color: aliceblue;
-  border-radius: 50%;
-  align-self: flex-end;
+margin: 15px;
+width: 50px;
+height: 50px;
+background-color: rgba(1, 16, 28, 0);
+border-radius: 50%;
+align-self: flex-end;
+}
+
+.divbuttoncarrossel{
+width: 50px;
+height: 50px;
+position: absolute;
+bottom: 15%;
+left: 10px;
+z-index: 2;
+}
+
+.xbutton{
+width: 40px;
+height: 40px;
+background-color: black;
 }

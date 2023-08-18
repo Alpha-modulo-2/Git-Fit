@@ -59,10 +59,10 @@ export default function EditForm(props: FormProps) {
           <form encType="multipart/form-data" 
             method="PATCH" 
             action="/upload">
-            <label
-              htmlFor="photo-upload"
-              className="custom-file-label-edit"
-            ></label>
+            
+              <label htmlFor="photo-upload" className="custom-file-label-edit">
+              </label>
+        
             <input
               id="photo-upload"
               className="custom-file-input-edit"
