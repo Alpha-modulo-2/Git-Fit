@@ -13,6 +13,7 @@ RUN npm install -g pm2
 COPY ./back .
 RUN npm run build
 COPY --from=build-stage /app/front/dist ./dist/public
+RUN mkdir -p ./uploads
 EXPOSE 3000
 
 CMD [ "pm2-runtime", "start", "./dist/index.js" ]

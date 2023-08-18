@@ -21,7 +21,23 @@ export default class UserController {
 
     async insert(req: Request, res: Response) {
         try {
-            const result = await this.service.insert(req.body);
+            const { userName, password, email, friends, gender, weight, height, occupation, age, name, } = req.body
+
+            const user = {
+                userName,
+                password,
+                email,
+                friends,
+                photo: req.file?.filename || "",
+                gender,
+                weight,
+                height,
+                occupation,
+                age,
+                name
+            }
+
+            const result = await this.service.insert(user);
 
             return res.status(result.statusCode).json(result.statusCode >= 300 ? result.message : result.user);
         } catch (error: any) {
