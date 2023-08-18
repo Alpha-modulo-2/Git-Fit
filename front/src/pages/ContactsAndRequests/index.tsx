@@ -109,7 +109,7 @@ export const Contacts = () => {
         <div className="contacts-page">
             <Header isLoggedIn={true}/>
             <div className="container-contacts-request">
-                <Chat/>
+                <Chat onChatOpen={false}/>
                 <div className="content-contacts">
                     <div className="container-titles-contacts">
                         <p className={`title-contacts title-content-left ${!showRequests ? 'active' : ''}`} onClick={() => setShowRequests(false)}
