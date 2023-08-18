@@ -139,6 +139,7 @@ export const Chat = ({ onChatOpen }: { onChatOpen: any }) => {
             });
             postMessage(currentChatId, userId, message); // Adicionar a mensagem ao chat na página
             input.value = '';
+            setInputMessage('');
         }
     }
 
