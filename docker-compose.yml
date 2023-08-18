@@ -14,7 +14,7 @@ services:
       - mongo
       - redis
     volumes:                
-      - uploads_data:/uploads
+      - uploads_data:/app/back/uploads
   mongo:
     image: mongo
     volumes:
