@@ -125,7 +125,7 @@ export const Register = () => {
 
         setMessageModal("Perfil CRIADO com sucesso!");
         openModal();
-        navigate("/login");
+        navigate("/profile");
         return response.json() as Promise<ApiResponseRequests>;
 
       } else {
