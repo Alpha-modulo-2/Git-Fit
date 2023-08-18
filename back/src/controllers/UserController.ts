@@ -23,12 +23,18 @@ export default class UserController {
         try {
             const { userName, password, email, friends, gender, weight, height, occupation, age, name, } = req.body
 
-            if (!req.file?.filename) {
-                return
-            }
-            const file = req.file?.filename
             const user = {
-                userName, password, email, friends, photo: file, gender, weight, height, occupation, age, name
+                userName,
+                password,
+                email,
+                friends,
+                photo: req.file?.filename || "",
+                gender,
+                weight,
+                height,
+                occupation,
+                age,
+                name
             }
 
             const result = await this.service.insert(user);
