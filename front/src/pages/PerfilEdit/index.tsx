@@ -3,10 +3,8 @@ import { Header } from "../../components/Header";
 import { NavigateFunction, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import Form from "./formEdit";
-import IUpdateUserData from "../../interfaces/IUpdateUserData";
 import { useParams } from "react-router-dom";
 import { Modal } from "../../components/Modal";
-import { generalRequest } from "../../generalFunction";
 import { useAuth } from "../../context/authContext";
 import { User } from "../../interfaces/IUser";
 import  uuid  from 'uuidv4';
@@ -46,7 +44,6 @@ export const PerfilEdit = () => {
   const [ageValue, setAgeValue] = useState<number>(0);
   const [updatedAgeValue, setUpdatedAgeValue] = useState<number | undefined>();
   const [fileName, setFileName] = useState('')
-  // const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const { user, isLoggedIn, setLoggedUser } = useAuth();
   
@@ -80,7 +77,7 @@ export const PerfilEdit = () => {
       setOccupationValue(user.occupation);
       setAgeValue(user.age || 0);
     }
-  }, [userId]);
+  }, [user]);
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -252,7 +249,7 @@ export const PerfilEdit = () => {
             inputsOccupationValue={occupationValue}
 
             onSubmit={handleSubmit}
-            inputsPhotoValue={""} 
+            inputsPhotoValue={photoValue} 
             handlePhotoChange={handlePhotoChange}
             handleUserNameChange={handleUserNameChange}
             handleEmailChange={handleEmailChange}
