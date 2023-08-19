@@ -46,10 +46,10 @@ router.delete("/meal/:mealId", authenticate, clearCacheForCards, cardController.
 
 const friendRequestsController = new FriendRequestsController();
 
-router.post("/solicitation", authenticate, friendRequestsController.insert);
+router.post("/solicitation", authenticate, clearCache, friendRequestsController.insert);
 router.get("/friendRequests/:userId", authenticate, friendRequestsController.friendRequestsByUser);
-router.patch("/acceptFriend", authenticate, friendRequestsController.acceptFriend);
-router.delete("/rejectFriend/:requestId", authenticate, friendRequestsController.rejectFriend);
+router.patch("/acceptFriend", authenticate, clearCache, friendRequestsController.acceptFriend);
+router.delete("/rejectFriend/:requestId", authenticate, clearCache, friendRequestsController.rejectFriend);
 
 
 const loginController = new LoginController();
