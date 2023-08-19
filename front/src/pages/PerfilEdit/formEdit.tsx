@@ -18,7 +18,7 @@ interface FormProps {
   inputsPhotoValue: string;
   inputsUserNameValue: string;
   inputsEmailValue: string;
-  inputsAgeValue: string;
+  inputsAgeValue: number;
   inputsGenderValue: string;
   inputNameValue: string;
   inputsWeightValue: string;
@@ -29,24 +29,8 @@ interface FormProps {
 
 export default function EditForm(props: FormProps) {
   const [isProfessional, setIsProfessional] = useState(false);
-  const [weightValue, setWeightValue] = useState(""); 
-  const [heightValue, setHeightValue] = useState(""); 
-  const [selectedPhoto, setSelectedPhoto] = useState<string | null>(null);
-
-  const handleLocalPhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-
-    if (file) {
-      const reader = new FileReader();
-
-      reader.onload = () => {
-        setSelectedPhoto(reader.result as string);
-        props.handlePhotoChange(e);
-      };
-
-      reader.readAsDataURL(file);
-    }
-  };
+  // const [weightValue, setWeightValue] = useState(""); 
+  // const [heightValue, setHeightValue] = useState(""); 
 
   const handleOccupationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setIsProfessional(e.target.checked);
@@ -54,14 +38,18 @@ export default function EditForm(props: FormProps) {
 
   const handleWeightChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
-    const formattedValue = value.replace(/[^0-9]/g, "") + " Kg";
-    setWeightValue(formattedValue);
+    const formattedValue = value.replace(/[^0-9]/g, "") + "kg";
+    props.handleWeightChange({
+      target: { value: formattedValue },
+    } as React.ChangeEvent<HTMLInputElement>);
   };
 
   const handleHeightChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
-    const formattedValue = value.replace(/[^0-9]/g, "") + " cm";
-    setHeightValue(formattedValue);
+    const formattedValue = value.replace(/[^0-9]/g, "") + "cm";
+    props.handleHeightChange({
+      target: { value: formattedValue },
+    } as React.ChangeEvent<HTMLInputElement>);
   };
 
   return (
@@ -69,31 +57,20 @@ export default function EditForm(props: FormProps) {
       <div className="menu-edit">
         <div className="container-first-content-edit">
           <form encType="multipart/form-data" 
-            method="POST" 
+            method="PATCH" 
             action="/upload">
-            {selectedPhoto ? (
-              <img
-                src={selectedPhoto}
-                alt="Selected"
-                className="custom-file-label-edit"
-                onClick={() => {
-                  const input = document.getElementById("photo-upload");
-                  if (input) {
-                    input.click();
-                  }
-                }}
-              />
-            ) : (
+            
               <label htmlFor="photo-upload" className="custom-file-label-edit">
               </label>
-            )}
+        
             <input
               id="photo-upload"
               className="custom-file-input-edit"
               type="file"
               name="photo"
               accept="image/*"
-              onChange={handleLocalPhotoChange}
+              value={props.inputsPhotoValue}
+              onChange={props.handlePhotoChange}
             />
           </form>
 
@@ -101,6 +78,7 @@ export default function EditForm(props: FormProps) {
             type="text"
             className="input-edit"
             placeholder="Nome do Usuário"
+            value={props.inputsUserNameValue}
             onChange={props.handleUserNameChange}
           />
 
@@ -108,6 +86,7 @@ export default function EditForm(props: FormProps) {
             type="text"
             className="input-edit"
             placeholder="E-mail"
+            value={props.inputsEmailValue}
             onChange={props.handleEmailChange}
           />
 
@@ -115,6 +94,7 @@ export default function EditForm(props: FormProps) {
             type="number"
             className="input-edit"
             placeholder="Idade"
+            value={props.inputsAgeValue || ''}
             onChange={props.handleAgeChange}
           />
 
@@ -135,20 +115,21 @@ export default function EditForm(props: FormProps) {
             type="text"
             className="input-edit"
             placeholder="Nome Completo"
+            value={props.inputNameValue}
             onChange={props.handleNameChange}
           />
             <input
               type="text"
               className="input-weight-edit"
               placeholder="Peso"
-              value={weightValue}
+              value={props.inputsWeightValue}
               onChange={handleWeightChange}
             />
             <input
               type="text"
               className="input-hight-edit"
               placeholder="Altura"
-              value={heightValue}
+              value={props.inputsHeightValue}
               onChange={handleHeightChange}
             />
           </div>
@@ -174,6 +155,7 @@ export default function EditForm(props: FormProps) {
 
             <label className="switch">
               <input type="checkbox" 
+              value={props.inputsOccupationValue}
                 onChange={handleOccupationChange} />
               <span className="sliderR-round"></span>
             </label>

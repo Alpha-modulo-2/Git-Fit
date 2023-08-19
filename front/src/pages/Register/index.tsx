@@ -14,7 +14,6 @@ export interface ApiResponseRequests {
   statusCode?: string;
 }
 
-
 export const Register = () => {
   const [nameValue, setNameValue] = useState("");
   const [userNameValue, setUserNameValue] = useState("");
@@ -124,9 +123,7 @@ export const Register = () => {
         console.log("Perfil CRIADO com sucesso!");
         setMessageModal("Perfil CRIADO com sucesso!");
         openModal();
-        navigate("/profile");
         return response.json() as Promise<ApiResponseRequests>;
-
       } else {
         console.log(response.status, response.statusText);
         setMessageModal("Ocorreu um erro ao criar o perfil.");
@@ -135,6 +132,7 @@ export const Register = () => {
     })
     .then((data) => {
       if (data) {
+        navigate("/profile");
         console.log(data, 'data')
       }
       console.log(data, 'data from register')

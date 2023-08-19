@@ -332,11 +332,11 @@ describe('PATCH /users/:id', () => {
             .send(updateData);
 
         expect(response.status).toBe(200);
-        expect(response.body.userName).toEqual(result.userName);
-        expect(response.body.name).toEqual(updateData.name);
-        expect(response.body.occupation).toEqual(updateData.occupation);
-        expect(response.body.email).toEqual(updateData.email);
-        expect(response.body.password).toBeUndefined();
+        expect(response.body.user.userName).toEqual(result.userName);
+        expect(response.body.user.name).toEqual(updateData.name);
+        expect(response.body.user.occupation).toEqual(updateData.occupation);
+        expect(response.body.user.email).toEqual(updateData.email);
+        expect(response.body.user.password).toBeUndefined();
     });
 
     it('should return 401 if not authenticated', async () => {

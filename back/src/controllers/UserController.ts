@@ -79,11 +79,21 @@ export default class UserController {
     }
 
     async update(req: Request, res: Response) {
-        const { id } = req.params
-
         try {
-            const result = await this.service.update(id, req.body);
-            return res.status(result.statusCode).json(result.statusCode >= 300 ? result.message : result.user);
+            const { id } = req.params;
+            const { userName, password, email, friends, gender, weight, height, occupation, age, name } = req.body;
+    
+            let user: IUser = 
+                req.body
+            ;
+
+            if (req.file?.filename) {
+                user = {...req.body, photo: req.file.filename}
+            }
+
+            const result = await this.service.update(id, user);
+
+            return res.status(result.statusCode).json(result.statusCode >= 300 ? result.message : result);
         } catch (error: any) {
             return res.status(500).json({
                 error: true,
