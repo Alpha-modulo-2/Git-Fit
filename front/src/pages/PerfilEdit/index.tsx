@@ -56,7 +56,7 @@ export const PerfilEdit = () => {
 
   const navigate: NavigateFunction = useNavigate();
 
-  const urlPath = import.meta.env.VITE_URL_PATH;
+  const urlPath = import.meta.env.VITE_URL_PATH ||"";
 
   if (!urlPath) {
     throw new Error('URL_PATH is not defined');
