@@ -110,7 +110,7 @@ export const Register = () => {
     formData.append("age", ageValue);
 
     
-    const urlPath = import.meta.env.VITE_URL_PATH||"";
+    const urlPath = import.meta.env.VITE_URL_PATH ||"";
 
     void fetch(`${urlPath}/users`, {
       method: "POST",

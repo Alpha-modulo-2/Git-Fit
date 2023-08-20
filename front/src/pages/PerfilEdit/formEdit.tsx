@@ -67,38 +67,40 @@ export default function EditForm(props: FormProps) {
   };
 
   return (
-    <form onSubmit={props.onSubmit}>
+    <form onSubmit={props.onSubmit} className="form-edit-allcontent">
       <div className="menu-edit">
         <div className="container-first-content-edit">
-          <form encType="multipart/form-data" 
-            method="PATCH" 
-            action="/upload">
-            {selectedPhoto ? (
-              <img
-                src={selectedPhoto}
-                alt="Selected"
-                className="custom-file-label-edit"
-                onClick={() => {
-                  const input = document.getElementById("photo-upload");
-                  if (input) {
-                    input.click();
-                  }
-                }}
+          <div className="container-choose-photo-edit">
+            <form encType="multipart/form-data" 
+              method="PATCH" 
+              action="/upload">
+              {selectedPhoto ? (
+                <img
+                  src={selectedPhoto}
+                  alt="Selected"
+                  className="custom-file-label-edit"
+                  onClick={() => {
+                    const input = document.getElementById("photo-upload");
+                    if (input) {
+                      input.click();
+                    }
+                  }}
+                />
+              ) : (
+                <label htmlFor="photo-upload" className="custom-file-label-edit">
+                </label>
+              )}
+              <input
+                id="photo-upload"
+                className="custom-file-input-edit"
+                type="file"
+                name="photo"
+                accept="image/*"
+                onChange={handleLocalPhotoChange}
               />
-            ) : (
-              <label htmlFor="photo-upload" className="custom-file-label-edit">
-              </label>
-            )}
-            <input
-              id="photo-upload"
-              className="custom-file-input-edit"
-              type="file"
-              name="photo"
-              accept="image/*"
-              value={props.inputsPhotoValue}
-              onChange={handleLocalPhotoChange}
-            />
-          </form>
+            </form>
+            <label htmlFor="photo-upload"><p>Alterar foto</p></label>
+          </div>
 
           <input
             type="text"
@@ -118,14 +120,14 @@ export default function EditForm(props: FormProps) {
 
           <input
             type="number"
-            className="input-edit"
+            className="input-edit input-edit-age"
             placeholder="Idade"
             value={props.inputsAgeValue || ''}
             onChange={props.handleAgeChange}
           />
 
           <select
-            className="input-edit"
+            className="select-gender-edit"
             onChange={props.handleGenderChange}
             value={props.inputsGenderValue}
           >

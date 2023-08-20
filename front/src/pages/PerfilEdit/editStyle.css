@@ -1,9 +1,16 @@
-@import url('https://fonts.googleapis.com/css2?family=Italiana&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Italiana&display=swap");
 
 * {
   margin: 0;
   padding: 0;
   font-family: "Poppins", sans-serif;
+}
+
+.form-edit-allcontent {
+  display: flex;
+  justify-content: center;
+  padding: 1.5rem 3rem;
+  gap: 1rem;
 }
 
 /* All content */
@@ -27,11 +34,10 @@
   background-color: rgba(220, 235, 247, 0.766);
 }
 
-  /* Menu content */
+/* Menu content */
 .menu-edit {
   display: flex;
-  width: 90%;
-  margin-bottom: 5%;
+  gap: 4rem;
 }
 
 .container-first-content-edit,
@@ -42,9 +48,20 @@
   text-align: center;
   width: 100%;
   height: 100%;
-  padding: 5% 0 5% 15% ;
 }
-
+.container-second-content-edit {
+  padding-top: 2rem;
+}
+.container-choose-photo-edit {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.container-choose-photo-edit p {
+  font-size: 12px;
+  font-weight: 500;
+  color: rgba(115, 83, 186, 1);
+}
 .custom-file-input-edit {
   position: absolute;
   width: 0;
@@ -59,7 +76,7 @@
   padding: 10px;
   border-radius: 50%;
   border: 0.9px solid rgba(115, 83, 186, 1);
-  background-color: #ffffff;
+  background-color: #ffffff5f;
   cursor: pointer;
   text-align: left;
 }
@@ -81,11 +98,10 @@
   transform: translate(-50%, -50%);
 }
 
-  
 .input-edit {
   width: 100%;
   padding: 2% 5% 3% 5%;
-  height:3.2vw;
+  height: 6.5vh;
   color: rgba(115, 83, 186, 1);
   border-bottom: 1px solid rgb(0, 0, 0);
   background-color: transparent;
@@ -95,7 +111,7 @@
   outline: none;
   caret-color: black;
 }
-  
+
 .input-edit::placeholder {
   color: rgb(0, 0, 0);
 }
@@ -104,22 +120,7 @@
   color: rgba(115, 83, 186, 1);
 }
 
-.input-weight-edit {
-  font-size: 77%;
-  color: black;
-  background-color: transparent;
-  color: rgba(115, 83, 186, 1);
-  background: transparent !important;
-  font-weight: bold;
-  border-bottom: 1px solid rgb(0, 0, 0);
-  width: 47%;
-  height: 100%;
-  height: 50px;
-  outline: none;
-  caret-color: black;
-
-}
-
+.input-weight-edit,
 .input-hight-edit {
   font-size: 77%;
   color: black;
@@ -128,16 +129,11 @@
   background: transparent !important;
   font-weight: bold;
   border-bottom: 1px solid rgb(0, 0, 0);
-  width: 47%;
-  height: 100%;
-  height: 50px;
+  width: 50%;
+  height: 7.6vh;
   outline: none;
   caret-color: black;
-
-}
-
-.weightHight-edit{
-  margin-top: 2vw;
+  padding: 2% 5% 3% 5%;
 }
 
 .input-hight-edit::placeholder,
@@ -149,73 +145,88 @@
   color: rgba(115, 83, 186, 1);
 }
 
-  /*switch*/
-  .switch {
-    position: relative;
-    display: inline-block;
+/*switch*/
+.switch {
+  position: relative;
+  display: inline-block;
+}
 
-  }
-  
-  .switch input {
-    opacity: 0;
-    width: 0;
-    height: 0;
-  }
-  
-  .sliderE-round {
-    left: 10px;
-    position: absolute;
-    cursor: pointer;
-    width: 50px;
-    height: 23px;
-    -webkit-transition: .4s;
-    transition: .4s;
-    background-color: #9c9c9c;
-    border-radius: 34px;
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
 
-  }
-  
-  .sliderE-round:before {
-    position: absolute;
-    content: "";
-    height: 15px;
-    width: 15px;
-    border-radius: 50%;
-    left:5px;
-    bottom: 4px;
-    -webkit-transition: .4s;
-    transition: .4s;
-    background-color: #ffffff;
-  }
-  
-  input:checked + .sliderE-round {
-    background-color: rgba(115, 83, 186, 1);
-    border-radius: 34px;
+.sliderE-round {
+  left: 10px;
+  position: absolute;
+  cursor: pointer;
+  width: 50px;
+  height: 23px;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+  background-color: #9c9c9c;
+  border-radius: 34px;
+}
 
-  }
+.sliderE-round:before {
+  position: absolute;
+  content: "";
+  height: 15px;
+  width: 15px;
+  border-radius: 50%;
+  left: 5px;
+  bottom: 4px;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+  background-color: #ffffff;
+}
 
-  input:checked + .sliderE-round:before {
-    -webkit-transform: translateX(23px);
-    transform: translateX(25px);
-  }
-  
- 
-  
-  .sliderR.round:before {
-    border-radius: 50%;
-  }
-  
- /*button config*/
- .divButton-edit {
+input:checked + .sliderE-round {
+  background-color: rgba(115, 83, 186, 1);
+  border-radius: 34px;
+}
+
+input:checked + .sliderE-round:before {
+  -webkit-transform: translateX(23px);
+  transform: translateX(25px);
+}
+
+.sliderR.round:before {
+  border-radius: 50%;
+}
+
+/*button config*/
+.divButton-edit {
   display: flex;
   justify-content: center;
   padding: 2%;
-  
 }
-  .editprofessionalProfile{
-    font-weight: bold;
-    font-size: 77%;
-  }
+.editprofessionalProfile {
+  font-weight: bold;
+  font-size: 77%;
+}
+
+.input-edit-age::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}
+.input-edit-age {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+.select-gender-edit {
+  width: 100%;
+  height: 6.5vh;
+  color: rgba(115, 83, 186, 1);
+  border-bottom: 1px solid rgb(0, 0, 0);
+  background-color: transparent;
+  background: transparent !important;
+  font-weight: bold;
+  font-size: 77%;
+  caret-color: black;
+  padding: 2% 5% 3% 2%;
+  outline: 0;
+}
 
 /* Button config */
 .diveditprofessionalProfile {
@@ -229,66 +240,114 @@
   font-size: 15px;
 }
 
-  .buttonLogin {
-    background-color: rgba(115, 83, 186, 1);
-    height: 3vw;
-    width: 8vw;
-    border-radius: 15px;
-    padding: '10px 24px';
-    font-family: 'Poppins';
-    font-size: 0.9vw;
-    font-weight: 800;
-    line-height: '20px';
-    letter-spacing: '0.11em';
-    color: rgb(255, 255, 255);
-    cursor: pointer;
-  }
-  .buttonLogin {
-    background-color: rgba(115, 83, 186, 1);
-    height: 3vw;
-    width: 8vw;
-    border-radius: 15px;
-    padding: '10px 24px';
-    font-family: 'Poppins';
-    font-size: 0.9vw;
-    font-weight: 800;
-    line-height: '20px';
-    letter-spacing: '0.11em';
-    color: rgb(255, 255, 255);
-    cursor: pointer;
-  }
-  .buttonLogin:hover {
-    background-color:rgb(83, 39, 180);
-    color: rgb(255, 255, 255);
-    cursor: pointer;
-  }
-  
-  
-.divDeleteAccount-edit{
+.buttonSave {
+  background-color: rgba(115, 83, 186, 1);
+  height: 3vw;
+  width: 8vw;
+  border-radius: 15px;
+  padding: "10px 24px";
+  font-family: "Poppins";
+  font-size: 0.9vw;
+  font-weight: 800;
+  line-height: "20px";
+  letter-spacing: "0.11em";
+  color: rgb(255, 255, 255);
+  cursor: pointer;
+}
+.buttonLogin {
+  background-color: rgba(115, 83, 186, 1);
+  height: 3vw;
+  width: 8vw;
+  border-radius: 15px;
+  padding: "10px 24px";
+  font-family: "Poppins";
+  font-size: 0.9vw;
+  font-weight: 800;
+  line-height: "20px";
+  letter-spacing: "0.11em";
+  color: rgb(255, 255, 255);
+  cursor: pointer;
+}
+.buttonLogin:hover {
+  background-color: rgb(83, 39, 180);
+  color: rgb(255, 255, 255);
+  cursor: pointer;
+}
+
+.divDeleteAccount-edit {
+  width: 100%;
   display: flex;
   justify-content: right;
 }
-.deleteAccount-edit{
-  
-  background-color: #A62626;
-  height: 1.7vw;
-  width: 5vw;
-  border-radius: 25px;
-  font-family: 'Poppins';
-  font-size: 0.6vw;
+.deleteAccount-edit {
+  background-color: #a62626;
+  padding: 6px 12px;
+  border-radius: 30px;
+  font-family: "Poppins";
+  font-size: 0.7rem;
   font-weight: 800;
-  line-height: '20px';
-  letter-spacing: '0.11em';
   color: rgb(255, 255, 255);
-  margin: 0 10px 10px 0;
 }
-.deleteAccount-edit:hover{
-  background-color: #ff00008f;
+.deleteAccount-edit:hover {
+  background-color: #6f1a1a;
   cursor: pointer;
 }
-form{
+form {
   align-items: center;
   flex-direction: column;
 }
 
-  
+@media (max-width: 780px) {
+  .menu-edit {
+    display: flex;
+    flex-direction: column;
+    gap: 0rem;
+    padding-top: 110px;
+  }
+  .container-choose-photo-edit {
+    flex-direction: column;
+    justify-content: center;
+  }
+  .input-edit {
+    padding: 2% 5% 3% 5%;
+    height: 40px;
+  }
+  .select-gender-edit {
+    height: 40px;
+  }
+  .form-edit-allcontent {
+    max-height: 600px;
+    overflow-y: auto;
+  }
+  .custom-file-label-edit {
+    width: 85px;
+    height: 85px;
+  }
+  .custom-file-label-edit::before {
+    width: 75px;
+    height: 75px;
+    font-size: 75px;
+  }
+  .container-second-content-edit {
+    padding-top: 0.6rem;
+  }
+  .input-weight-edit,
+  .input-hight-edit {
+    height: 52px;
+  }
+  .divDeleteAccount-edit{
+    justify-content: center;
+  }
+}
+
+@media (min-width: 781px) and (max-width: 900px) {
+  .container-edit-content {
+    width: 80%;
+  }
+}
+
+@media (min-width: 781px) and (max-width: 1100px) {
+  .container-edit-content {
+    width: 65%;
+  }
+}
