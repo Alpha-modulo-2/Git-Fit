@@ -13,12 +13,12 @@ import { useAuth } from '../../context/authContext';
 import { generalRequest } from "../../generalFunction";
 
 // import  { UserFriendRequests } from '../ContactsAndRequests/getUserRequests';
-import { UserData } from "../../interfaces/IUser";
+import { User } from "../../interfaces/IUser";
 import { Friend } from '../../interfaces/IUser';
 
 interface FriendRequest {
     _id: string;
-    requester: UserData;
+    requester: User;
     recipient: string;
     created_at: string;
     __v: number;
@@ -34,7 +34,7 @@ interface ApiResponseRequests {
 export const SearchedResults = () => {
     const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
     const [messageModal, setMessageModal] = useState<string>('');
-    const [usersFromSearch, setUsersFromSearch] = useState<UserData[] | undefined>([]);
+    const [usersFromSearch, setUsersFromSearch] = useState<User[] | undefined>([]);
     const [userFriendRequests, setUserFriendRequests] = useState<FriendRequest[] | null | undefined>()
     const [query, setQuery]=useState('')
     
@@ -95,7 +95,6 @@ export const SearchedResults = () => {
         }).catch(error => {
                 console.error('Erro na requisição:', error);
         });
-      
     }
 
     /***************    REFUSE A FRIEND REQUEST     ********************/
@@ -115,7 +114,7 @@ export const SearchedResults = () => {
 
     /***************    GET USERS FROM SEARCH    ********************/
     async function searchUsers() {
-        const response = await generalRequest<UserData[]>(`/users/search?name=${query}`)
+        const response = await generalRequest<User[]>(`/users/search?name=${query}`)
         if(response){
             if(response.length === 0){
                 setMessageModal('Não foi encontrado nenhum usuário na pesquisa')
@@ -127,34 +126,34 @@ export const SearchedResults = () => {
     }
 
     /***************    ADD USER AS FRIEND    ********************/
-  function addUserAsFriend(requesterId: string | undefined){
-    const updatedUsers = usersFromSearch?.map((userSearched) => {
-        if (userSearched._id === requesterId) {
-            const updatedFriends: Friend[] = [
-                ...userSearched.friends,
-                {
-                    _id: user?._id || '',
-                    occupation: user?.occupation || '',
-                    photo: user?.photo || '',
-                    userName: user?.userName || '',
-                },
-            ];
+    function addUserAsFriend(requesterId: string | undefined){
+        const updatedUsers = usersFromSearch?.map((userSearched) => {
+            if (userSearched._id === requesterId) {
+                const updatedFriends: Friend[] = [
+                    ...userSearched.friends,
+                    {
+                        _id: user?._id || '',
+                        occupation: user?.occupation || '',
+                        photo: user?.photo || '',
+                        userName: user?.userName || '',
+                    },
+                ];
 
-            return {
-                ...userSearched,
-                friends: updatedFriends,
-            };
+                return {
+                    ...userSearched,
+                    friends: updatedFriends,
+                };
+            }
+            return userSearched;
+        });
+
+        if (updatedUsers) {
+            setUsersFromSearch(updatedUsers);
         }
-        return userSearched;
-    });
-
-    if (updatedUsers) {
-        setUsersFromSearch(updatedUsers);
     }
-  }
         
     /***************    GET TYPE OF CARD    ********************/
-    function getCardType(userSearched: UserData): ReactElement{
+    function getCardType(userSearched: User): ReactElement{
         const isFriend = userSearched.friends.some(friend => friend._id === user?._id);
 
         const requestedFriend = userFriendRequests?.find(request => {
@@ -170,8 +169,7 @@ export const SearchedResults = () => {
                     typeOfCard={'contact'}
                 />
             );
-        }else if
-         (requestedFriend) {
+        }else if (requestedFriend) {
             
             return (
                 <ContactCard
@@ -199,7 +197,6 @@ export const SearchedResults = () => {
         }
     }
 
-      
     return (
         <div className="search-page">
             <Header isLoggedIn={true} />
@@ -233,7 +230,5 @@ export const SearchedResults = () => {
                 )}
             </div>
         </div>
-      
     );
-  };
-  
+};

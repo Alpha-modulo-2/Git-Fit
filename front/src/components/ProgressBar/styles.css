@@ -16,7 +16,7 @@
 }
 
 .title-bar h4{
-  font-size: 90%;
+  font-size: 80%;
 }
 
 .progress-bar {
@@ -34,4 +34,11 @@
   height: 40%;
   border-radius: 25rem;
   background-color: #7353BA;
+}
+
+@media (max-width: 780px) {
+  .title-bar {
+    width: 50%;
+    margin-left: 10px;
+  }
 }

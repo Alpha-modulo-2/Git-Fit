@@ -7,7 +7,7 @@ import ContactCard from "../../components/ContactCard";
 import {Modal} from "../../components/Modal";
 import { Chat } from "../../components/Chat";
 import { useAuth } from '../../context/authContext';
-import { UserData } from '../../interfaces/IUser';
+import { User } from '../../interfaces/IUser';
 import { Friend } from '../../interfaces/IUser';
 import { FriendRequest } from '../../interfaces/IContacts';
 import { ApiResponseRequests } from '../../interfaces/IContacts';
@@ -36,7 +36,7 @@ export const Contacts = () => {
     async function getContacts() {
         if(user){
             const id = String(user._id)
-            const response = await generalRequest(`/users/${id}`) as UserData;
+            const response = await generalRequest(`/users/${id}`) as User;
             if(response){
                 setContacts(response.friends)
             }
@@ -50,7 +50,6 @@ export const Contacts = () => {
 
     /***************    GET THE FRIEND REQUESTS    ********************/
     async function getRequests() {
-        console.log(user, 'uasssserre')
         if(user){
             const response = await generalRequest(`/friendRequests/${user._id}`) as ApiResponseRequests;
             if(response){
@@ -104,12 +103,15 @@ export const Contacts = () => {
             console.error('Erro na requisição:', error);
         });
     }
-     
+
+    const handleChatToggle = (isOpen: boolean) => {
+        setIsChatOpen(isOpen);
+    };
     return (
         <div className="contacts-page">
             <Header isLoggedIn={true}/>
             <div className="container-contacts-request">
-                <Chat onChatOpen={false}/>
+                <Chat onChatOpen={handleChatToggle}/>
                 <div className="content-contacts">
                     <div className="container-titles-contacts">
                         <p className={`title-contacts title-content-left ${!showRequests ? 'active' : ''}`} onClick={() => setShowRequests(false)}
@@ -152,7 +154,5 @@ export const Contacts = () => {
                 )}
             </div>
         </div>
-      
     );
-  };
-  
+};

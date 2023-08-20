@@ -1,12 +1,13 @@
 interface FormProps {
-    onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
-    handleUserNameChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-    handlePasswordChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  }
-  
-  export default function Form(props: FormProps) {
-    return (
-      <form className="formLogin" onSubmit={props.onSubmit}>
+  onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
+  handleUserNameChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handlePasswordChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+}
+
+export default function Form(props: FormProps) {
+  return (
+    <form className="formLogin" onSubmit={props.onSubmit}>
+      <div className="formlogin-container-inputs">
         <input
           type="text"
           className="input-login"
@@ -20,9 +21,10 @@ interface FormProps {
           placeholder="Senha"
           onChange={props.handlePasswordChange}
         />
-        
-        <button className="buttonLogin" type="submit">Entrar</button>
-      </form>
-    );
-  }
-  
+      </div>
+      
+      
+      <button className="buttonLogin" type="submit">Entrar</button>
+    </form>
+  );
+}

@@ -9,8 +9,7 @@ import { useParams } from 'react-router-dom';
 import { useAuth } from '../../context/authContext';
 import { Chat } from "../../components/Chat";
 import { generalRequest } from "../../generalFunction";
-// import { UserData } from "../../interfaces/IUser";
-//import currentuser from '../../currentuser.json'
+
 
 interface CardData {
     card: [{}]
@@ -78,8 +77,6 @@ export const FullCard = () => {
     const selectedDay = weekDays.find(day => day.id === parseInt(selectedId));
 
     const { user } = useAuth();
-    // const { isLoggedIn, login, user } = useAuth();
-    // console.log(isLoggedIn, login, user, 'login');
     const userId = String(user?._id);
 
     const [trainingCard, setTrainingCard] = useState<CardData['trainingCard']>({
@@ -110,7 +107,9 @@ export const FullCard = () => {
                 console.error('Erro ao buscar dados dos cards', error);
             }
         };
-        fetchCardsData();
+        fetchCardsData().catch(error => {
+            console.error('Erro ao buscar dados dos cards', error);
+        });
     }, [selectedId]);
 
     const handleTrainingCheckboxChange = async () => {
@@ -253,6 +252,8 @@ export const FullCard = () => {
     const [isEditingMeal, setIsEditingMeal] = useState(false);
     const [isAddTraining, setIsAddTraining] = useState(false);
     const [isAddMeal, setIsAddMeal] = useState(false);
+    const [showInput, setShowInput] = useState(false);
+    
 
     const [newMealDescription, setNewMealDescription] = useState('');
     const [newTrainingDescription, setNewTrainingDescription] = useState('');
@@ -271,7 +272,6 @@ export const FullCard = () => {
     const handleEditCardTrainingSubmit = async () => {
         setIsEditingTraining(false);
         setShowEditButtons(false);
-
         const updatedTaskDescription = editedTaskDescription;
         const editingTaskId = trainingCard.tasks[editingTaskIndex]._id;
         try {
@@ -286,6 +286,7 @@ export const FullCard = () => {
 
             if (updatedCard) {
                 setTrainingCard(updatedCard.trainingCard);
+                setEditedTaskDescription('')
             }
         } catch (error) {
             console.error('Erro ao atualizar a tarefa', error);
@@ -334,8 +335,8 @@ export const FullCard = () => {
             setShowMiniCarrossel(true);
         }
     }
-    const [isChatOpen, setIsChatOpen] = useState(true);
-    const handleChatToggle = (isOpen: any) => {
+    const [isChatOpen, setIsChatOpen] = useState(false);
+    const handleChatToggle = (isOpen: boolean) => {
         setIsChatOpen(isOpen);
     };
     return (

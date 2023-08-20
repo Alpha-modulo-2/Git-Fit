@@ -21,12 +21,10 @@ import { UserData } from "../interfaces/IUser";
 
     function setUsers(users: UserData[]){
         setUsersFromSearch(users)
-        console.log(users, 'usersfromcontext')
     }
 
     function setQueryToSearch(query: string){
       setQuery(query);
-      console.log(query, 'queryToSearch')
     }
     
     return(

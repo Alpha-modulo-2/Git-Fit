@@ -169,6 +169,8 @@
   border: 2px solid rgb(70, 69, 70);
   background-color: #cdc4e1;
   border-radius: 0.5rem;
+  caret-color: #000000;
+  padding-left: 5px;
 }
 
 .button_send_message{
