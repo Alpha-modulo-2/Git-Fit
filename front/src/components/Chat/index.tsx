@@ -12,13 +12,19 @@ interface ChatData {
     members: Array<{ _id: string }>;
 }
 
+interface SocketMessage {
+    chatMessage: Message | Message[]
+    error: boolean
+    statusCode: number
+}
+
 interface Friend {
     photo?: string;
     userName: string;
     name: string;
     occupation: string;
     _id: string;
-} 
+}
 
 interface Message {
     chatId?: string;
@@ -48,7 +54,7 @@ let currentChatId: string | null = null;
 export const Chat = ({ onChatOpen }: ChatProps) => {
     const { user } = useAuth();
 
-    if(!user){
+    if (!user) {
         throw new Error('Usuário não exite')
     }
 
@@ -58,69 +64,83 @@ export const Chat = ({ onChatOpen }: ChatProps) => {
 
     const [messages, setMessages] = useState<Array<Message>>([]);
     const [showChat, setShowChat] = useState(false);
+    const [chats, setChats] = useState<ChatData[]>([]);
 
-    const [currentlyFriend, setcurrentlyFriend] = useState('Other');
+    const [currentlyFriend, setCurrentlyFriend] = useState('Other');
     const [inputMessage, setInputMessage] = useState('');
 
-    const urlPath = import.meta.env.VITE_URL_PATH || "";
+    const urlPath = import.meta.env.VITE_URL_PATH;
 
     const messagesContainerRef = useRef<HTMLDivElement | null>(null);
 
-    const toggleChat = () => {
-        setChatOpen((prevState) => !prevState);
+    const toggleChat = async () => {
+        setChatOpen(!chatOpen);
         onChatOpen(!chatOpen);
+        await searchChats(userId);
+
         return
     };
 
     const initChat = async (friend: Friend) => {
-        if (!userId) {
-            alert("User ID is required!");
-            return;
-        }
-        setcurrentlyFriend(friend.name)
-        try {
-            await searchChat(userId, friend._id);
-        } catch (error) {
-        console.error('Houve um erro ao buscar o chat:', error);
-        }
+        setCurrentlyFriend(friend.userName)
+        await chatWithFriend(friend._id)
     }
 
-    const searchChat = async (userId: string, friendId: string) => {
+    const searchChats = async (userId: string) => {
         try {
             const response = await generalRequest(`/conversations/${userId}`);
 
             const userChats: Array<ChatData> = response as Array<ChatData>;
+            setChats(userChats);
 
-            const chatWithFriend = userChats.find((chat: ChatData) =>
-                chat.members.some((member) => member._id === friendId)
-            );
-
-            if (chatWithFriend) {
-                await openChatPopup(chatWithFriend._id);
-            } else {
-                await generalRequest(`/conversations`,{userId: userId, friendId: friendId}, 'POST');
-                await  searchChat(userId, friendId);
-            }
         } catch (error) {
-            console.error("Error searching chat:", error);
+            console.error("Error getting chats:", error);
         }
     };
 
-    const openChatPopup = async (chatId: string) => {
-        const response = await generalRequest(`/messages/${chatId}`)
-        const messages: Message[] = response as Message[];
-        setMessages(messages);
-        messages.forEach(displayMessage);
+    const chatWithFriend = async (friendId: string) => {
+        try {
+            const chat = chats.find((chat: ChatData) =>
+                chat.members.some((member) => member._id === friendId)
+            );
+
+            if (chat) {
+                openChatPopup(chat._id);
+            } else {
+                await generalRequest(`/conversations`, { userId: userId, friendId: friendId }, 'POST');
+                await chatWithFriend(friendId);
+            }
+        } catch (error) {
+            console.error("Error getting chats:", error);
+        }
+    }
+
+    const openChatPopup = (chatId: string) => {
         currentChatId = chatId;
         setShowChat(true);
-        if (!socket) {
-            socket = io(urlPath);
-            socket.on('receiveMessage', (messageData: any) => {
-                if (messageData.chatId === chatId) {
-                    displayMessage(messageData);
-                }
-            });
+        if (socket) {
+            socket.disconnect();
         }
+        if (urlPath) {
+            socket = io(urlPath);
+        } else {
+            socket = io();
+        }
+        socket.on('receiveMessage', (messageData: SocketMessage) => {
+
+            if ((messageData.chatMessage as Message).chatId === chatId) {
+
+                const newMessages = Array.isArray(messageData.chatMessage) ? messageData.chatMessage : [messageData.chatMessage];
+                setMessages(prevMessages => [...prevMessages, ...newMessages]);
+            }
+        });
+
+        socket.on('chatHistory', (messages: SocketMessage) => {
+
+            const messageList = Array.isArray(messages.chatMessage) ? messages.chatMessage : [messages.chatMessage];
+            setMessages(messageList);
+        });
+
         socket.emit('joinRoom', chatId);
     }
 
@@ -128,15 +148,15 @@ export const Chat = ({ onChatOpen }: ChatProps) => {
         return messages.map((message, index) => (
             <div key={index} className={`message ${message.sender === userId ? 'mine' : 'others'}`}>
                 <div className="message-text">{message.text}</div>
-                {message.created_at ?(
+                {message.created_at ? (
                     <p className={message.sender === userId ? 'message-time-white' : 'message-time-black'}>
                         {formatMessageTime(message?.created_at)}
                     </p>
-                ):
+                ) :
                     <p className={message.sender === userId ? 'message-time-white' : 'message-time-black'}>
                         {formatMessageTime(Date.now())}
-                    </p>  
-            }
+                    </p>
+                }
             </div>
         ));
     };
@@ -148,15 +168,6 @@ export const Chat = ({ onChatOpen }: ChatProps) => {
         return `${hours}:${minutes}`;
     };
 
-    function displayMessage(message: any) {
-        const messagesDiv = document.querySelector('.body_box_msgs');
-        const alignment = message.sender === userId ? 'mine' : 'others';
-        const msgDiv = document.createElement('div');
-        msgDiv.classList.add('message', alignment);
-        msgDiv.textContent = (alignment === 'mine' ? "You" : currentlyFriend) + ': ' + message.text;
-        messagesDiv?.appendChild(msgDiv);
-    }
-
     const scrollToBottom = () => {
         if (messagesContainerRef.current) {
             const container = messagesContainerRef.current;
@@ -165,31 +176,36 @@ export const Chat = ({ onChatOpen }: ChatProps) => {
     };
 
     function sendMessage() {
-        const input = document.querySelector('.input_send_message') as HTMLInputElement;
-        const message = input.value;
-        if (message && currentChatId && socket) {
+        if (inputMessage && currentChatId && socket) {
             socket.emit('sendMessage', {
                 chatId: currentChatId,
                 sender: userId,
-                text: message,
+                text: inputMessage,
             });
-            postMessage(currentChatId, userId, message);
-            input.value = '';
-            setInputMessage('');
+            setInputMessage('');  // Reset the inputMessage state, which is bound to the input field.
         }
     }
+
     useEffect(() => {
         scrollToBottom();
     }, [messages]);
 
-    const closechat = () => {
+    useEffect(() => {
+        return () => {
+            if (socket) {
+                socket.disconnect();
+            }
+        };
+    }, []);
+
+    const closeChat = () => {
         if (socket) {
             socket.disconnect();
             socket = null;
         }
         currentChatId = null;
         setShowChat(false);
-        setcurrentlyFriend('Other');
+        setCurrentlyFriend('Other');
     }
 
     useEffect(() => {
@@ -197,33 +213,8 @@ export const Chat = ({ onChatOpen }: ChatProps) => {
             setMessages([]);
         }
     }, [showChat]);
-    
 
-    function postMessage(chatId: string, senderId: string, content: string) {
-        const url = `${urlPath}/messages`;
 
-        const messageData: Message  = {
-            conversationId: chatId,
-            sender: senderId,
-            text: content
-        };
-
-        fetch(url, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(messageData)
-        })
-            .then(response => response.json())
-            .then(() => {
-                const newmessages:  Message[] = [...messages, messageData];
-                setMessages(newmessages);
-            })
-            .catch(error => {
-                console.error("Error posting message:", error);
-            });
-    }
 
     return (
         <div className="chat-container">
@@ -237,13 +228,13 @@ export const Chat = ({ onChatOpen }: ChatProps) => {
                     <div className="box-open-msgs">
                         <div className="header_open_msg">
                             <p>{currentlyFriend}</p>
-                            <X size={22} color="#5e35aa" weight="bold" onClick={closechat} />
+                            <X size={22} color="#5e35aa" weight="bold" onClick={closeChat} />
                         </div>
                         <div className="body_box_msgs" ref={messagesContainerRef}>
                             {renderMessages()}
                         </div>
                         <div className="div_send_message">
-                            <input type="text" 
+                            <input type="text"
                                 className="input_send_message"
                                 value={inputMessage}
                                 placeholder="Digite algo..."
@@ -254,14 +245,14 @@ export const Chat = ({ onChatOpen }: ChatProps) => {
                                         sendMessage();
                                     }
                                 }}
-                                >
+                            >
                             </input>
-                            <PaperPlaneRight size={15} color="#5e35aa"  className="button_send_message" onClick={sendMessage} />
+                            <PaperPlaneRight size={15} color="#5e35aa" className="button_send_message" onClick={sendMessage} />
                         </div>
                     </div>
                     : <div className="box-users-msgs">
                         {user.friends.map((friend) => (
-                            <div className="msg-card" onClick={() => initChat(friend as any)}>
+                            <div className="msg-card" onClick={() => { initChat(friend as any) }}>
                                 <div className="img-card-msgs">
                                     <img
                                         src={friend.photo || "../src/assets/images/placeholderphoto.jpg"}
