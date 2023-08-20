@@ -23,7 +23,6 @@
 
 .chat-container-msg {
   display: none;
-  height: 22rem;
   position: absolute;
   bottom: 20px;
   left: 20px;
@@ -31,11 +30,10 @@
   opacity: 0;
   transform: scale(0.5);
   transform-origin: bottom right;
-  padding: 20px 10px;
+  padding: 10px 10px;
   z-index: 0;
   border-radius: 25px;
   opacity: 0.3s ease, transform 0.3s ease;
-  width: 18.5rem;
 }
 
 .chat-open {
@@ -45,7 +43,10 @@
   align-items: center;
   opacity: 1;
   transform: scale(1);
+  height: 30rem;
+  width: 25rem;
 }
+
 
 /* Input de pesquisaa */
 .search-box-msg {
@@ -68,25 +69,20 @@
 .box-users-msgs {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
   overflow-y: auto;
-  padding-right: 10px;
 }
 .msg-card {
-  width: 17rem;
-  height: 45px;
+  width: 24rem;
+  height: 4rem;
   display: flex;
   gap: 1rem;
   align-items: center;
-  background-color: #f2f2f2;
+  border-bottom: 5px solid #d5d5d5;
 }
 
-.msg-card:hover{
-  background-color: #afadad;
-}
-
-.msg-card:active{
-  background-color: #ec9cfc;
+.msg-card:hover {
+  background-color: #e3e3e3;
+  cursor: pointer;
 }
 
 .img-card-msgs {
@@ -103,16 +99,16 @@
   width: 45%;
   display: flex;
   flex-direction: column;
-  gap: 0.3rem;
+  /* gap: 0.3rem; */
 }
 .username-msg {
   font-weight: 500;
-  font-size: 0.7rem;
+  font-size: 1rem;
   white-space: nowrap;
 }
 .useroccupation-msg {
   color: #64748b;
-  font-size: 0.6rem;
+  font-size: 0.8rem;
   white-space: nowrap;
 }
 
@@ -128,63 +124,68 @@
   text-align: center;
 }
 
-.box-open-msgs{
-  width: 17rem;
+.box-open-msgs {
+  width: 100%;
   height: 100%;
   overflow-y: scroll;
   overflow-x: hidden;
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
 }
 
-.header_open_msg{
-  width: 16rem;
+.header_open_msg {
+  /* width: 16rem; */
   display: flex;
   align-items: center;
   justify-content: space-between;
   cursor: pointer;
+  color: #5e35aa;
+  font-size: 1rem;
+  font-weight: 500;
 }
 
-.body_box_msgs{
-  width: 16.3rem;
-  height: 80%;
-  margin-top: 0.5rem;
-  margin-bottom: 0.5rem;
-  border: 1px solid black;
+.body_box_msgs {
+  height: 85%;
+  /* border: 1px solid black; */
   overflow-y: scroll;
   padding: 5px;
-  border: 2px solid rgb(70, 69, 70);
-  background-color: #cdc4e1;
+  background-color: transparent;
   border-radius: 0.5rem;
 }
 
-.div_send_message{
-  width: 17rem;
+.div_send_message {
+  width: 100%;
   display: flex;
+  justify-content: space-between;
 }
 
-.input_send_message{
-  width: 14rem;
+.input_send_message {
+  width: 100%;
   height: 2rem;
-  border: 2px solid rgb(70, 69, 70);
-  background-color: #cdc4e1;
+  border: 1px solid rgb(115, 83, 186, 1);
+  background-color: #dadada;
   border-radius: 0.5rem;
   caret-color: #000000;
   padding-left: 5px;
 }
+.input_send_message:focus {
+  border: 2px solid rgb(106, 77, 169);
+  outline:0;
+}
 
-.button_send_message{
+.button_send_message {
   width: 2rem;
   height: 2rem;
   margin-left: 5px;
   border-radius: 5%;
 }
 
-.button_send_message:hover{
+.button_send_message:hover {
   background-color: #dadbdc;
 }
 
-.button_send_message:active{
+.button_send_message:active {
   border: 2px solid rgb(157, 156, 157);
   background-color: #c7b4f2;
   border-radius: 0.5rem;
@@ -205,4 +206,43 @@
 ::-webkit-scrollbar-track {
   background-color: #f1f1f1;
   border-radius: 4px;
+}
+
+.mine {
+  background-color: rgba(116, 83, 186, 0.865);
+  color: white;
+  width: 80%;
+  max-width: 80%;
+  text-align: left;
+  margin: 5px 10px 5px auto; 
+  border-radius: 10px;
+  padding: 5px 10px; 
+  word-wrap: break-word; 
+  font-size: 0.8rem;
+}
+
+.others {
+  background-color: #c7c7c7;
+  color: black;
+  text-align: left ;
+  width: 80%;
+  max-width: 80%;
+  text-align: left;
+  margin: 5px auto 5px 10px; /* Adicione "auto" para alinhar à esquerda */
+  border-radius: 10px;
+  padding: 5px 10px; 
+  word-wrap: break-word; 
+  font-size: 0.8rem;
+}
+
+
+.message-time-white {
+  font-size: 0.6rem;
+  color: #ffffff; /* Cor da hora da mensagem */
+  text-align: right;
+}
+.message-time-black {
+  font-size: 0.6rem;
+  color: #000000; /* Cor da hora da mensagem */
+  text-align: right;
 }

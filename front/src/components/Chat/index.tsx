@@ -1,10 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { generalRequest } from "../../generalFunction";
 import { Socket } from "socket.io-client";
 import { useAuth } from '../../context/authContext';
 import { io } from "socket.io-client";
 import "./styles.css"
-import { ChatCircleText, X } from "@phosphor-icons/react";
+import { ChatCircleText, X, PaperPlaneRight } from "@phosphor-icons/react";
+
 
 interface ChatData {
     _id: string;
@@ -62,6 +63,8 @@ export const Chat = ({ onChatOpen }: ChatProps) => {
     const [inputMessage, setInputMessage] = useState('');
 
     const urlPath = import.meta.env.VITE_URL_PATH || "";
+
+    const messagesContainerRef = useRef<HTMLDivElement | null>(null);
 
     const toggleChat = () => {
         setChatOpen((prevState) => !prevState);
@@ -124,11 +127,26 @@ export const Chat = ({ onChatOpen }: ChatProps) => {
     const renderMessages = () => {
         return messages.map((message, index) => (
             <div key={index} className={`message ${message.sender === userId ? 'mine' : 'others'}`}>
-                {message.sender === userId ? 'You' : currentlyFriend}: {message.text}
+                <div className="message-text">{message.text}</div>
+                {message.created_at ?(
+                    <p className={message.sender === userId ? 'message-time-white' : 'message-time-black'}>
+                        {formatMessageTime(message?.created_at)}
+                    </p>
+                ):
+                    <p className={message.sender === userId ? 'message-time-white' : 'message-time-black'}>
+                        {formatMessageTime(Date.now())}
+                    </p>  
+            }
             </div>
         ));
     };
 
+    const formatMessageTime = (isoTimeString: string | number) => {
+        const date = new Date(isoTimeString);
+        const hours = String(date.getHours()).padStart(2, '0'); // Obtém as horas com zero à esquerda se for necessário
+        const minutes = String(date.getMinutes()).padStart(2, '0'); // Obtém os minutos com zero à esquerda se for necessário
+        return `${hours}:${minutes}`;
+    };
 
     function displayMessage(message: any) {
         const messagesDiv = document.querySelector('.body_box_msgs');
@@ -138,6 +156,13 @@ export const Chat = ({ onChatOpen }: ChatProps) => {
         msgDiv.textContent = (alignment === 'mine' ? "You" : currentlyFriend) + ': ' + message.text;
         messagesDiv?.appendChild(msgDiv);
     }
+
+    const scrollToBottom = () => {
+        if (messagesContainerRef.current) {
+            const container = messagesContainerRef.current;
+            container.scrollTop = container.scrollHeight;
+        }
+    };
 
     function sendMessage() {
         const input = document.querySelector('.input_send_message') as HTMLInputElement;
@@ -153,6 +178,9 @@ export const Chat = ({ onChatOpen }: ChatProps) => {
             setInputMessage('');
         }
     }
+    useEffect(() => {
+        scrollToBottom();
+    }, [messages]);
 
     const closechat = () => {
         if (socket) {
@@ -204,14 +232,14 @@ export const Chat = ({ onChatOpen }: ChatProps) => {
                     <X size={40} color="white" className="close-button-msg" />
                     : <ChatCircleText size={40} color="white" />}
             </div>
-            <div className={`chat-container-msg ${chatOpen ? "chat-open" : ""}`}>
+            <div className={`chat-container-msg ${chatOpen ? "chat-open" : "chat-close"}`}>
                 {showChat ?
                     <div className="box-open-msgs">
                         <div className="header_open_msg">
-                            <h3>{currentlyFriend}</h3>
-                            <h3 onClick={closechat}>X</h3>
+                            <p>{currentlyFriend}</p>
+                            <X size={22} color="#5e35aa" weight="bold" onClick={closechat} />
                         </div>
-                        <div className="body_box_msgs">
+                        <div className="body_box_msgs" ref={messagesContainerRef}>
                             {renderMessages()}
                         </div>
                         <div className="div_send_message">
@@ -228,9 +256,7 @@ export const Chat = ({ onChatOpen }: ChatProps) => {
                                 }}
                                 >
                             </input>
-                            
-                            <img src="https://www.pinclipart.com/picdir/middle/201-2016537_send-message-icon-white-clipart-computer-icons-clip.png"
-                            className="button_send_message" onClick={sendMessage}></img>
+                            <PaperPlaneRight size={15} color="#5e35aa"  className="button_send_message" onClick={sendMessage} />
                         </div>
                     </div>
                     : <div className="box-users-msgs">
