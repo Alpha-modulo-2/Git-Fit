@@ -1,12 +1,11 @@
 // ContactCard.tsx
 import React from 'react';
 import { XCircle, Check, UserCirclePlus } from "@phosphor-icons/react";
-import { Friend, UserData } from '../../interfaces/IUser';
-// import path from 'path';
-
+import { Friend, User } from '../../interfaces/IUser';
+import { useNavigate } from 'react-router-dom'; 
 
 interface ContactCardProps{
-  requesterInfo?: UserData | Friend;
+  requesterInfo?: User | Friend;
   requestId?: string; 
   recipientId?: string;
   onUpdateFriends?: (requestId: string, requesterId: string) => void;
@@ -17,11 +16,20 @@ interface ContactCardProps{
 
 
 const ContactCard: React.FC<ContactCardProps> = ({ requesterInfo, requestId, onUpdateFriends, onRemoveFriends, onAddFriend, recipientId, typeOfCard }) => {
-  const imageId = requesterInfo?.photo;
-  const image = imageId ? `/uploads/${imageId}` : 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/User-avatar.svg/2048px-User-avatar.svg.png';
-// const image =path.join('/uploads', imageId!)
-  return (
-    <div className="contact-card">
+const navigate = useNavigate();
+const imageId = requesterInfo?.photo;
+const image = imageId ? `/uploads/${imageId}` : 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/User-avatar.svg/2048px-User-avatar.svg.png';
+
+function validate() {
+  if(requesterInfo !== undefined && requesterInfo._id ) {
+    const contactId = requesterInfo._id
+    navigate(`/contact_profile/${contactId}`)
+  }
+  
+}
+
+return (
+    <div className="contact-card"  onClick={() => validate() }>
       <div className="img-card-contacts">
         <img src={image} alt="Texto" />
       </div>
@@ -70,9 +78,8 @@ const ContactCard: React.FC<ContactCardProps> = ({ requesterInfo, requestId, onU
         )
       }
       {
-       typeOfCard === 'contact' &&(
+        typeOfCard === 'contact' &&(
           <div className="container-icon-contact">
-           
           </div>
         )
       }

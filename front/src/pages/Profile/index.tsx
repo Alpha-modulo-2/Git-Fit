@@ -4,13 +4,10 @@ import { Header } from "../../components/Header";
 import { ProgressBar } from "../../components/ProgressBar";
 import { CircleProgressBar } from "../../components/CircleProgressBar";
 import { PhotoProfile } from "../../components/PhotoProfile";
-// import { Carrossel } from "../../components/Carrossel";
 import { DailyCard } from "../../components/DailyCard";
 import { NavigateFunction, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/authContext';
-//import currentuser from '../../currentuser.json';
 import { generalRequest } from "../../generalFunction";
-import { UserData } from "../../interfaces/IUser";
 
 const convertToNumber = (stringValue: string) => {
   const numericValue = stringValue ? stringValue.replace(/\D/g, '') : '';
@@ -27,6 +24,12 @@ interface Meal {
   description: string;
 }
 
+export interface ApiResponseRequests {
+  error?: boolean;
+  statusCode?: number;
+  message?: string;
+  card?: CardData[];
+}
 interface CardData {
   card: {
       trainingCard: {
@@ -74,48 +77,38 @@ export const Profile = () => {
   const navigate: NavigateFunction = useNavigate();
 
   const { user } = useAuth();
-  // const { isLoggedIn, login, user } = useAuth();
-  // console.log(isLoggedIn, login, user, 'login');
   const userId = String(user?._id);
 
-  const [userData, setUserData] = useState<any>(null);
-  const [cardData, setCardData] = useState<any>([]);
+  const [cardData, setCardData] = useState<any[]>([]);
 
   useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const response = await generalRequest(`/users/${userId}`) as UserData;
-        const data = response;
-        setUserData(data);
-      } catch (error) {
-        console.error('Erro ao buscar dados do usuário', error);
-      }
-    };
-
     const fetchCardsData = async () => {
       try {
-        const response = await generalRequest(`/allcards/${userId}`) as CardData;
-        const data = response;
-        setCardData(data.card);
+        const response = await generalRequest(`/allcards/${userId}`) as ApiResponseRequests
+        const data = response.card
+        if(data !== undefined) {
+          setCardData(data);
+        }
       } catch (error) {
         console.error('Erro ao buscar dados dos cards', error);
       }
     };
-    fetchUserData();
-    fetchCardsData();
-  }, []);
+    fetchCardsData().catch(error => {
+      console.error('Erro ao buscar dados dos cards', error);
+  });
+  }, [userId]);
 
   let user_name = "";
   let weight = 0;
   let heigth = 0;
-  let user_photo = "https://www.logolynx.com/images/logolynx/b4/b4ef8b89b08d503b37f526bca624c19a.jpeg";
+  let user_photo = "../src/assets/images/placeholderphoto.jpg";
 
-  if (userData != null) {
-    user_name = userData.userName;
-    weight = convertToNumber(userData.weight);
-    heigth = convertToNumber(userData.height);
-    if (userData.photo) {
-      user_photo = userData.photo;
+  if (user != null) {
+    user_name = user.userName;
+    weight = convertToNumber(user.weight);
+    heigth = convertToNumber(user.height);
+    if (user.photo) {
+      user_photo = user.photo;
     }
   }
   const calcIMC = Calc_IMC(weight, heigth);
@@ -124,6 +117,7 @@ export const Profile = () => {
 
   const countTrainingCheckboxes = () => {
     const totalDays = cardData.length;
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     const checkedDays = Array.isArray(cardData) ? cardData.filter((day) => day.trainingCard.checked).length : 0;
     if (isNaN(checkedDays)) {
       return 0;
@@ -134,6 +128,7 @@ export const Profile = () => {
 
   const countMealCheckboxes = () => {
     const totalDays = cardData.length;
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     const checkedDays = Array.isArray(cardData) ? cardData.filter((day) => day.mealsCard.checked).length : 0;
     if (isNaN(checkedDays)) {
       return 0;

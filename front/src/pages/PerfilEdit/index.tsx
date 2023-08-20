@@ -3,7 +3,6 @@ import { Header } from "../../components/Header";
 import { NavigateFunction, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import Form from "./formEdit";
-import { useParams } from "react-router-dom";
 import { Modal } from "../../components/Modal";
 import { useAuth } from "../../context/authContext";
 import { User } from "../../interfaces/IUser";
@@ -17,9 +16,6 @@ export interface ApiResponseRequests {
 }
 
 export const PerfilEdit = () => {
-  const { id } = useParams();
-  const userId = id ?? "";
-
   const [nameValue, setNameValue] = useState("");
   const [updatedNameValue, setUpdatedNameValue] = useState("");
 
@@ -46,6 +42,12 @@ export const PerfilEdit = () => {
   const [fileName, setFileName] = useState('')
 
   const { user, isLoggedIn, setLoggedUser } = useAuth();
+
+  if (!user) {
+    throw new Error('URL_PATH is not defined');
+  }
+
+  const userId = user._id
   
   function openModal() {
     setModalIsOpen(true);
@@ -85,12 +87,11 @@ export const PerfilEdit = () => {
     const password = passwordValue;
   
     if (password !== confirmPasswordValue) {
-      console.log("As senhas não coincidem.");
       setMessageModal("As senhas não coincidem.");
       openModal();
       return;
     }
- 
+
     const formData = new FormData();
 
     // Adicione os campos ao FormData
@@ -125,32 +126,28 @@ export const PerfilEdit = () => {
       formData.append("occupation", updatedOccupationValue);
     }
 
-    fetch(`https://localhost:443/users/${userId}`, {
-
+    fetch(`${urlPath}/users/${userId}`, {
       method: "PATCH",
       body: formData,
       credentials: 'include'
     }).then((response) => {
-      if (response.ok) {
-        console.log("Perfil atualizado com sucesso!");
-
-        return response.json() as Promise<ApiResponseRequests>;
-
-      } else {
-        console.log(response,'response');
-      }
+      return response.json() as Promise<ApiResponseRequests>;
     })
     .then((data) => {
-      if (data?.user) {
-        console.log(data, 'dataaaazaza')
-        if (data !== undefined) {
-          setLoggedUser(data.user)
-        }
-      }else{console.log(data, 'data from register deu errad?')}
-    }).catch((err) => {
-      console.log(err)
+      if (data.error == false && data.user !== undefined) {
+        setMessageModal(`Usuário atualizado com sucesso!` );
+        openModal();
+        navigate("/profile")
+        setLoggedUser(data.user)
+      }else{
+        if (data.message !== undefined)
+        setMessageModal(`Erro ao editar usuário: ${data.message}` );
+        openModal();
+      }
+    }).catch((err: { message: string }) => {
+      setMessageModal(`Erro ao editar usuário: ${err.message}` );
+      openModal();
     });
-
   }
 
   const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -217,10 +214,10 @@ export const PerfilEdit = () => {
           if (response.ok) {
             setMessageModal("Usuário excluído com sucesso!");
             openModal();
-            navigate("/profile");
+            navigate("/register");
           } else {
             console.error("Erro ao excluir usuário:", response);
-            setMessageModal("Erro ao excluir usuário:");
+            setMessageModal("Erro ao ex0cluir usuário:");
             openModal();
           }
         })

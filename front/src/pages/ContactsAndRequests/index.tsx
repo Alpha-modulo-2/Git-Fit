@@ -5,9 +5,8 @@ import { Header } from "../../components/Header";
 import { useState, useEffect } from "react";
 import ContactCard from "../../components/ContactCard";
 import {Modal} from "../../components/Modal";
-import { Chat } from "../../components/Chat";
 import { useAuth } from '../../context/authContext';
-import { UserData } from '../../interfaces/IUser';
+import { User } from '../../interfaces/IUser';
 import { Friend } from '../../interfaces/IUser';
 import { FriendRequest } from '../../interfaces/IContacts';
 import { ApiResponseRequests } from '../../interfaces/IContacts';
@@ -20,7 +19,6 @@ export const Contacts = () => {
     const [showRequests, setShowRequests] = useState(false); // Estado para controlar exibição das solicitações
     const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
     const [messageModal, setMessageModal] = useState<string>('');
-
     
     const { user } = useAuth();
     /***************    MODAL    ********************/
@@ -36,7 +34,7 @@ export const Contacts = () => {
     async function getContacts() {
         if(user){
             const id = String(user._id)
-            const response = await generalRequest(`/users/${id}`) as UserData;
+            const response = await generalRequest(`/users/${id}`) as User;
             if(response){
                 setContacts(response.friends)
             }
@@ -50,7 +48,6 @@ export const Contacts = () => {
 
     /***************    GET THE FRIEND REQUESTS    ********************/
     async function getRequests() {
-        console.log(user, 'uasssserre')
         if(user){
             const response = await generalRequest(`/friendRequests/${user._id}`) as ApiResponseRequests;
             if(response){
@@ -86,7 +83,6 @@ export const Contacts = () => {
         ).catch(error => {
             console.error('Erro na requisição:', error);
         });
-      
     }
 
 
@@ -104,12 +100,11 @@ export const Contacts = () => {
             console.error('Erro na requisição:', error);
         });
     }
-     
+
     return (
         <div className="contacts-page">
             <Header isLoggedIn={true}/>
             <div className="container-contacts-request">
-                <Chat onChatOpen={false}/>
                 <div className="content-contacts">
                     <div className="container-titles-contacts">
                         <p className={`title-contacts title-content-left ${!showRequests ? 'active' : ''}`} onClick={() => setShowRequests(false)}
@@ -152,7 +147,5 @@ export const Contacts = () => {
                 )}
             </div>
         </div>
-      
     );
-  };
-  
+};

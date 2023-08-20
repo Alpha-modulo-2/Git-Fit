@@ -34,7 +34,7 @@ export default class UserRepository {
     async get(): Promise<IResult> {
         try {
 
-            const users = await userModel.find().select("-password").populate("friends", { userName: 1, name: 1, photo: 1, occupation: 1, id: 1 });
+            const users = await userModel.find().select("-password").populate("friends", { userName: 1, name: 1, photo: 1, occupation: 1, _id: 1 });
 
             if (!users) {
                 throw new Error("Erro no servidor")

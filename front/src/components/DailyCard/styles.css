@@ -44,3 +44,49 @@
     font-size: 0.9rem;
     margin-left: 0.5rem;
 }
+
+@media (max-width: 900px) {
+    .structure-daily-card {
+        width: 95%;
+        height: 15rem;
+        padding: 0.8rem;
+        align-items: center;
+    }
+    .structure-daily-card h2 {
+        font-size: 1rem;
+    }
+    .body-card {
+        margin: 1%;
+        border-top: 1.5px solid rgb(255, 255, 255);
+        height: 70%;
+        align-items: center;
+    }
+
+    .training-day-card {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .training-day-card p {
+        font-size: 0.8rem;
+        margin-left: 0;
+    }
+    .training-day-card h3 {
+        font-size: 0.9rem;
+        margin-left: 0;
+    }
+
+    .meal-day-card{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    .meal-day-card p{
+        text-align: center;
+        font-size: 0.8rem;
+    }
+    .meal-day-card h3{
+        font-size: 0.9rem;
+    }
+}

@@ -44,6 +44,14 @@ const RegisterForm: React.FC<FormProps> = (props) => {
     setIsProfessional(e.target.checked);
   };
 
+  const handleUserNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    const formattedValue = value.replace(/[^a-z]/g, "");
+    props.handleUserNameChange({
+      target: { value: formattedValue },
+    } as React.ChangeEvent<HTMLInputElement>);
+  };
+
   const handleWeightChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     const formattedValue = value.replace(/[^0-9]/g, "") + "kg";
@@ -61,42 +69,46 @@ const RegisterForm: React.FC<FormProps> = (props) => {
   };
 
   return (
-    <form onSubmit={props.onSubmit}>
+    <form onSubmit={props.onSubmit} className="form-register-allcontent">
       <div className="menu-register">
         <div className="container-first-content-register">
-          <form encType="multipart/form-data" method="POST" action="/upload">
-            {selectedPhoto ? (
-              <img
-                src={selectedPhoto}
-                alt="Selected"
-                className="custom-file-label-register"
-                onClick={() => {
-                  const input = document.getElementById("photo-upload");
-                  if (input) {
-                    input.click();
-                  }
-                }}
+          <div className="container-choose-photo-register">
+            <form encType="multipart/form-data" method="POST" action="/upload" >
+              {selectedPhoto ? (
+                <img
+                  src={selectedPhoto}
+                  alt="Selected"
+                  className="custom-file-label-register"
+                  onClick={() => {
+                    const input = document.getElementById("photo-upload");
+                    if (input) {
+                      input.click();
+                    }
+                  }}
+                />
+              ) : (
+                <label htmlFor="photo-upload" className="custom-file-label-register">
+                </label>
+              )}
+              <input
+                id="photo-upload"
+                className="custom-file-input-register"
+                type="file"
+                name="photo"
+                accept="image/*"
+                onChange={handleLocalPhotoChange}
               />
-            ) : (
-              <label htmlFor="photo-upload" className="custom-file-label-register">
-              </label>
-            )}
-            <input
-              id="photo-upload"
-              className="custom-file-input-register"
-              type="file"
-              name="photo"
-              accept="image/*"
-              onChange={handleLocalPhotoChange}
-            />
-          </form>
+            </form>
+            <label htmlFor="photo-upload"><p>Adicionar foto</p></label>
+          </div>
 
           <input
             type="text"
             className="input-register"
             placeholder="Nome do Usuário"
-            onChange={props.handleUserNameChange}
+            onChange={handleUserNameChange}
             value={props.userNameValue}
+            minLength={6}
           />
 
           <input
@@ -108,17 +120,18 @@ const RegisterForm: React.FC<FormProps> = (props) => {
 
           <input
             type="number"
-            className="input-register"
+            className="input-register input-register-age"
             placeholder="Idade"
             onChange={props.handleAgeChange}
           />
 
           <select
-            className="input-register"
+            className="select-gender-register"
             onChange={props.handleGenderChange}
             value={props.genderValue}
+            
           >
-            <option value="">Selecione o Gênero</option>
+            <option value="" disabled selected hidden>Selecione o gênero</option>
             <option value="M">Masculino</option>
             <option value="F">Feminino</option>
           </select>
@@ -132,6 +145,7 @@ const RegisterForm: React.FC<FormProps> = (props) => {
               placeholder="Nome Completo"
               onChange={props.handleNameChange}
               value={props.nameValue}
+              minLength={6}
             />
             <input
               type="text"

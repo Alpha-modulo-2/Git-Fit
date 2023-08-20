@@ -7,7 +7,7 @@ export default class LoginRepository {
     async login(data: ILogin): Promise<IResult> {
 
         try {
-            const user = await userModel.findOne({ userName: data.userName });
+            const user = await userModel.findOne({ userName: data.userName }).populate("friends", { userName: 1, name: 1, photo: 1, occupation: 1, _id: 1 });
 
             if (user) {
 
