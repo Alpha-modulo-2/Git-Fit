@@ -79,7 +79,7 @@ export const Profile = () => {
   const { user } = useAuth();
   const userId = String(user?._id);
 
-  const [cardData, setCardData] = useState<CardData[]>([]);
+  const [cardData, setCardData] = useState<CardData>({ card: [] });
 
   useEffect(() => {
     const fetchCardsData = async () => {
@@ -116,7 +116,7 @@ const calcIMC = Calc_IMC(weight, heigth);
   const progressIMCircle = parseInt(progressIMC.toFixed(0));
 
   const countTrainingCheckboxes = () => {
-    const totalDays = cardData.length;
+    const totalDays = cardData.card.length;
     const checkedDays = cardData.card.filter((day) => day.trainingCard.checked).length;
     if (isNaN(checkedDays)) {
       return 0;
@@ -124,9 +124,9 @@ const calcIMC = Calc_IMC(weight, heigth);
       return (checkedDays / totalDays) * 100;
     }
   };
-
+  
   const countMealCheckboxes = () => {
-    const totalDays = cardData.length;
+    const totalDays = cardData.card.length;
     const checkedDays = cardData.card.filter((day) => day.mealsCard.checked).length;
     if (isNaN(checkedDays)) {
       return 0;
