@@ -5,7 +5,6 @@ import { Header } from "../../components/Header";
 import { useState, useEffect } from "react";
 import ContactCard from "../../components/ContactCard";
 import {Modal} from "../../components/Modal";
-import { Chat } from "../../components/Chat";
 import { useAuth } from '../../context/authContext';
 import { User } from '../../interfaces/IUser';
 import { Friend } from '../../interfaces/IUser';
@@ -20,7 +19,6 @@ export const Contacts = () => {
     const [showRequests, setShowRequests] = useState(false); // Estado para controlar exibição das solicitações
     const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
     const [messageModal, setMessageModal] = useState<string>('');
-
     
     const { user } = useAuth();
     /***************    MODAL    ********************/
@@ -85,7 +83,6 @@ export const Contacts = () => {
         ).catch(error => {
             console.error('Erro na requisição:', error);
         });
-      
     }
 
 
@@ -104,14 +101,10 @@ export const Contacts = () => {
         });
     }
 
-    const handleChatToggle = (isOpen: boolean) => {
-        setIsChatOpen(isOpen);
-    };
     return (
         <div className="contacts-page">
             <Header isLoggedIn={true}/>
             <div className="container-contacts-request">
-                <Chat onChatOpen={handleChatToggle}/>
                 <div className="content-contacts">
                     <div className="container-titles-contacts">
                         <p className={`title-contacts title-content-left ${!showRequests ? 'active' : ''}`} onClick={() => setShowRequests(false)}

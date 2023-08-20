@@ -188,7 +188,7 @@ export const Chat = ({ onChatOpen }: ChatProps) => {
             body: JSON.stringify(messageData)
         })
             .then(response => response.json())
-            .then(data => {
+            .then(() => {
                 const newmessages:  Message[] = [...messages, messageData];
                 setMessages(newmessages);
             })
@@ -235,7 +235,7 @@ export const Chat = ({ onChatOpen }: ChatProps) => {
                     </div>
                     : <div className="box-users-msgs">
                         {user.friends.map((friend) => (
-                            <div className="msg-card" onClick={() => initChat(friend)}>
+                            <div className="msg-card" onClick={() => initChat(friend as any)}>
                                 <div className="img-card-msgs">
                                     <img
                                         src={friend.photo || "../src/assets/images/placeholderphoto.jpg"}

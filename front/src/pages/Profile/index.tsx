@@ -8,8 +8,6 @@ import { DailyCard } from "../../components/DailyCard";
 import { NavigateFunction, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/authContext';
 import { generalRequest } from "../../generalFunction";
-import { User } from "../../interfaces/IUser.ts";
-//import { UserData } from "../../interfaces/IUser";
 
 const convertToNumber = (stringValue: string) => {
   const numericValue = stringValue ? stringValue.replace(/\D/g, '') : '';
@@ -32,7 +30,7 @@ export interface ApiResponseRequests {
   message?: string;
   card?: CardData[];
 }
-interface CardData {
+type CardData = {
   card: {
       trainingCard: {
           checked: boolean;
@@ -87,8 +85,10 @@ export const Profile = () => {
     const fetchCardsData = async () => {
       try {
         const response = await generalRequest(`/allcards/${userId}`) as ApiResponseRequests
-        const data = response.card as CardData[];
-        setCardData(data);
+        const data = response.card
+        if(data !== undefined) {
+          setCardData(data);
+        }
       } catch (error) {
         console.error('Erro ao buscar dados dos cards', error);
       }
@@ -111,13 +111,13 @@ export const Profile = () => {
       user_photo = user.photo;
     }
   }
-  const calcIMC = Calc_IMC(weight, heigth);
+const calcIMC = Calc_IMC(weight, heigth);
   const progressIMC = (calcIMC.imc_media * 100) / 40;
   const progressIMCircle = parseInt(progressIMC.toFixed(0));
 
   const countTrainingCheckboxes = () => {
     const totalDays = cardData.length;
-    const checkedDays = Array.isArray(cardData) ? cardData.filter((day) => day.trainingCard.checked).length : 0;
+    const checkedDays = cardData.card.filter((day) => day.trainingCard.checked).length;
     if (isNaN(checkedDays)) {
       return 0;
     } else {
@@ -127,7 +127,7 @@ export const Profile = () => {
 
   const countMealCheckboxes = () => {
     const totalDays = cardData.length;
-    const checkedDays = Array.isArray(cardData) ? cardData.filter((day) => day.mealsCard.checked).length : 0;
+    const checkedDays = cardData.card.filter((day) => day.mealsCard.checked).length;
     if (isNaN(checkedDays)) {
       return 0;
     } else {

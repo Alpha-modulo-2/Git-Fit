@@ -6,7 +6,6 @@ import { MagnifyingGlass } from "@phosphor-icons/react";
 import { Header } from "../../components/Header";
 import ContactCard from "../../components/ContactCard";
 import {Modal} from "../../components/Modal";
-import { Chat } from "../../components/Chat";
 
 import "./styles.css"
 import { useAuth } from '../../context/authContext';
@@ -201,7 +200,6 @@ export const SearchedResults = () => {
         <div className="search-page">
             <Header isLoggedIn={true} />
             <div className="container-search">
-                <Chat onChatOpen={false}/>
                 <div className="search-box">
                     <input type="text" className="search-text" placeholder="Pesquisar usuários..."
                     onChange={(e)=> setQuery(e.target.value)}/>

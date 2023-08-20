@@ -252,7 +252,6 @@ export const FullCard = () => {
     const [isEditingMeal, setIsEditingMeal] = useState(false);
     const [isAddTraining, setIsAddTraining] = useState(false);
     const [isAddMeal, setIsAddMeal] = useState(false);
-    const [showInput, setShowInput] = useState(false);
     
 
     const [newMealDescription, setNewMealDescription] = useState('');
