@@ -41,7 +41,7 @@ export const Login = () => {
     const password = passwordValue;
     const user: ILogin = { userName, password };
 
-    const urlPath = import.meta.env.VITE_URL_PATH||""
+    const urlPath = import.meta.env.VITE_URL_PATH || "";
 
 
     fetch(`${urlPath}/login`, {
@@ -54,7 +54,6 @@ export const Login = () => {
         navigate("/profile");
         return response.json() as Promise<ApiResponseRequests>;
       } else {
-        console.log("Failed to Login");
         setMessageModal("Dados incorretos");
         openModal();
       }
@@ -68,6 +67,8 @@ export const Login = () => {
     })
       .catch((error) => {
         console.error("Error:", error);
+        setMessageModal(`Erro: ${error.message}`);
+        openModal();
       });
   };
 
@@ -90,17 +91,18 @@ export const Login = () => {
       <div className="All-content-login">
         <div className="container-login-content">
           <label className="loginTitle">Login</label>
-
-          <Form
-            onSubmit={handleSubmit}
-            handleUserNameChange={handleUserNameChange}
-            handlePasswordChange={handlePasswordChange}
-            />
-          <div className="divButton-login">
-            <label>
-              Não possuí conta ainda?{" "}
-              <span className="registerOption">Cadastre-se</span>
-            </label>
+          <div className="container-inputs-btn-login">
+            <Form
+              onSubmit={handleSubmit}
+              handleUserNameChange={handleUserNameChange}
+              handlePasswordChange={handlePasswordChange}
+              /> 
+            <div className="divButton-login">
+              <label>
+                Não possui conta ainda?{" "}
+                <span className="registerOption" onClick={()=> navigate("/register")}>Cadastre-se</span>
+              </label>
+            </div>
           </div>
         </div>
       </div>

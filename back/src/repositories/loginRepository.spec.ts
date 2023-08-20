@@ -34,10 +34,11 @@ describe('LoginRepository', () => {
     it('should login a user', async () => {
         const loginRepository = new LoginRepository();
 
-        userModel.findOne = jest.fn().mockResolvedValue({
-            toObject: jest.fn(() => mockUser)
-        }
-        )
+        userModel.findOne = jest.fn().mockReturnValue({
+            populate: jest.fn(() => ({
+                toObject: () => mockUser
+            }))
+        });
 
         const result = await loginRepository.login(mockCredentials);
 
@@ -46,7 +47,9 @@ describe('LoginRepository', () => {
     });
 
     it('should fail to login when user is not found', async () => {
-        (userModel.findOne as jest.Mock).mockImplementation(async () => null);
+        userModel.findOne = jest.fn().mockReturnValue({
+            populate: jest.fn(() => null)
+        });
 
         const loginRepository = new LoginRepository();
 

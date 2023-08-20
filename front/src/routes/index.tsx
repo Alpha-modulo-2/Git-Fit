@@ -48,7 +48,6 @@ export const Router = () => {
           <Route path="/" element={<LandingPage />} />
           <Route path="/landing-page" element={<LandingPage />} />
           <Route path="/landing_page" element={<LandingPage />} />
-          <Route path="/contact_profile" element={<Contact_profile />} />
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login/>} />
           <Route path="/see-more" element={<SeeMore/>} />
@@ -58,7 +57,7 @@ export const Router = () => {
                 <Private>
                   <PerfilEdit/>
                 </Private>
-               }/>
+              }/>
           <Route 
               path="/contacts" 
               element={
@@ -87,8 +86,13 @@ export const Router = () => {
                   <SearchedResults/>
                 </Private>
               } />
-          {/* <Route path="*" element={<Error404 />} />
-           */}
+          <Route 
+              path="/contact_profile/:id" 
+              element={
+                <Private>
+                  <Contact_profile />
+                </Private>
+              } />
         </Routes>
       </SearchedUsersProvider>  
     </div>

@@ -18,7 +18,6 @@ import { User } from "./types/interface";
 
     function setUsers(users: User[]){
         setUsersFromSearch(users)
-        console.log(users, 'usersfromcontext')
     }
     
     return(

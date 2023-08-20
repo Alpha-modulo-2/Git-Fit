@@ -70,31 +70,30 @@ const weekDays = [
 export const DailyCard = ({ week_number, onClick }: PropTypes) => {
 
   const { user } = useAuth();
-  // const { isLoggedIn, login, user } = useAuth();
-  // console.log(isLoggedIn, login, user, 'login');
   const userId = String(user?._id);
   
     const [cardData, setCardData] = useState<CardData[]>([]);
     const [dataResponse, setDataResponse] = useState(false);
 
     useEffect(() => {
-        const fetchCardsData = async () => {
-          try {
-            const response = await generalRequest(`/allcards/${userId}`) as CardDataTest;
-            const data = response;
-            setCardData(data.card);
-            if(data){
-              setDataResponse(true);
-            }else{
-              setDataResponse(false);
-            }
-          } catch (error) {
+      const fetchCardsData = async () => {
+        try {
+          const response = await generalRequest(`/allcards/${userId}`) as CardDataTest;
+          const data = response;
+          setCardData(data.card);
+          if(data){
+            setDataResponse(true);
+          }else{
             setDataResponse(false);
-            console.error('Erro ao buscar dados dos cards', error);
           }
-        };
-        fetchCardsData();
-      }, []);
+        } catch (error) {
+          setDataResponse(false);
+          console.error('Erro ao buscar dados dos cards', error);
+        }
+      };
+      fetchCardsData().catch(error => {
+        console.error('Erro ao buscar dados dos cards', error); });
+    }, [userId]);
 
 let daily_theme = "Nenhum";
 let daily_food = "Nenhum";

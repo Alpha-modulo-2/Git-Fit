@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Italiana&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Italiana&display=swap");
 
 * {
   margin: 0;
@@ -21,8 +21,8 @@
   justify-content: center;
   align-items: center;
   gap: 50px;
-  width: 20vw;
-  height: 25vw;
+  width: 450px;
+  height: 500px;
   min-width: 20rem;
   min-height: 30rem;
   border-radius: 25px;
@@ -40,11 +40,8 @@
 .logo-name-git-login,
 .logo-name-fit-login {
   color: rgb(255, 255, 255);
-  font-family: 'Italiana', serif;
+  font-family: "Italiana", serif;
 }
-
-
-
 
 /* Menu content */
 .loginTitle {
@@ -56,7 +53,7 @@
 .input-login {
   font-size: 1rem;
   width: 70%;
-  height: 20%;
+  height: 4rem;
   font-weight: bold;
   color: rgba(115, 83, 186, 1);
   border-bottom: 1px solid rgb(0, 0, 0);
@@ -64,7 +61,6 @@
   background: transparent !important;
   outline: none;
   caret-color: black;
-  
 }
 
 .input-login::placeholder {
@@ -75,7 +71,6 @@
   color: rgba(115, 83, 186, 1);
 }
 
-
 /* Button config */
 .divButton-login {
   display: flex;
@@ -85,40 +80,62 @@
   font-size: 0.9rem;
 }
 
-
 .registerOption {
   color: rgba(115, 83, 186, 1);
   cursor: pointer;
 }
 
 .buttonLogin {
-  width: 6rem;
+  width: 8rem;
   height: 3rem;
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #7353BA;
+  background-color: #7353ba;
   text-align: center;
-  border-radius: 25px;  
+  border-radius: 25px;
   padding: 20px 34px;
   font-family: Poppins;
   font-size: 0.8rem;
   letter-spacing: 0.11em;
-  color: #FFFFFF;
-  
+  color: #ffffff;
 }
 .buttonLogin:hover {
   background-color: #422483;
-  border-color: #7353BA;
+  border-color: #7353ba;
 }
-.formLogin{
-  height: 40%;
+.formLogin {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 80px;
+  width: 100%;
+}
+
+.formlogin-container-inputs {
   width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 30px;
 }
 
+.container-inputs-btn-login{
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
 
-
+@media (min-width: 360px) and (max-width: 500px) {
+  .container-login-content {
+    gap: 50px;
+    width: 350px;
+    height: 400px;
+    min-width: 20rem;
+    min-height: 30rem;
+    border-radius: 25px;
+    border: 0.9px solid rgba(0, 0, 0, 0.604);
+    box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.638);
+    background-color: rgba(240, 248, 255, 0.766);
+  }
+}

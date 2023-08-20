@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { generalRequest } from "../../generalFunction";
-import { UserData } from "../../interfaces/IUser";
+import { Socket } from "socket.io-client";
 import { useAuth } from '../../context/authContext';
 import { io } from "socket.io-client";
 import "./styles.css"
@@ -11,76 +11,92 @@ interface ChatData {
     members: Array<{ _id: string }>;
 }
 
-interface ContactsProps {
-    photo: string;
+interface Friend {
+    photo?: string;
+    userName: string;
     name: string;
     occupation: string;
-    id: string;
+    _id: string;
+} 
+
+interface Message {
+    chatId?: string;
+    conversationId?: string;
+    sender: string;
+    text: string;
+    _id?: string;
+    created_at?: string;
+    __v?: number;
 }
 
-let socket: any;
-let currentChatId: any = null;
+interface ChatProps {
+    onChatOpen: (chatOpen: boolean) => void;
+}
 
-export const Chat = ({ onChatOpen }: { onChatOpen: any }) => {
+interface Chat {
+    members: Member[];
+}
+
+interface Member {
+    _id: string;
+}
+
+let socket: Socket | null = null;
+let currentChatId: string | null = null;
+
+export const Chat = ({ onChatOpen }: ChatProps) => {
     const { user } = useAuth();
-    const userId = String(user?._id);
+
+    if(!user){
+        throw new Error('Usuário não exite')
+    }
+
+    const userId = String(user._id);
 
     const [chatOpen, setChatOpen] = useState<boolean>(false);
-    const [userData, setUserData] = useState<any>(null);
 
-    const [messages, setMessages] = useState<Array<any>>([]);
+    const [messages, setMessages] = useState<Array<Message>>([]);
     const [showChat, setShowChat] = useState(false);
 
     const [currentlyFriend, setcurrentlyFriend] = useState('Other');
     const [inputMessage, setInputMessage] = useState('');
 
-    const fetchUserData = async () => {
-        try {
-            const response = await generalRequest(`/users/${userId}`) as UserData;
-            const data = response;
-            setUserData(data);
-        } catch (error) {
-            console.error('Erro ao buscar dados do usuário', error);
-        }
-    };
-    fetchUserData();
-
-    let friends: ContactsProps[] = [];
-    if (userData) {
-        friends = userData.friends;
-    }
+    const urlPath = import.meta.env.VITE_URL_PATH || "";
 
     const toggleChat = () => {
         setChatOpen((prevState) => !prevState);
         onChatOpen(!chatOpen);
+        return
     };
 
-    const initChat = (friend: any) => {
+    const initChat = async (friend: Friend) => {
         if (!userId) {
             alert("User ID is required!");
             return;
         }
         setcurrentlyFriend(friend.name)
-        searchChat(userId, friend._id)
+        try {
+            await searchChat(userId, friend._id);
+        } catch (error) {
+        console.error('Houve um erro ao buscar o chat:', error);
+        }
     }
 
     const searchChat = async (userId: string, friendId: string) => {
         try {
             const response = await generalRequest(`/conversations/${userId}`);
+
             const userChats: Array<ChatData> = response as Array<ChatData>;
 
-            const chatWithFriend = userChats.find((chat: any) =>
-                chat.members.some((member: any) => member._id === friendId)
+            const chatWithFriend = userChats.find((chat: ChatData) =>
+                chat.members.some((member) => member._id === friendId)
             );
 
             if (chatWithFriend) {
-                console.log("Chat com o amigo:", chatWithFriend);
-                openChatPopup(chatWithFriend._id);
+                await openChatPopup(chatWithFriend._id);
             } else {
-                console.log("Não possui chat com o amigo:", friendId);
                 await generalRequest(`/conversations`,{userId: userId, friendId: friendId}, 'POST');
-                console.log("chego")
-                searchChat(userId, friendId);
+                await  searchChat(userId, friendId);
             }
         } catch (error) {
             console.error("Error searching chat:", error);
@@ -88,18 +104,14 @@ export const Chat = ({ onChatOpen }: { onChatOpen: any }) => {
     };
 
     const openChatPopup = async (chatId: string) => {
-        console.log(chatId)
         const response = await generalRequest(`/messages/${chatId}`)
-        const messages: any[] = response as any[];
-        console.log(messages)
+        const messages: Message[] = response as Message[];
         setMessages(messages);
         messages.forEach(displayMessage);
         currentChatId = chatId;
         setShowChat(true);
-
         if (!socket) {
-            socket = io('https://localhost:443');
-
+            socket = io(urlPath);
             socket.on('receiveMessage', (messageData: any) => {
                 if (messageData.chatId === chatId) {
                     displayMessage(messageData);
@@ -108,7 +120,6 @@ export const Chat = ({ onChatOpen }: { onChatOpen: any }) => {
         }
         socket.emit('joinRoom', chatId);
     }
-
 
     const renderMessages = () => {
         return messages.map((message, index) => (
@@ -131,13 +142,13 @@ export const Chat = ({ onChatOpen }: { onChatOpen: any }) => {
     function sendMessage() {
         const input = document.querySelector('.input_send_message') as HTMLInputElement;
         const message = input.value;
-        if (message && currentChatId) {
+        if (message && currentChatId && socket) {
             socket.emit('sendMessage', {
                 chatId: currentChatId,
                 sender: userId,
                 text: message,
             });
-            postMessage(currentChatId, userId, message); // Adicionar a mensagem ao chat na página
+            postMessage(currentChatId, userId, message);
             input.value = '';
             setInputMessage('');
         }
@@ -161,9 +172,9 @@ export const Chat = ({ onChatOpen }: { onChatOpen: any }) => {
     
 
     function postMessage(chatId: string, senderId: string, content: string) {
-        const url = `https://localhost:443/messages`;
+        const url = `${urlPath}/messages`;
 
-        const messageData = {
+        const messageData: Message  = {
             conversationId: chatId,
             sender: senderId,
             text: content
@@ -177,8 +188,9 @@ export const Chat = ({ onChatOpen }: { onChatOpen: any }) => {
             body: JSON.stringify(messageData)
         })
             .then(response => response.json())
-            .then(data => {
-                console.log("Message posted successfully:", data);
+            .then(() => {
+                const newmessages:  Message[] = [...messages, messageData];
+                setMessages(newmessages);
             })
             .catch(error => {
                 console.error("Error posting message:", error);
@@ -206,24 +218,32 @@ export const Chat = ({ onChatOpen }: { onChatOpen: any }) => {
                             <input type="text" 
                                 className="input_send_message"
                                 value={inputMessage}
-                                onChange={(e) => setInputMessage(e.target.value)}>
+                                placeholder="Digite algo..."
+                                onChange={(e) => setInputMessage(e.target.value)}
+                                onKeyDown={(e) => {
+                                    if (e.key === 'Enter') {
+                                        e.preventDefault();
+                                        sendMessage();
+                                    }
+                                }}
+                                >
                             </input>
                             
                             <img src="https://www.pinclipart.com/picdir/middle/201-2016537_send-message-icon-white-clipart-computer-icons-clip.png"
-                             className="button_send_message" onClick={sendMessage}></img>
+                            className="button_send_message" onClick={sendMessage}></img>
                         </div>
                     </div>
                     : <div className="box-users-msgs">
-                        {friends.map((friend) => (
-                            <div className="msg-card" onClick={() => initChat(friend)}>
+                        {user.friends.map((friend) => (
+                            <div className="msg-card" onClick={() => initChat(friend as any)}>
                                 <div className="img-card-msgs">
                                     <img
-                                        src={friend.photo || "https://www.logolynx.com/images/logolynx/b4/b4ef8b89b08d503b37f526bca624c19a.jpeg"}
+                                        src={friend.photo || "../src/assets/images/placeholderphoto.jpg"}
                                         alt=""
                                     />
                                 </div>
                                 <div className="user-msg-info">
-                                    <p className="username-msg">{friend.name.length > 15 ? friend.name.substring(0, 15) + "..." : friend.name}</p>
+                                    <p className="username-msg">{(friend as Friend).name.length > 15 ? (friend as Friend).name.substring(0, 15) + "..." : (friend as Friend).name}</p>
                                     <p className="useroccupation-msg">{friend.occupation.length > 15 ? friend.occupation.substring(0, 15) + "..." : friend.occupation}</p>
                                 </div>
                             </div>
@@ -234,5 +254,3 @@ export const Chat = ({ onChatOpen }: { onChatOpen: any }) => {
 
     );
 };
-
-
