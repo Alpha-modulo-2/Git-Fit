@@ -62,7 +62,7 @@ export const Chat = ({ onChatOpen }: ChatProps) => {
     const [currentlyFriend, setcurrentlyFriend] = useState('Other');
     const [inputMessage, setInputMessage] = useState('');
 
-    const urlPath = import.meta.env.VITE_URL_PATH || ""
+    const urlPath = import.meta.env.VITE_URL_PATH || "";
 
     const messagesContainerRef = useRef<HTMLDivElement | null>(null);
 

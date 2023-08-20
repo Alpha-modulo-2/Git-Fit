@@ -1,6 +1,5 @@
 import ILogin from "../interfaces/ILogin";
 import IResult from "../interfaces/IResult";
-import IUser from "../interfaces/IUser";
 import { userModel } from "../models/user";
 
 export default class LoginRepository {
