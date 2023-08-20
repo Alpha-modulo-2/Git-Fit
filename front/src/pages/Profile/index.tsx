@@ -30,7 +30,7 @@ export interface ApiResponseRequests {
   message?: string;
   card?: CardData[];
 }
-type CardData = {
+interface CardData {
   card: {
       trainingCard: {
           checked: boolean;
@@ -79,7 +79,7 @@ export const Profile = () => {
   const { user } = useAuth();
   const userId = String(user?._id);
 
-  const [cardData, setCardData] = useState<CardData[]>([]);
+  const [cardData, setCardData] = useState<any[]>([]);
 
   useEffect(() => {
     const fetchCardsData = async () => {
@@ -111,27 +111,25 @@ export const Profile = () => {
       user_photo = user.photo;
     }
   }
-const calcIMC = Calc_IMC(weight, heigth);
+  const calcIMC = Calc_IMC(weight, heigth);
   const progressIMC = (calcIMC.imc_media * 100) / 40;
   const progressIMCircle = parseInt(progressIMC.toFixed(0));
 
   const countTrainingCheckboxes = () => {
     const totalDays = cardData.length;
-    const checkedDays = cardData.reduce((count, day) => {
-      return count + day.card.filter(cardItem => cardItem.trainingCard.checked).length;
-    }, 0);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    const checkedDays = Array.isArray(cardData) ? cardData.filter((day) => day.trainingCard.checked).length : 0;
     if (isNaN(checkedDays)) {
       return 0;
     } else {
       return (checkedDays / totalDays) * 100;
     }
   };
-  
+
   const countMealCheckboxes = () => {
     const totalDays = cardData.length;
-    const checkedDays = cardData.reduce((count, day) => {
-      return count + day.card.filter(cardItem => cardItem.mealsCard.checked).length;
-    }, 0);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    const checkedDays = Array.isArray(cardData) ? cardData.filter((day) => day.mealsCard.checked).length : 0;
     if (isNaN(checkedDays)) {
       return 0;
     } else {
