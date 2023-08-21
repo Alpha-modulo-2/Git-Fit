@@ -21,9 +21,11 @@ export const PhotoProfile = ({url_photo, user_name}:PropTypes) => {
     return (
     <div className="structure-photo-profile">
         <div className="moldure-photo">
-            <div className="icon-edit-container" onClick={verifyUser}>
-                <PencilSimpleLine size={20} color="black"  className="icon-editpage" />
-            </div>
+            { window.location.href.includes('/profile') && (
+                <div className="icon-edit-container" onClick={verifyUser}>
+                    <PencilSimpleLine size={20} color="black" className="icon-editpage" />
+                </div>
+            )}
             <img className="photo-profile" src={url_photo} />
         </div>
         <div className="name-profile">

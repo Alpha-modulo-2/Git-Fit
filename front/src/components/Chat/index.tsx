@@ -99,8 +99,6 @@ export const Chat = ({ onChatOpen }: ChatProps) => {
         try {
             const response = await generalRequest(`/conversations/${userId}`);
 
-            console.log(response);
-
             const userChats: Array<ChatData> = response as Array<ChatData>;
             setChats(userChats);
 
@@ -285,7 +283,7 @@ export const Chat = ({ onChatOpen }: ChatProps) => {
                                     <div style={{ display: "flex", gap: "10px" }}>
                                         <div className="img-card-msgs">
                                             <img
-                                                src={`/uploads/${friend.photo}` || "../src/assets/images/placeholderphoto.jpg"}
+                                                src={`/uploads/${friend.photo}` || new URL("../../assets/images/placeholderphoto.jpg", import.meta.url).href}
                                                 alt=""
                                             />
                                         </div>

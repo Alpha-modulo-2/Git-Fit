@@ -20,6 +20,11 @@ const navigate = useNavigate();
 const imageId = requesterInfo?.photo;
 const image = imageId ? `/uploads/${imageId}` : 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/User-avatar.svg/2048px-User-avatar.svg.png';
 
+const handleIconClick = (ContactCard?: () => void) => (event: React.MouseEvent) => {
+  event.stopPropagation();
+  if (ContactCard) ContactCard();
+};
+
 function validate() {
   if(requesterInfo !== undefined && requesterInfo._id ) {
     const contactId = requesterInfo._id
@@ -47,20 +52,19 @@ return (
         </p>
       </div>
 
-
       { typeOfCard === 'request' && (
         <div className="container-icon-contact">
           <Check
             size={20}
             color="black"
             className="icon-add-contact"
-            onClick={() => (onUpdateFriends && requestId && requesterInfo) && onUpdateFriends(requestId, requesterInfo?._id)}
+            onClick={handleIconClick(() => (onUpdateFriends && requestId && requesterInfo) && onUpdateFriends(requestId, requesterInfo?._id))}
           />
           <XCircle
             size={20}
             color="black"
             className="icon-remove-contact"
-            onClick={() => (onRemoveFriends && requestId && requesterInfo) && onRemoveFriends(requestId)}
+            onClick={handleIconClick(() => (onRemoveFriends && requestId && requesterInfo) && onRemoveFriends(requestId))}
           />
         </div>
       )}
@@ -72,7 +76,7 @@ return (
               size={20}
               color="black"
               className="icon-add-friend"
-              onClick={() => (onAddFriend && requestId && recipientId) && onAddFriend(requestId, recipientId)}
+              onClick={handleIconClick(() => (onAddFriend && requestId && recipientId) && onAddFriend(requestId, recipientId))}
             />
           </div>
         )

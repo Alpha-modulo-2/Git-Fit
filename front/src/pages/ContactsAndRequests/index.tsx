@@ -11,7 +11,7 @@ import { Friend } from '../../interfaces/IUser';
 import { FriendRequest } from '../../interfaces/IContacts';
 import { ApiResponseRequests } from '../../interfaces/IContacts';
 import { generalRequest } from "../../generalFunction";
-
+import { Chat } from "../../components/Chat";
 
 export const Contacts = () => {
     const [contacts, setContacts] = useState<Friend[]>();
@@ -100,11 +100,25 @@ export const Contacts = () => {
             console.error('Erro na requisição:', error);
         });
     }
+    
+const [isChatOpen, setIsChatOpen] = useState(false);
+const handleChatToggle = (isOpen: boolean) => {
+    setIsChatOpen(isOpen);
+};
 
     return (
         <div className="contacts-page">
             <Header isLoggedIn={true}/>
             <div className="container-contacts-request">
+                {isChatOpen ? (
+                    <div className="message_box">
+                        <Chat onChatOpen={handleChatToggle}></Chat>
+                    </div>
+                ) : (
+                    <div className="buttoncarrossel">
+                        <Chat onChatOpen={handleChatToggle}></Chat>
+                    </div>
+                )}
                 <div className="content-contacts">
                     <div className="container-titles-contacts">
                         <p className={`title-contacts title-content-left ${!showRequests ? 'active' : ''}`} onClick={() => setShowRequests(false)}

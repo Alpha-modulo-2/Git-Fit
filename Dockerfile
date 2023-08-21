@@ -2,8 +2,9 @@ FROM node:18 as build-stage
 WORKDIR /app/front
 COPY ./front/package*.json ./
 RUN npm install
+RUN npm install -g cross-env
 COPY ./front . 
-RUN npm run build
+RUN cross-env NODE_OPTIONS=--max-old-space-size=4096 npm run build
 
 FROM node:18 as production-stage
 WORKDIR /app/back/

@@ -8,6 +8,8 @@ import { DailyCard } from "../../components/DailyCard";
 import { NavigateFunction, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/authContext';
 import { generalRequest } from "../../generalFunction";
+import { Chat } from "../../components/Chat";
+import { MiniCard } from "../../components/MiniCard";
 
 const convertToNumber = (stringValue: string) => {
     const numericValue = stringValue ? stringValue.replace(/\D/g, '') : '';
@@ -80,6 +82,7 @@ export const Profile = () => {
     const userId = String(user?._id);
 
     const [cardData, setCardData] = useState<any[]>([]);
+    const [showMiniCarrosel, setShowMiniCarrossel] = useState(true);
 
     useEffect(() => {
         const fetchCardsData = async () => {
@@ -137,6 +140,19 @@ export const Profile = () => {
         }
     };
 
+    const changeversion = () => {
+        if (showMiniCarrosel) {
+            setShowMiniCarrossel(false);
+        } else {
+            setShowMiniCarrossel(true);
+        }
+    }
+
+    const [isChatOpen, setIsChatOpen] = useState(false);
+    const handleChatToggle = (isOpen: boolean) => {
+        setIsChatOpen(isOpen);
+    };
+
     const progress1 = parseInt(countMealCheckboxes().toFixed(0));
     const progress2 = parseInt(countTrainingCheckboxes().toFixed(0));
 
@@ -144,6 +160,15 @@ export const Profile = () => {
         <div className="profile">
             <Header isLoggedIn={true} />
             <div className="structure-profile">
+                {isChatOpen ? (
+                    <div className="message_box">
+                        <Chat onChatOpen={handleChatToggle}></Chat>
+                    </div>
+                ) : (
+                    <div className="buttoncarrossel" onClick={changeversion}>
+                        <Chat onChatOpen={handleChatToggle}></Chat>
+                    </div>
+                )}
                 <div className="container-profile">
                     <PhotoProfile user_name={user_name} url_photo={user_photo} />
                     <div className="container-progress-bar">
@@ -161,15 +186,27 @@ export const Profile = () => {
                         </div>
                     </div>
                 </div>
-                <div className="structure-carrossel-fc">
-                    <DailyCard week_number={0} onClick={() => navigate('/fullcard/0')}></DailyCard>
-                    <DailyCard week_number={1} onClick={() => navigate('/fullcard/1')}></DailyCard>
-                    <DailyCard week_number={2} onClick={() => navigate('/fullcard/2')}></DailyCard>
-                    <DailyCard week_number={3} onClick={() => navigate('/fullcard/3')}></DailyCard>
-                    <DailyCard week_number={4} onClick={() => navigate('/fullcard/4')}></DailyCard>
-                    <DailyCard week_number={5} onClick={() => navigate('/fullcard/5')}></DailyCard>
-                    <DailyCard week_number={6} onClick={() => navigate('/fullcard/6')}></DailyCard>
-                </div>
+                {!isChatOpen ? (
+                    <div className="structure-carrossel-fc">
+                        <DailyCard week_number={0} onClick={() => navigate('/fullcard/0')}></DailyCard>
+                        <DailyCard week_number={1} onClick={() => navigate('/fullcard/1')}></DailyCard>
+                        <DailyCard week_number={2} onClick={() => navigate('/fullcard/2')}></DailyCard>
+                        <DailyCard week_number={3} onClick={() => navigate('/fullcard/3')}></DailyCard>
+                        <DailyCard week_number={4} onClick={() => navigate('/fullcard/4')}></DailyCard>
+                        <DailyCard week_number={5} onClick={() => navigate('/fullcard/5')}></DailyCard>
+                        <DailyCard week_number={6} onClick={() => navigate('/fullcard/6')}></DailyCard>
+                    </div>
+                ) : (
+                    <div className="structure-minicarrossel">
+                        <MiniCard week_number={0} onClick={() => navigate('/fullcard/0')}></MiniCard>
+                        <MiniCard week_number={1} onClick={() => navigate('/fullcard/1')}></MiniCard>
+                        <MiniCard week_number={2} onClick={() => navigate('/fullcard/2')}></MiniCard>
+                        <MiniCard week_number={3} onClick={() => navigate('/fullcard/3')}></MiniCard>
+                        <MiniCard week_number={4} onClick={() => navigate('/fullcard/4')}></MiniCard>
+                        <MiniCard week_number={5} onClick={() => navigate('/fullcard/5')}></MiniCard>
+                        <MiniCard week_number={6} onClick={() => navigate('/fullcard/6')}></MiniCard>
+                    </div>
+                )}
             </div>
         </div>
     );

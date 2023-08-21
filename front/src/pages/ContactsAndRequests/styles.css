@@ -3,12 +3,11 @@
 }
 .container-contacts-request {
   display: flex;
-  flex-direction: column;
-  /* gap: 1.8rem; */
-  /* justify-content: space-evenly; */
   align-items: center;
+  justify-content: center;
   color: #000000;
   font-family: "Poppins", sans-serif;
+  max-height: 70vh;
   padding: 2rem 0rem 0rem 0rem;
 }
 
@@ -165,6 +164,9 @@
   }
   .container-titles-contacts {
     flex-direction: column;
+  }
+  .container-contacts-request {
+    padding-right: 50px;
   }
   .title-contacts {
     width: 100%;
