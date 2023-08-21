@@ -12,7 +12,7 @@ describe('ConversationService', () => {
 
     const mockConversation: IConversation = {
         members: [mockFriendID, mockUserId],
-        id: conversationId,
+        _id: conversationId,
         created_at: new Date,
     };
 

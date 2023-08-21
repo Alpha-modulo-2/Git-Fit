@@ -5,11 +5,14 @@ import { useAuth } from '../../context/authContext';
 import { io } from "socket.io-client";
 import "./styles.css"
 import { ChatCircleText, X, PaperPlaneRight } from "@phosphor-icons/react";
+import Badge from '@mui/material/Badge';
+import MailIcon from '@mui/icons-material/Mail';
 
 
 interface ChatData {
     _id: string;
     members: Array<{ _id: string }>;
+    unreadCount: number
 }
 
 interface SocketMessage {
@@ -30,6 +33,7 @@ interface Message {
     chatId?: string;
     conversationId?: string;
     sender: string;
+    isRead?: boolean;
     text: string;
     _id?: string;
     created_at?: string;
@@ -76,7 +80,12 @@ export const Chat = ({ onChatOpen }: ChatProps) => {
     const toggleChat = async () => {
         setChatOpen(!chatOpen);
         onChatOpen(!chatOpen);
-        await searchChats(userId);
+        if (chatOpen) {
+            closeChat()
+        } else {
+
+            await searchChats(userId);
+        }
 
         return
     };
@@ -89,6 +98,8 @@ export const Chat = ({ onChatOpen }: ChatProps) => {
     const searchChats = async (userId: string) => {
         try {
             const response = await generalRequest(`/conversations/${userId}`);
+
+            console.log(response);
 
             const userChats: Array<ChatData> = response as Array<ChatData>;
             setChats(userChats);
@@ -135,10 +146,16 @@ export const Chat = ({ onChatOpen }: ChatProps) => {
             }
         });
 
-        socket.on('chatHistory', (messages: SocketMessage) => {
+        socket.on('chatHistory', async (messages: SocketMessage) => {
 
             const messageList = Array.isArray(messages.chatMessage) ? messages.chatMessage : [messages.chatMessage];
             setMessages(messageList);
+
+            const unreadMessages = messageList.filter(message => !message.isRead && message.sender !== userId);
+
+            if (unreadMessages.length !== 0) {
+                await markMessagesAsRead(unreadMessages.map(message => message._id as string));
+            }
         });
 
         socket.emit('joinRoom', chatId);
@@ -183,6 +200,15 @@ export const Chat = ({ onChatOpen }: ChatProps) => {
                 text: inputMessage,
             });
             setInputMessage('');  // Reset the inputMessage state, which is bound to the input field.
+        }
+    }
+
+    const markMessagesAsRead = async (messageIds: string[]) => {
+        try {
+            await generalRequest(`/messages/markAsRead`, { messageIds }, 'POST');
+            await searchChats(userId);
+        } catch (error) {
+            console.error("Error marking messages as read:", error);
         }
     }
 
@@ -251,23 +277,35 @@ export const Chat = ({ onChatOpen }: ChatProps) => {
                         </div>
                     </div>
                     : <div className="box-users-msgs">
-                        {user.friends.map((friend) => (
-                            <div className="msg-card" onClick={() => { initChat(friend as any) }}>
-                                <div className="img-card-msgs">
-                                    <img
-                                        src={friend.photo || "../src/assets/images/placeholderphoto.jpg"}
-                                        alt=""
-                                    />
+                        {user.friends.map((friend) => {
+                            const associatedChat = chats.find((chat: ChatData) => chat.members.some((member) => member._id === friend._id));
+
+                            return (
+                                <div className="msg-card" onClick={() => { initChat(friend as any) }}>
+                                    <div style={{ display: "flex", gap: "10px" }}>
+                                        <div className="img-card-msgs">
+                                            <img
+                                                src={`/uploads/${friend.photo}` || "../src/assets/images/placeholderphoto.jpg"}
+                                                alt=""
+                                            />
+                                        </div>
+                                        <div className="user-msg-info">
+                                            <p className="username-msg">{(friend as Friend).name.length > 15 ? (friend as Friend).name.substring(0, 15) + "..." : (friend as Friend).name}</p>
+                                            <p className="useroccupation-msg">{friend.occupation.length > 15 ? friend.occupation.substring(0, 15) + "..." : friend.occupation}</p>
+                                        </div>
+                                    </div>
+                                    {
+                                        associatedChat?.unreadCount ?
+                                            <Badge badgeContent={associatedChat.unreadCount} color="secondary">
+                                                <MailIcon color="action" />
+                                            </Badge> : <></>
+                                    }
                                 </div>
-                                <div className="user-msg-info">
-                                    <p className="username-msg">{(friend as Friend).name.length > 15 ? (friend as Friend).name.substring(0, 15) + "..." : (friend as Friend).name}</p>
-                                    <p className="useroccupation-msg">{friend.occupation.length > 15 ? friend.occupation.substring(0, 15) + "..." : friend.occupation}</p>
-                                </div>
-                            </div>
-                        ))}
+                            )
+                        })}
                     </div>}
             </div>
-        </div>
+        </div >
 
     );
 };

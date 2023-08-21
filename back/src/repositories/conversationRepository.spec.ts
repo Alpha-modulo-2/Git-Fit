@@ -1,18 +1,19 @@
 import ConversationRepository from './conversationRepository';
 import { conversationModel } from '../models/conversation';
+import { messageModel } from '../models/message';
 
 describe('ConversationRepository', () => {
     beforeEach(() => {
         jest.clearAllMocks();
     });
 
-    const mockUserId = '123';
+    const mockUserId = '123456789012345678901234';
     const mockConversation = {
         members: [mockUserId, '456']
     };
     const mockExistingConversation = {
         ...mockConversation,
-        _id: '789',
+        _id: '123456789012345678901789',
         otherData: 'test'
     };
 
@@ -51,15 +52,31 @@ describe('ConversationRepository', () => {
 
     it('should get all conversations for a user', async () => {
         const mockConversations = [mockExistingConversation, mockExistingConversation];
+        const mockPopulatedResults = mockConversations.map(conversation => ({
+            ...conversation,
+            toJSON: jest.fn().mockReturnValue(conversation)
+        }));
+
         conversationModel.find = jest.fn().mockReturnValue({
-            populate: jest.fn().mockResolvedValue(mockConversations)
+            populate: jest.fn().mockResolvedValue(mockPopulatedResults)
         });
+
+        // Mock the countDocuments function to always return a fixed number (e.g., 5 unread messages)
+        const mockUnreadCount = 5;
+        messageModel.countDocuments = jest.fn().mockResolvedValue(mockUnreadCount);
 
         const conversationRepository = new ConversationRepository();
         const result = await conversationRepository.get(mockUserId);
 
+        // Create the expected response, each conversation with a mockUnreadCount of 5
+        const expectedConversations = mockConversations.map(conversation => ({
+            ...conversation,
+            unreadCount: mockUnreadCount
+        }));
+
         expect(conversationModel.find).toHaveBeenCalledWith({ members: { $in: mockUserId } });
-        expect(result).toEqual({ error: false, statusCode: 200, conversation: mockConversations });
+        expect(result).toEqual({ error: false, statusCode: 200, conversation: expectedConversations });
+
     });
 
     it('should handle server errors when fetching conversations', async () => {

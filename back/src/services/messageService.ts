@@ -55,4 +55,27 @@ export default class MessageService {
         }
     }
 
+    async markAsRead(messageIds: string[]): Promise<IResult> {
+        try {
+            const result = await this.repository.markAsRead(messageIds);
+
+            if (result.error) {
+                const error = {
+                    message: result.message,
+                    code: result.statusCode
+                };
+                throw error;
+            }
+
+            return result;
+
+        } catch (error: any) {
+            return {
+                error: true,
+                message: error.message,
+                statusCode: error.code || 500,
+            };
+        }
+    }
+
 }

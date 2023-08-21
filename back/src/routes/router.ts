@@ -64,6 +64,7 @@ router.get("/conversations/:userId", conversationController.get)
 
 router.post("/messages", messageController.create)
 router.get("/messages/:chatId", messageController.get)
+router.post("/messages/markAsRead", messageController.markAsRead);
 
 router.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, '../public/index.html'));

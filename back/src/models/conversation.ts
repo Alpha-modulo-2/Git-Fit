@@ -14,7 +14,6 @@ const conversationSchema = new Schema<IConversation>({
         required: true,
         default: () => new Date()
     },
-    id: SchemaTypes.ObjectId,
 })
 
 const conversationModel = model("Conversation", conversationSchema)

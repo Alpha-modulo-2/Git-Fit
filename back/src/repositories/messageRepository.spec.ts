@@ -6,7 +6,7 @@ import IMessage from '../interfaces/IMessage';
 describe('MessageRepository', () => {
     const mockChatId = '12345';
     const mockMessage: IMessage = {
-        id: new mongoose.Types.ObjectId().toString(),
+        _id: new mongoose.Types.ObjectId().toString(),
         sender: new mongoose.Types.ObjectId(),
         chatId: new mongoose.Types.ObjectId(),
         text: "mockContent",

@@ -1,5 +1,5 @@
 export default interface IConversation {
     members: string[];
-    id?: string,
+    _id?: string,
     created_at?: Date,
 }
