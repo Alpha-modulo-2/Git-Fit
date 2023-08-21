@@ -108,7 +108,7 @@ const RegisterForm: React.FC<FormProps> = (props) => {
             placeholder="Nome do Usuário"
             onChange={handleUserNameChange}
             value={props.userNameValue}
-            minLength={6}
+            minLength={5}
           />
 
           <input
@@ -145,7 +145,7 @@ const RegisterForm: React.FC<FormProps> = (props) => {
               placeholder="Nome Completo"
               onChange={props.handleNameChange}
               value={props.nameValue}
-              minLength={6}
+              minLength={5}
             />
             <input
               type="text"
@@ -168,6 +168,7 @@ const RegisterForm: React.FC<FormProps> = (props) => {
             className="input-register"
             placeholder="Senha"
             onChange={props.handlePasswordChange}
+            minLength={5}
           />
 
           <input
@@ -175,6 +176,7 @@ const RegisterForm: React.FC<FormProps> = (props) => {
             className="input-register"
             placeholder="Confirme a senha"
             onChange={props.handleConfirmPasswordValue}
+            minLength={5}
           />
 
           <div className="divregisterprofessionalProfile">

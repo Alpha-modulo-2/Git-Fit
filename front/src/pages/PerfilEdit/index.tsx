@@ -46,6 +46,7 @@ export const PerfilEdit = () => {
     const [fileName, setFileName] = useState('')
 
     const { user, isLoggedIn, setLoggedUser } = useAuth();
+    const { logout } = useAuth();
 
     function openModal() {
         setModalIsOpen(true);
@@ -127,10 +128,11 @@ export const PerfilEdit = () => {
                 body: formData,
                 credentials: 'include'
             })
-
+            console.log('antes', req)
             if (req.ok) {
-
+                console.log('meio',req)
                 const result = await req.json()
+                console.log(result)
 
                 if (result.error == false && result.user !== undefined) {
                     setLoggedUser(result.user)
@@ -143,6 +145,11 @@ export const PerfilEdit = () => {
                         openModal();
                     }
                 }
+            }
+            else{
+                const result = await req.json()
+                setMessageModal(`Erro ao editar usuário: ${result.message}`);
+                openModal();
             }
         } catch (err) {
             console.error("Error:", err);
@@ -218,8 +225,9 @@ export const PerfilEdit = () => {
 
                 if (req.ok) {
                     setMessageModal("Usuário excluído com sucesso!");
-                    openModal();
-                    navigate("/profile");
+                    document.cookie = 'session=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+                    logout();
+                    navigate('/login');
                 } else {
                     console.error("Erro ao excluir usuário:", req);
                     setMessageModal("Erro ao excluir usuário:");
