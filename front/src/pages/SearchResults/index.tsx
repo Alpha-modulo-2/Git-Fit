@@ -125,7 +125,8 @@ export const SearchedResults = () => {
     }
 
     /***************    ADD USER AS FRIEND    ********************/
-    function addUserAsFriend(requesterId: string | undefined){
+    function addUserAsFriend(event: React.MouseEvent<HTMLButtonElement>, requesterId: string | undefined){
+        event.stopPropagation(); 
         const updatedUsers = usersFromSearch?.map((userSearched) => {
             if (userSearched._id === requesterId) {
                 const updatedFriends: Friend[] = [

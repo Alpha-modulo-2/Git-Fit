@@ -49,7 +49,6 @@ background-color: #949191;
   margin-left: 4%;
   border: 1.5px solid rgb(255, 255, 255);
   border-radius: 1.5rem;
-  align-self: center;
 }
 
 .background-card h2{
@@ -218,17 +217,16 @@ font-size: 0.8rem;
 
 .structure-minicarrossel{
 position: absolute;
-right: 1%;
+right: 4%;
 top: 12%;
 display: flex;
 flex-direction: column;
 }
 
 .message_box{
-width: 25%;
+width: 23%;
 height: 40vw;
 border-radius: 2.5rem;
-margin-left: 70px;
 align-self: center;
 }
 
