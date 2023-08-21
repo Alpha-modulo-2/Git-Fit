@@ -14,7 +14,6 @@ describe('LoginRepository', () => {
     const mockUser = {
         _id: new mongoose.Types.ObjectId(),
         userName: mockCredentials.userName,
-        password: '$2a$10$yH.C8uIjC.O9F5/RLKmKMu9JqG2tUzBLpLuJ.bfO6ZJ5V7oQ.tolC', // bcrypt hashed version of "password"
         email: "teste@teste.com",
         friends: [""],
         created_at: new Date,
