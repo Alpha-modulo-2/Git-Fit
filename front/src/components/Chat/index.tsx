@@ -58,11 +58,7 @@ let currentChatId: string | null = null;
 export const Chat = ({ onChatOpen }: ChatProps) => {
     const { user } = useAuth();
 
-    if (!user) {
-        throw new Error('Usuário não exite')
-    }
-
-    const userId = String(user._id);
+    const userId = String(user!._id);
 
     const [chatOpen, setChatOpen] = useState<boolean>(false);
 
