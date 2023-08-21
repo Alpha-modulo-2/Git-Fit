@@ -36,14 +36,10 @@ export default class MessageRepository {
 
             const results = await messageModel.find({ chatId: chatId })
 
-            if (!results) {
-                throw new Error("Erro no servidor")
-            }
-
             return {
                 error: false,
                 statusCode: 200,
-                chatMessage: results
+                chatMessage: results || []
             }
 
         } catch (error: any) {

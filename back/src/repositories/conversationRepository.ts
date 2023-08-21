@@ -53,29 +53,33 @@ export default class ConversationRepository {
 
             const results = await conversationModel.find({ members: { $in: userId } }).populate("members", { userName: 1, name: 1, photo: 1, occupation: 1, id: 1 });
 
-            if (!results || results.length === 0) {
-                throw new Error("Erro no servidor")
-            }
+            if (results) {
+                const resultsJSON = results.map(result => result.toJSON());
 
-            const resultsJSON = results.map(result => result.toJSON());
-
-            const unreadCountsPromises = resultsJSON.map(async (conversation: IConversation) => {
-                const count = await messageModel.countDocuments({
-                    chatId: conversation._id,
-                    sender: { $ne: userId },
-                    isRead: false
+                const unreadCountsPromises = resultsJSON.map(async (conversation: IConversation) => {
+                    const count = await messageModel.countDocuments({
+                        chatId: conversation._id,
+                        sender: { $ne: userId },
+                        isRead: false
+                    });
+                    return {
+                        ...conversation, unreadCount: count
+                    };
                 });
-                return {
-                    ...conversation, unreadCount: count
-                };
-            });
 
-            const unreadCounts = await Promise.all(unreadCountsPromises);
+                const unreadCounts = await Promise.all(unreadCountsPromises);
+
+                return {
+                    error: false,
+                    statusCode: 200,
+                    conversation: unreadCounts
+                }
+            }
 
             return {
                 error: false,
                 statusCode: 200,
-                conversation: unreadCounts
+                conversation: []
             }
 
         } catch (error: any) {
