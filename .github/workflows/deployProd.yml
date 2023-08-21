@@ -33,10 +33,12 @@ jobs:
       - name: Create .key file
         run: |
           echo ${{ secrets.CERT_KEY }} > ./back/localhost.key
+        shell: /usr/bin/bash -e {0}
 
       - name: Create .crt file
         run: |
           echo ${{ secrets.CERT_CRT }} > ./back/localhost.crt
+        shell: /usr/bin/bash -e {0}
   
       - name: Run Docker Compose up
         run: docker-compose up --build -d
