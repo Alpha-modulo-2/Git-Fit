@@ -183,31 +183,31 @@ return (imc_obj);
       <div className="profile">
         <Header isLoggedIn={true}/>
         <div className="structure-contact-profile">
-            <div className="container-contact-profile">
+          <div className="container-contact-profile">
             <div className="div-buttonAdd">
               {!isFriend && (
                 <button className="buttonAdd" onClick={ () => addFriends(user?._id, id)}>Adicionar ao Time</button>
               )}
             </div>
-                <PhotoProfile user_name={user_name} url_photo={user_photo}/>
-                <div className="container-progress-bar">
-                <div className="div-progress-bar">
+            <PhotoProfile user_name={user_name} url_photo={user_photo}/>
+            <div className="container-progress-bar">
+              <div className="div-progress-bar">
                 <ProgressBar progress={progress1} title_bar="Alimentação"/>
                 <CircleProgressBar progress={progress1} title_bar={""}/>
-                </div >
-                <div className="div-progress-bar">
+              </div >
+              <div className="div-progress-bar">
                 <ProgressBar progress={progress2} title_bar="Exercícios"/>
                 <CircleProgressBar progress={progress2} title_bar={""}/>
-                </div>
-                <div className="div-progress-bar">
+              </div>
+              <div className="div-progress-bar">
                 <ProgressBar progress={progressIMC} title_bar={calcIMC.imc_class}/>
                 <CircleProgressBar progress={progressIMCircle} title_bar={calcIMC.imc_media.toFixed(1)}/>
-                </div>
-                </div>
+              </div>
             </div>
-            {modalIsOpen && (
-                <Modal children={messageModal} onClick={closeModal} />
-            )}
+          </div>
+          {modalIsOpen && (
+              <Modal children={messageModal} onClick={closeModal} />
+          )}
         </div>
       </div>
     );

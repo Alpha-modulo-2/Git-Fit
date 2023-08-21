@@ -32,6 +32,7 @@ body {
   max-width: 75vw;
   display: flex;
   flex-direction: column;
+  padding-right: 40px;
   align-items: center;
 }
 
