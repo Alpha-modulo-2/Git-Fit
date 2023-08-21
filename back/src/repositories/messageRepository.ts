@@ -36,14 +36,10 @@ export default class MessageRepository {
 
             const results = await messageModel.find({ chatId: chatId })
 
-            if (!results) {
-                throw new Error("Erro no servidor")
-            }
-
             return {
                 error: false,
                 statusCode: 200,
-                chatMessage: results
+                chatMessage: results || []
             }
 
         } catch (error: any) {
@@ -55,4 +51,22 @@ export default class MessageRepository {
         }
     }
 
+    async markAsRead(messageIds: string[]): Promise<IResult> {
+        try {
+            const results = await messageModel.updateMany({ _id: { $in: messageIds } }, { isRead: true });
+
+            return {
+                error: false,
+                statusCode: 200,
+                message: "Updated successfully"
+            }
+
+        } catch (error: any) {
+            return {
+                error: true,
+                message: error.message,
+                statusCode: error.code || 500,
+            };
+        }
+    }
 }

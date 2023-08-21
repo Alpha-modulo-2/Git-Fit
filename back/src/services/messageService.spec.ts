@@ -7,7 +7,7 @@ jest.mock('../repositories/messageRepository');
 
 describe('MessageService', () => {
     const mockMessage: IMessage = {
-        id: new mongoose.Types.ObjectId().toString(),
+        _id: new mongoose.Types.ObjectId().toString(),
         sender: new mongoose.Types.ObjectId(),
         chatId: new mongoose.Types.ObjectId(),
         text: "mockContent",

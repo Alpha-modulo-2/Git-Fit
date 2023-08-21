@@ -7,13 +7,11 @@ import { useNavigate } from "react-router-dom";
 import { Modal } from "../../components/Modal";
 import  uuid  from 'uuidv4';
 
-
 export interface ApiResponseRequests {
   error?: string;
   user: User;
   statusCode?: string;
 }
-
 
 export const Register = () => {
   const [nameValue, setNameValue] = useState("");
@@ -90,7 +88,6 @@ export const Register = () => {
     }
 
     if (passwordValue !== confirmPasswordValue) {
-      console.log("As senhas não coincidem");
       setMessageModal(`As senhas não coincidem`);
       openModal();
       return;
@@ -113,32 +110,29 @@ export const Register = () => {
     formData.append("age", ageValue);
 
     
-    const urlPath = import.meta.env.VITE_URL_PATH||"";
+    const urlPath = import.meta.env.VITE_URL_PATH ||"";
 
     void fetch(`${urlPath}/users`, {
-
       method: "POST",
       body: formData,
     }).then((response) => {
       if (response.ok) {
-        console.log("Perfil CRIADO com sucesso!");
-
-        setMessageModal("Perfil CRIADO com sucesso!");
+        setMessageModal("Perfil criado com sucesso!");
         openModal();
-        navigate("/profile");
         return response.json() as Promise<ApiResponseRequests>;
-
       } else {
-        console.log(response,'response');
-      }
+        setMessageModal("Ocorreu um erro ao criar o perfil.");
+        openModal();
+        throw new Error("Erro na requisição");      }
     })
     .then((data) => {
       if (data) {
-        console.log(data, 'data')
+        navigate("/login");
       }
-      console.log(data, 'data from register')
-    }).catch((err) => {
-      console.log(err)
+    }).catch((error) => {
+      console.error("Erro na requisição:", error);
+      setMessageModal("Ocorreu um erro na requisição. Por favor, tente novamente mais tarde.");
+      openModal();
     });
   };
 
@@ -167,16 +161,20 @@ export const Register = () => {
   const handlePhotoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
       const file = event.target.files[0];
-      console.log(file);
-      
+      try{
       const fileExtension = file.name.split('.').pop(); 
-      if(fileExtension){
-        const fileName = `${uuid()}.${fileExtension}`; // Gera o nome de arquivo com UUID e extensão
+      if (fileExtension) {
+        const fileName = `${uuid()}.${fileExtension}`;
         setFileName(fileName);
         setPhotoValue(file);
+      } else {
+        console.error("Erro ao obter a extensão do arquivo");
       }
+    } catch (error) {
+      console.error("Erro ao processar a foto:", error);
     }
-  };
+  }
+};
 
   const handleGenderChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setGenderValue(event.target.value);

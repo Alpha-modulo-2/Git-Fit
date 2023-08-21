@@ -1,6 +1,7 @@
 export interface User {
     _id: string;
     userName: string;
+    name?: string;
     password: string;
     email: string;
     friends: Friend[];
@@ -15,7 +16,7 @@ export interface User {
     __v: number;
   }
   
- export interface Friend {
+  export interface Friend {
     _id: string;
     userName: string;
     password?: string;
@@ -30,21 +31,4 @@ export interface User {
     updated_at?: string;
     __v?: number;
     photo?:string;
-  }
-
-  export interface UserData {
-    _id: string;
-    userName: string;
-    password: string;
-    email: string;
-    friends: Friend[];
-    photo?: string;
-    gender: string;
-    weight: string;
-    height: string;
-    occupation: string;
-    age: number;
-    created_at: string;
-    updated_at: string;
-    __v: number;
   }

@@ -9,6 +9,8 @@ import { useParams } from 'react-router-dom';
 import { useAuth } from '../../context/authContext';
 import { Chat } from "../../components/Chat";
 import { generalRequest } from "../../generalFunction";
+import { PencilSimple, X } from "@phosphor-icons/react";
+
 
 interface CardData {
     card: [{}]
@@ -91,7 +93,6 @@ export const FullCard = () => {
 
     const [currently_card, set_currently_card_id] = useState<CardDataTest['card'][0] | undefined>();
 
-
     useEffect(() => {
         const fetchCardsData = async () => {
             try {
@@ -107,7 +108,9 @@ export const FullCard = () => {
                 console.error('Erro ao buscar dados dos cards', error);
             }
         };
-        fetchCardsData();
+        fetchCardsData().catch(error => {
+            console.error('Erro ao buscar dados dos cards', error);
+        });
     }, [selectedId]);
 
     const handleTrainingCheckboxChange = async () => {
@@ -181,6 +184,7 @@ export const FullCard = () => {
                 const updatedCardResponse = await generalRequest(`/allcards/${userId}`) as CardDataTest;
                 const updatedData = updatedCardResponse;
                 const updatedCard = updatedData.card.find((card) => card.name === selectedDay?.name);
+
                 if (updatedCard) {
                     setTrainingCard(updatedCard.trainingCard);
                 }
@@ -239,6 +243,7 @@ export const FullCard = () => {
             if (updatedCard) {
                 setMealsCard(updatedCard.mealsCard);
             }
+            
         } catch (error) {
             console.error('Erro ao excluir refeição', error);
         }
@@ -248,6 +253,7 @@ export const FullCard = () => {
     const [isEditingMeal, setIsEditingMeal] = useState(false);
     const [isAddTraining, setIsAddTraining] = useState(false);
     const [isAddMeal, setIsAddMeal] = useState(false);
+    
 
     const [newMealDescription, setNewMealDescription] = useState('');
     const [newTrainingDescription, setNewTrainingDescription] = useState('');
@@ -266,7 +272,6 @@ export const FullCard = () => {
     const handleEditCardTrainingSubmit = async () => {
         setIsEditingTraining(false);
         setShowEditButtons(false);
-
         const updatedTaskDescription = editedTaskDescription;
         const editingTaskId = trainingCard.tasks[editingTaskIndex]._id;
         try {
@@ -278,8 +283,10 @@ export const FullCard = () => {
             const updatedCardResponse = await generalRequest(`/allcards/${userId}`) as CardDataTest;
             const updatedData = updatedCardResponse;
             const updatedCard = updatedData.card.find((card) => card.name === selectedDay?.name);
+
             if (updatedCard) {
                 setTrainingCard(updatedCard.trainingCard);
+                setEditedTaskDescription('')
             }
         } catch (error) {
             console.error('Erro ao atualizar a tarefa', error);
@@ -302,6 +309,7 @@ export const FullCard = () => {
             const updatedCardResponse = await generalRequest(`/allcards/${userId}`) as CardDataTest;
             const updatedData = updatedCardResponse;
             const updatedCard = updatedData.card.find((card) => card.name === selectedDay?.name);
+
             if (updatedCard) {
                 setMealsCard(updatedCard.mealsCard);
             }
@@ -327,18 +335,22 @@ export const FullCard = () => {
             setShowMiniCarrossel(true);
         }
     }
-
+    const [isChatOpen, setIsChatOpen] = useState(false);
+    const handleChatToggle = (isOpen: boolean) => {
+        setIsChatOpen(isOpen);
+    };
     return (
         <div className="fullcard">
             <Header isLoggedIn={true} />
             <div className="structure-fullcard">
-                {!showMiniCarrosel ? (
+                {isChatOpen ? (
                     <div className="message_box">
-                        <input type="button" className="buttoncarrossel" onClick={changeversion}></input>
-                        <Chat></Chat>
+                        <Chat onChatOpen={handleChatToggle}></Chat>
                     </div>
                 ) : (
-                    <input type="button" className="buttoncarrossel" onClick={changeversion}></input>
+                    <div className="buttoncarrossel" onClick={changeversion}>
+                        <Chat onChatOpen={handleChatToggle}></Chat>
+                    </div>
                 )}
                 <div className="background-card">
                     <h2>{selectedDay?.name}</h2>
@@ -359,8 +371,18 @@ export const FullCard = () => {
                                                 <p>{option.description}</p>
                                                 {isEditingTraining && showEditButtons && (
                                                     <div className="edit_buttons">
-                                                        <Button category="edit_cards" label="E" onClick={() => handleEditTrainingClick(index)} />
-                                                        <Button category="edit_cards" label="X" onClick={() => handleDeleteTrainingClick(index)} />
+                                                        <PencilSimple
+                                                            size={16}
+                                                            color="white"
+                                                            className="icons-edit-card"
+                                                            onClick={() => handleEditTrainingClick(index)}
+                                                        />
+                                                        <X
+                                                            size={16}
+                                                            color="white"
+                                                            className="icons-edit-card"
+                                                            onClick={() => handleDeleteTrainingClick(index)}
+                                                        />                          
                                                     </div>
                                                 )}
                                             </li>
@@ -464,8 +486,8 @@ export const FullCard = () => {
                         )}
                     </div>
                 </div>
-                {showMiniCarrosel ? (
-                    <div className="structure-carrossel">
+                {!isChatOpen ? (
+                    <div className="structure-carrossel-fc">
                         <DailyCard week_number={0} onClick={() => navigate('/fullcard/0')}></DailyCard>
                         <DailyCard week_number={1} onClick={() => navigate('/fullcard/1')}></DailyCard>
                         <DailyCard week_number={2} onClick={() => navigate('/fullcard/2')}></DailyCard>

@@ -17,6 +17,7 @@ export async function generalRequest<T>(endpoint: string, body?:object, method: 
         if (!token) {
             throw new Error('Token is not defined');
         }
+
         const req = await fetch(`${urlPath}${endpoint}`, {
             method: method,
             headers: {

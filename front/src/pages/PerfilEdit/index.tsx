@@ -3,220 +3,270 @@ import { Header } from "../../components/Header";
 import { NavigateFunction, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import Form from "./formEdit";
-import IUpdateUserData from "../../interfaces/IUpdateUserData";
 import { useParams } from "react-router-dom";
 import { Modal } from "../../components/Modal";
+import { useAuth } from "../../context/authContext";
+import { User } from "../../interfaces/IUser";
+import uuid from 'uuidv4';
 
+export interface ApiResponseRequests {
+    error?: boolean;
+    statusCode?: number;
+    message?: string;
+    user?: User;
+}
 
 export const PerfilEdit = () => {
-  const { id } = useParams();
-  const userId = id ?? "";
+    const { id } = useParams();
+    const userId = id ?? "";
 
-  const [nameValue, setNameValue] = useState("");
-  const [userNameValue, setUserNameValue] = useState("");
-  const [passwordValue, setPasswordValue] = useState("");
-  const [confirmPasswordValue, setConfirmPasswordValue] = useState("");
-  const [emailValue, setEmailValue] = useState("");
-  const [photoValue, setPhotoValue] = useState("");
-  const [genderValue, setGenderValue] = useState("");
-  const [weightValue, setWeightValue] = useState("");
-  const [heightValue, setHeightValue] = useState("");
-  const [occupationValue, setOccupationValue] = useState("");
-  const [ageValue, setAgeValue] = useState("");
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [nameValue, setNameValue] = useState("");
+    const [updatedNameValue, setUpdatedNameValue] = useState("");
 
-  
-  function openModal() {
-    setModalIsOpen(true);
-  }
-  function closeModal() {
-    setModalIsOpen(false);
-  }
+    const [userNameValue, setUserNameValue] = useState("");
+    const [updatedUserNameValue, setUpdatedUserNameValue] = useState("");
 
-  const navigate: NavigateFunction = useNavigate();
+    const [passwordValue, setPasswordValue] = useState("");
+    const [updatedPasswordValue, setUpdatedPasswordValue] = useState("");
+    const [confirmPasswordValue, setConfirmPasswordValue] = useState("");
+    const [emailValue, setEmailValue] = useState("");
+    const [updatedEmailValue, setUpdatedEmailValue] = useState("");
+    const [photoValue, setPhotoValue] = useState("");
+    const [newPhotoValue, setNewPhotoValue] = useState<File>();
+    const [genderValue, setGenderValue] = useState("");
+    const [updatedGenderValue, setUpdatedGenderValue] = useState("");
+    const [weightValue, setWeightValue] = useState("");
+    const [updatedWeightValue, setUpdatedWeightValue] = useState("");
+    const [heightValue, setHeightValue] = useState("");
+    const [updatedHeightValue, setUpdatedHeightValue] = useState("");
+    const [occupationValue, setOccupationValue] = useState("");
+    const [updatedOccupationValue, setUpdatedOccupationValue] = useState("");
+    const [ageValue, setAgeValue] = useState<number>(0);
+    const [updatedAgeValue, setUpdatedAgeValue] = useState<number | undefined>();
+    const [fileName, setFileName] = useState('')
 
-  const urlPath = import.meta.env.VITE_URL_PATH||"";
+    const { user, isLoggedIn, setLoggedUser } = useAuth();
 
+    function openModal() {
+        setModalIsOpen(true);
+    }
+    function closeModal() {
+        setModalIsOpen(false);
+    }
 
-  const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
-  const [messageModal, setMessageModal] = useState<string>("");
+    const navigate: NavigateFunction = useNavigate();
 
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const response = await fetch(`${urlPath}/users/${userId}`);
-        if (response.ok) {
-          const userData = (await response.json()) as IUpdateUserData;
-          setNameValue(userData.name);
-          setUserNameValue(userData.userName);
-          setEmailValue(userData.email);
-          setPhotoValue(userData.photo);
-          setGenderValue(userData.gender);
-          setWeightValue(userData.weight);
-          setHeightValue(userData.height);
-          setOccupationValue(userData.occupation);
-          setAgeValue(parseInt(userData.age, 10).toString());
-          
-        } else {
-          console.error("Erro ao buscar dados do usuário.");
+    const urlPath = import.meta.env.VITE_URL_PATH || "";
+
+    const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
+    const [messageModal, setMessageModal] = useState<string>("");
+
+    useEffect(() => {
+        if (user) {
+            setNameValue(user.name || "");
+            setUserNameValue(user.userName);
+            setEmailValue(user.email);
+            setPhotoValue(user.photo || '');
+            setGenderValue(user.gender);
+            setWeightValue(user.weight);
+            setHeightValue(user.height);
+            setOccupationValue(user.occupation);
+            setAgeValue(user.age || 0);
         }
-      } catch (error) {
-        console.error("Erro na requisição:", error);
-      }
-    };
+    }, [user]);
 
-    void fetchUserData();
-  }, [userId]);
+    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+        const password = passwordValue;
 
-    const name = nameValue;
-    const userName = userNameValue;
-    const password = passwordValue;
-    const email = emailValue;
-    const photo = photoValue;
-    const gender = genderValue;
-    const weight = weightValue;
-    const height = heightValue;
-    const occupation = occupationValue;
-    const age = ageValue;
+        if (password !== confirmPasswordValue) {
+            console.log("As senhas não coincidem.");
+            setMessageModal("As senhas não coincidem.");
+            openModal();
+            return;
+        }
 
-    const user: IUpdateUserData = {
-      name,
-      userName,
-      password,
-      email,
-      photo,
-      gender,
-      weight,
-      height,
-      occupation,
-      age
-    };
-    if (password !== confirmPasswordValue) {
-      console.log("As senhas não coincidem.");
-      setMessageModal("As senhas não coincidem.");
-      openModal();
-      return;
+        const formData = new FormData();
+
+        // Adicione os campos ao FormData
+        if (newPhotoValue !== null && newPhotoValue !== undefined) {
+            formData.append("photo", newPhotoValue, fileName);
+        }
+        if (updatedAgeValue !== null && updatedAgeValue !== undefined) {
+            formData.append("age", String(updatedAgeValue));
+        }
+        if (updatedNameValue !== null && updatedNameValue !== undefined && updatedNameValue !== '') {
+            formData.append("name", updatedNameValue);
+        }
+        if (updatedUserNameValue !== null && updatedUserNameValue !== undefined && updatedUserNameValue !== '') {
+            formData.append("userName", updatedUserNameValue);
+        }
+        if (updatedPasswordValue !== null && updatedPasswordValue !== undefined && updatedPasswordValue !== '') {
+            formData.append("password", updatedPasswordValue);
+        }
+        if (updatedEmailValue !== null && updatedEmailValue !== undefined && updatedEmailValue !== '') {
+            formData.append("email", updatedEmailValue);
+        }
+        if (updatedGenderValue !== null && updatedGenderValue !== undefined && updatedGenderValue !== '') {
+            formData.append("gender", updatedGenderValue);
+        }
+        if (updatedWeightValue !== null && updatedWeightValue !== undefined && updatedWeightValue !== '') {
+            formData.append("weight", updatedWeightValue);
+        }
+        if (updatedHeightValue !== null && updatedHeightValue !== undefined && updatedHeightValue !== '') {
+            formData.append("height", updatedHeightValue);
+        }
+        if (updatedOccupationValue !== null && updatedOccupationValue !== undefined && updatedOccupationValue !== '') {
+            formData.append("occupation", updatedOccupationValue);
+        }
+
+        try {
+            const req = await fetch(`${urlPath}/users/${userId}`, {
+                method: "PATCH",
+                body: formData,
+                credentials: 'include'
+            })
+
+            if (req.ok) {
+
+                const result = await req.json()
+
+                if (result.error == false && result.user !== undefined) {
+                    setLoggedUser(result.user)
+                    setMessageModal(`Usuário atualizado com sucesso!`);
+                    openModal();
+                    navigate("/profile")
+                } else {
+                    if (result.message !== undefined) {
+                        setMessageModal(`Erro ao editar usuário: ${result.message}`);
+                        openModal();
+                    }
+                }
+            }
+        } catch (err) {
+            console.error("Error:", err);
+            setMessageModal(`Erro: ${err as string}`);
+            openModal();
+        }
+
     }
 
-    void fetch(`${urlPath}/users/${userId}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(user),
-    }).then((response) => {
-      if (response.ok) {
-        setMessageModal("Perfil atualizado com sucesso!");
-        openModal();
-        setIsLoggedIn(true);
-        navigate("/profile");
-      } else {
-        console.log(response);
-      }
-    });
-  };
+    const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setUpdatedNameValue(event.target.value);
+        setNameValue(event.target.value);
+    };
+    const handleUserNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setUpdatedUserNameValue(event.target.value);
+        setUserNameValue(event.target.value);
+    };
+    const handleConfirmPasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setConfirmPasswordValue(event.target.value);
+    };
+    const handlePasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setUpdatedPasswordValue(event.target.value);
+        setPasswordValue(event.target.value);
+    };
+    const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setUpdatedEmailValue(event.target.value);
+        setEmailValue(event.target.value);
+    };
+    const handlePhotoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        if (event.target.files && event.target.files.length > 0) {
+            const file = event.target.files[0];
+            const fileExtension = file.name.split('.').pop();
+            if (fileExtension) {
+                const fileName = `${uuid()}.${fileExtension}`; // Gera o nome de arquivo com UUID e extensão
+                setFileName(fileName);
+                setNewPhotoValue(file);
+            }
+        }
+    };
+    const handleWeightChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setUpdatedWeightValue(event.target.value);
+        setWeightValue(event.target.value);
+    };
+    const handleHeightChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setUpdatedHeightValue(event.target.value);
+        setHeightValue(event.target.value);
+    };
+    const handleOccupationChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setUpdatedOccupationValue(event.target.value);
+        setOccupationValue(event.target.value);
+    };
+    const handleGenderChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        setUpdatedGenderValue(event.target.value);
+        setGenderValue(event.target.value);
+    };
+    const handleAgeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const newAgeValue = event.target.value;
+        setUpdatedAgeValue(Number(newAgeValue));
+        setAgeValue(Number(newAgeValue));
+    };
 
-  const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setNameValue(event.target.value);
-  };
-  const handleUserNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setNameValue(event.target.value);
-  };
-  const handleConfirmPasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setConfirmPasswordValue(event.target.value);
-  };
-  const handlePasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setPasswordValue(event.target.value);
-  };
-  const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setEmailValue(event.target.value);
-  };
-  const handlePhotoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setPhotoValue(event.target.value);
-  };
-  const handleWeightChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setWeightValue(event.target.value);
-  };
-  const handleHeightChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setHeightValue(event.target.value);
-  };
-  const handleOccupationChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setOccupationValue(event.target.value);
-  };
-  const handleGenderChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setGenderValue(event.target.value);
-  };
-  const handleAgeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const newAgeValue = event.target.value;
-    setAgeValue(newAgeValue);
-  };
+    const handleDeleteAccount = async () => {
+        const confirmed = window.confirm(
+            "Tem certeza de que deseja excluir sua conta?"
+        );
+        if (confirmed) {
 
-  const handleDeleteAccount = () => {
-    const confirmed = window.confirm(
-      "Tem certeza de que deseja excluir sua conta?"
-    );
-    if (confirmed) {
-      fetch(`${urlPath}/users/${userId}`, {
-        method: "DELETE",
-      })
-        .then((response) => {
-          if (response.ok) {
-            setMessageModal("Usuário excluído com sucesso!");
-            openModal();
-            navigate("/profile");
-          } else {
-            console.error("Erro ao excluir usuário:", response);
-            setMessageModal("Erro ao excluir usuário:");
-            openModal();
-          }
-        })
-        .catch((error) => {
-          console.error("Erro ao excluir usuário:",error);
-          setMessageModal("Erro ao excluir usuário:");
-          openModal();
-        });
-    }
-  };
+            try {
+                const req = await fetch(`${urlPath}/users/${userId}`, {
+                    method: "DELETE",
+                    credentials: 'include'
+                })
 
-  if (isLoggedIn) {
-    navigate("/profile");
-  }
+                if (req.ok) {
+                    setMessageModal("Usuário excluído com sucesso!");
+                    openModal();
+                    navigate("/profile");
+                } else {
+                    console.error("Erro ao excluir usuário:", req);
+                    setMessageModal("Erro ao excluir usuário:");
+                    openModal();
+                }
+            } catch (err) {
+                console.error("Erro ao excluir usuário:", err);
+                setMessageModal("Erro ao excluir usuário:");
+                openModal();
+            }
+        }
+    };
 
-  return (
-    <div className="Edit">
-      <Header isLoggedIn={isLoggedIn} />
-      <div className="All-content-edit">
-        <div className="container-edit-content">
-          <Form
-            inputsUserNameValue={userNameValue}
-            inputsEmailValue={emailValue}
-            inputsAgeValue={ageValue}
-            inputsGenderValue={genderValue}
-            inputNameValue={nameValue}  
-            inputsWeightValue={weightValue}
-            inputsHeightValue={heightValue}
-            inputsPasswordValue={passwordValue}
-            inputsOccupationValue={occupationValue}
+    return (
+        <div className="Edit">
+            <Header isLoggedIn={isLoggedIn} />
+            <div className="All-content-edit">
+                <div className="container-edit-content">
+                    <Form
+                        inputsUserNameValue={userNameValue}
+                        inputsEmailValue={emailValue}
+                        inputsAgeValue={ageValue}
+                        inputsGenderValue={genderValue}
+                        inputNameValue={nameValue}
+                        inputsWeightValue={weightValue}
+                        inputsHeightValue={heightValue}
+                        inputsPasswordValue={passwordValue}
+                        inputsOccupationValue={occupationValue}
 
-            onSubmit={handleSubmit}
-            inputsPhotoValue={""} 
-            handlePhotoChange={handlePhotoChange}
-            handleUserNameChange={handleUserNameChange}
-            handleEmailChange={handleEmailChange}
-            handleAgeChange={handleAgeChange}
-            handleGenderChange={handleGenderChange}
-            handleNameChange={handleNameChange}
-            handleWeightChange={handleWeightChange}
-            handleHeightChange={handleHeightChange}
-            handlePasswordChange={handlePasswordChange}
-            handleConfirmPasswordChange={handleConfirmPasswordChange}
-            handleOccupationChange={handleOccupationChange}
-            handleDeleteAccount={handleDeleteAccount}
+                        onSubmit={handleSubmit}
+                        inputsPhotoValue={photoValue}
+                        handlePhotoChange={handlePhotoChange}
+                        handleUserNameChange={handleUserNameChange}
+                        handleEmailChange={handleEmailChange}
+                        handleAgeChange={handleAgeChange}
+                        handleGenderChange={handleGenderChange}
+                        handleNameChange={handleNameChange}
+                        handleWeightChange={handleWeightChange}
+                        handleHeightChange={handleHeightChange}
+                        handlePasswordChange={handlePasswordChange}
+                        handleConfirmPasswordChange={handleConfirmPasswordChange}
+                        handleOccupationChange={handleOccupationChange}
+                        handleDeleteAccount={handleDeleteAccount}
                     />
+                </div>
+            </div>
+            {modalIsOpen && <Modal children={messageModal} onClick={closeModal} />}
         </div>
-      </div>
-      {modalIsOpen && <Modal children={messageModal} onClick={closeModal} />}
-    </div>
-  );
+    );
 };

@@ -1,116 +1,309 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
+import { generalRequest } from "../../generalFunction";
+import { Socket } from "socket.io-client";
+import { useAuth } from '../../context/authContext';
+import { io } from "socket.io-client";
 import "./styles.css"
+import { ChatCircleText, X, PaperPlaneRight } from "@phosphor-icons/react";
+import Badge from '@mui/material/Badge';
+import MailIcon from '@mui/icons-material/Mail';
 
-import { ChatCircleText, X } from "@phosphor-icons/react";
-// import { useState, useEffect } from "react";
 
-interface ContactsProps{
-    photo: string;
-    name: string;
-    occupation: string;
-    id: string;
+interface ChatData {
+    _id: string;
+    members: Array<{ _id: string }>;
+    unreadCount: number
 }
 
-const users: ContactsProps[] = [
-    {
-        photo: 'https://conteudo.imguol.com.br/c/esporte/26/2021/02/25/terry-crews-interpretou-julius-rock-em-todo-mundo-odeia-o-chris-1614287010913_v2_600x600.jpg',
-        name: 'Júlia Souza',
-        occupation: 'Atriz',
-        id: '1'
-    },
-    {
-        photo: 'https://conteudo.imguol.com.br/c/esporte/26/2021/02/25/terry-crews-interpretou-julius-rock-em-todo-mundo-odeia-o-chris-1614287010913_v2_600x600.jpg',
-        name: 'Ana Silva',
-        occupation: 'Advogada',
-        id: '2'
-    },
-    {
-        photo: 'https://conteudo.imguol.com.br/c/esporte/26/2021/02/25/terry-crews-interpretou-julius-rock-em-todo-mundo-odeia-o-chris-1614287010913_v2_600x600.jpg',
-        name: 'Luana Freitas',
-        occupation: 'Nutricionista',
-        id: '3'
-    },
-    {
-        photo: 'https://conteudo.imguol.com.br/c/esporte/26/2021/02/25/terry-crews-interpretou-julius-rock-em-todo-mundo-odeia-o-chris-1614287010913_v2_600x600.jpg',
-        name: 'Ana Souza',
-        occupation: 'Professor',
-        id: '4'
-    },
-    {
-        photo: 'https://conteudo.imguol.com.br/c/esporte/26/2021/02/25/terry-crews-interpretou-julius-rock-em-todo-mundo-odeia-o-chris-1614287010913_v2_600x600.jpg',
-        name: 'Lucas Lima',
-        occupation: 'Estudante',
-        id: '5'
-    },
-    {
-        photo: 'https://conteudo.imguol.com.br/c/esporte/26/2021/02/25/terry-crews-interpretou-julius-rock-em-todo-mundo-odeia-o-chris-1614287010913_v2_600x600.jpg',
-        name: 'Isabela Costa',
-        occupation: 'Arquiteta',
-        id: '6'
-    },
-    {
-        photo: 'https://conteudo.imguol.com.br/c/esporte/26/2021/02/25/terry-crews-interpretou-julius-rock-em-todo-mundo-odeia-o-chris-1614287010913_v2_600x600.jpg',
-        name: 'Ricardo Mendes da Silva',
-        occupation: 'Programador',
-        id: '7'
-    },
-    {
-        photo: 'https://conteudo.imguol.com.br/c/esporte/26/2021/02/25/terry-crews-interpretou-julius-rock-em-todo-mundo-odeia-o-chris-1614287010913_v2_600x600.jpg',
-        name: 'Fernanda Rodrigues',
-        occupation: 'Enfermeira',
-        id: '8'
-    },
-    {
-        photo: 'https://conteudo.imguol.com.br/c/esporte/26/2021/02/25/terry-crews-interpretou-julius-rock-em-todo-mundo-odeia-o-chris-1614287010913_v2_600x600.jpg',
-        name: 'Gabriel Alves',
-        occupation: 'Designer',
-        id: '9'
-    },
-    {
-        photo: 'https://conteudo.imguol.com.br/c/esporte/26/2021/02/25/terry-crews-interpretou-julius-rock-em-todo-mundo-odeia-o-chris-1614287010913_v2_600x600.jpg',
-        name: 'Carolina Castro',
-        occupation: 'Psicóloga',
-        id: '10'
-    },];
+interface SocketMessage {
+    chatMessage: Message | Message[]
+    error: boolean
+    statusCode: number
+}
 
-export const Chat = () => {
+interface Friend {
+    photo?: string;
+    userName: string;
+    name: string;
+    occupation: string;
+    _id: string;
+}
+
+interface Message {
+    chatId?: string;
+    conversationId?: string;
+    sender: string;
+    isRead?: boolean;
+    text: string;
+    _id?: string;
+    created_at?: string;
+    __v?: number;
+}
+
+interface ChatProps {
+    onChatOpen: (chatOpen: boolean) => void;
+}
+
+interface Chat {
+    members: Member[];
+}
+
+interface Member {
+    _id: string;
+}
+
+let socket: Socket | null = null;
+let currentChatId: string | null = null;
+
+export const Chat = ({ onChatOpen }: ChatProps) => {
+    const { user } = useAuth();
+
+    if (!user) {
+        throw new Error('Usuário não exite')
+    }
+
+    const userId = String(user._id);
+
     const [chatOpen, setChatOpen] = useState<boolean>(false);
 
-    const toggleChat = () => {
-        setChatOpen((prevState) => !prevState);
+    const [messages, setMessages] = useState<Array<Message>>([]);
+    const [showChat, setShowChat] = useState(false);
+    const [chats, setChats] = useState<ChatData[]>([]);
+
+    const [currentlyFriend, setCurrentlyFriend] = useState('Other');
+    const [inputMessage, setInputMessage] = useState('');
+
+    const urlPath = import.meta.env.VITE_URL_PATH;
+
+    const messagesContainerRef = useRef<HTMLDivElement | null>(null);
+
+    const toggleChat = async () => {
+        setChatOpen(!chatOpen);
+        onChatOpen(!chatOpen);
+        if (chatOpen) {
+            closeChat()
+        } else {
+
+            await searchChats(userId);
+        }
+
+        return
     };
+
+    const initChat = async (friend: Friend) => {
+        setCurrentlyFriend(friend.userName)
+        await chatWithFriend(friend._id)
+    }
+
+    const searchChats = async (userId: string) => {
+        try {
+            const response = await generalRequest(`/conversations/${userId}`);
+
+            const userChats: Array<ChatData> = response as Array<ChatData>;
+            setChats(userChats);
+
+        } catch (error) {
+            console.error("Error getting chats:", error);
+        }
+    };
+
+    const chatWithFriend = async (friendId: string) => {
+        try {
+            const chat = chats.find((chat: ChatData) =>
+                chat.members.some((member) => member._id === friendId)
+            );
+
+            if (chat) {
+                openChatPopup(chat._id);
+            } else {
+                await generalRequest(`/conversations`, { userId: userId, friendId: friendId }, 'POST');
+                await chatWithFriend(friendId);
+            }
+        } catch (error) {
+            console.error("Error getting chats:", error);
+        }
+    }
+
+    const openChatPopup = (chatId: string) => {
+        currentChatId = chatId;
+        setShowChat(true);
+        if (socket) {
+            socket.disconnect();
+        }
+        if (urlPath) {
+            socket = io(urlPath);
+        } else {
+            socket = io();
+        }
+        socket.on('receiveMessage', (messageData: SocketMessage) => {
+
+            if ((messageData.chatMessage as Message).chatId === chatId) {
+
+                const newMessages = Array.isArray(messageData.chatMessage) ? messageData.chatMessage : [messageData.chatMessage];
+                setMessages(prevMessages => [...prevMessages, ...newMessages]);
+            }
+        });
+
+        socket.on('chatHistory', async (messages: SocketMessage) => {
+
+            const messageList = Array.isArray(messages.chatMessage) ? messages.chatMessage : [messages.chatMessage];
+            setMessages(messageList);
+
+            const unreadMessages = messageList.filter(message => !message.isRead && message.sender !== userId);
+
+            if (unreadMessages.length !== 0) {
+                await markMessagesAsRead(unreadMessages.map(message => message._id as string));
+            }
+        });
+
+        socket.emit('joinRoom', chatId);
+    }
+
+    const renderMessages = () => {
+        return messages.map((message, index) => (
+            <div key={index} className={`message ${message.sender === userId ? 'mine' : 'others'}`}>
+                <div className="message-text">{message.text}</div>
+                {message.created_at ? (
+                    <p className={message.sender === userId ? 'message-time-white' : 'message-time-black'}>
+                        {formatMessageTime(message?.created_at)}
+                    </p>
+                ) :
+                    <p className={message.sender === userId ? 'message-time-white' : 'message-time-black'}>
+                        {formatMessageTime(Date.now())}
+                    </p>
+                }
+            </div>
+        ));
+    };
+
+    const formatMessageTime = (isoTimeString: string | number) => {
+        const date = new Date(isoTimeString);
+        const hours = String(date.getHours()).padStart(2, '0'); // Obtém as horas com zero à esquerda se for necessário
+        const minutes = String(date.getMinutes()).padStart(2, '0'); // Obtém os minutos com zero à esquerda se for necessário
+        return `${hours}:${minutes}`;
+    };
+
+    const scrollToBottom = () => {
+        if (messagesContainerRef.current) {
+            const container = messagesContainerRef.current;
+            container.scrollTop = container.scrollHeight;
+        }
+    };
+
+    function sendMessage() {
+        if (inputMessage && currentChatId && socket) {
+            socket.emit('sendMessage', {
+                chatId: currentChatId,
+                sender: userId,
+                text: inputMessage,
+            });
+            setInputMessage('');  // Reset the inputMessage state, which is bound to the input field.
+        }
+    }
+
+    const markMessagesAsRead = async (messageIds: string[]) => {
+        try {
+            await generalRequest(`/messages/markAsRead`, { messageIds }, 'POST');
+            await searchChats(userId);
+        } catch (error) {
+            console.error("Error marking messages as read:", error);
+        }
+    }
+
+    useEffect(() => {
+        scrollToBottom();
+    }, [messages]);
+
+    useEffect(() => {
+        return () => {
+            if (socket) {
+                socket.disconnect();
+            }
+        };
+    }, []);
+
+    const closeChat = () => {
+        if (socket) {
+            socket.disconnect();
+            socket = null;
+        }
+        currentChatId = null;
+        setShowChat(false);
+        setCurrentlyFriend('Other');
+    }
+
+    useEffect(() => {
+        if (!showChat) {
+            setMessages([]);
+        }
+    }, [showChat]);
+
+
 
     return (
         <div className="chat-container">
             <div className="chat-button" onClick={toggleChat}>
-                {chatOpen ? 
-                <X size={40} color="white" className="close-button-msg"/>
-                : <ChatCircleText size={40} color="white"/>}
+                {chatOpen ?
+                    <X size={40} color="white" className="close-button-msg" />
+                    : <ChatCircleText size={40} color="white" />}
             </div>
-            <div className={`chat-container-msg ${chatOpen ? "chat-open" : ""}`}>
-                <div className="search-box-msg">
-                    <input type="text" className="search-text-msg"/>
-                </div>
-                <div className="box-users-msgs">
-                    {users.map((user) => (
-                    <div className="msg-card">
-                        <div className="img-card-msgs">
-                            <img src={user.photo} alt="" />
+            <div className={`chat-container-msg ${chatOpen ? "chat-open" : "chat-close"}`}>
+                {showChat ?
+                    <div className="box-open-msgs">
+                        <div className="header_open_msg">
+                            <p>{currentlyFriend}</p>
+                            <X size={22} color="#5e35aa" weight="bold" onClick={closeChat} />
                         </div>
-                        <div className="user-msg-info">
-                            <p className="username-msg">{user.name.length > 15 ? user.name.substring(0, 15) + "..." : user.name}</p>
-                            <p className="useroccupation-msg">{user.occupation.length > 15 ? user.occupation.substring(0, 15) + "..." : user.occupation}</p>
+                        <div className="body_box_msgs" ref={messagesContainerRef}>
+                            {renderMessages()}
                         </div>
-                        <div className="container-icon-new-msgs">
-                        <p>2</p>
+                        <div className="div_send_message">
+                            <input type="text"
+                                className="input_send_message"
+                                value={inputMessage}
+                                placeholder="Digite algo..."
+                                onChange={(e) => setInputMessage(e.target.value)}
+                                onKeyDown={(e) => {
+                                    if (e.key === 'Enter') {
+                                        e.preventDefault();
+                                        sendMessage();
+                                    }
+                                }}
+                            >
+                            </input>
+                            <PaperPlaneRight size={15} color="#5e35aa" className="button_send_message" onClick={sendMessage} />
                         </div>
                     </div>
-                    ))}
-                </div>
+                    : <div className="box-users-msgs">
+                        {user.friends.map((friend) => {
+                            const associatedChat = chats.find((chat: ChatData) => chat.members.some((member) => member._id === friend._id));
+
+                            return (
+                                <div className="msg-card" onClick={() => { initChat(friend as any) }}>
+                                    <div style={{ display: "flex", gap: "10px" }}>
+                                        <div className="img-card-msgs">
+                                            <img
+                                                src={`/uploads/${friend.photo}` || new URL("../../assets/images/placeholderphoto.jpg", import.meta.url).href}
+                                                alt=""
+                                            />
+                                        </div>
+                                        <div className="user-msg-info">
+                                            <p className="username-msg">{(friend as Friend).name.length > 15 ? (friend as Friend).name.substring(0, 15) + "..." : (friend as Friend).name}</p>
+                                            <p className="useroccupation-msg">{friend.occupation.length > 15 ? friend.occupation.substring(0, 15) + "..." : friend.occupation}</p>
+                                        </div>
+                                    </div>
+                                    {
+                                        associatedChat?.unreadCount ?
+                                            <Badge badgeContent={associatedChat.unreadCount} color="secondary">
+                                                <MailIcon color="action" />
+                                            </Badge> : <></>
+                                    }
+                                </div>
+                            )
+                        })}
+                    </div>}
             </div>
-            
-        </div>
-      
+        </div >
+
     );
-  };
-  
+};

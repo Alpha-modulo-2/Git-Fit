@@ -6,7 +6,7 @@ export default interface IUser {
     created_at?: Date,
     updated_at?: Date,
     friends: string[],
-    photo: string,
+    photo?: string,
     gender: string,
     weight: string,
     height: string,

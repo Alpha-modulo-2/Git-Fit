@@ -12,13 +12,16 @@ const messageSchema = new Schema<IMessage>({
         ref: "User"
     },
     text: String,
+    isRead: {
+        type: Boolean,
+        default: false,
+    },
     created_at: {
         type: Date,
         immutable: true,
         required: true,
         default: () => new Date()
     },
-    id: SchemaTypes.ObjectId,
 })
 
 const messageModel = model("Message", messageSchema)
