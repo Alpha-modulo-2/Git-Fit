@@ -30,5 +30,13 @@ jobs:
           echo REDIS_HOST=${{ secrets.REDIS_HOST }} >> ./back/.env
           echo REDIS_PORT=${{ secrets.REDIS_PORT }} >> ./back/.env
 
+      - name: Create .key file
+        run: |
+          echo ${{ secrets.CERT_KEY }} >> ./back/localhost.key
+
+      - name: Create .crt file
+        run: |
+          echo ${{ secrets.CERT_CRT }} >> ./back/localhost.crt
+  
       - name: Run Docker Compose up
         run: docker-compose up --build -d
