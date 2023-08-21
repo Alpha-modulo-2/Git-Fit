@@ -132,7 +132,9 @@ align-items: center;
 width: 68%;
 border-radius: 5rem;
 padding: 0.3rem;
+border-radius: 0.5rem;
 font-size: 90%;
+background-color: rgba(255, 255, 255, 0.786);
 }
 
 .add_form_meal input{
@@ -140,6 +142,7 @@ width: 68%;
 border-radius: 5rem;
 font-size: 90%;
 padding: 0.3rem;
+justify-content: space-between;
 }
 
 .add_form_training input{
@@ -252,4 +255,9 @@ z-index: 2;
 width: 40px;
 height: 40px;
 background-color: black;
+}
+
+.icons-edit-card:hover{
+  scale: 1.2;
+  cursor: pointer;
 }
