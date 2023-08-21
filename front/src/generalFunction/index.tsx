@@ -28,6 +28,10 @@ export async function generalRequest<T>(endpoint: string, body?:object, method: 
             credentials: 'include'
         });
 
+        if(req.status === 204){
+            return req;
+        }
+
         // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         const result = await req.json() as T;
         return result;

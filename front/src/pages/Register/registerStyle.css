@@ -5,10 +5,11 @@
   padding: 0;
   font-family: "Poppins", sans-serif;
 }
-.form-register-allcontent{
+.form-register-allcontent {
   display: flex;
   justify-content: center;
   padding: 1.5rem 3rem;
+  width: 100%;
   gap: 1rem;
 }
 /* All content */
@@ -36,6 +37,24 @@
 .menu-register {
   display: flex;
   gap: 4rem;
+  width: 100%;
+}
+
+.container-height-weight-register {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+.container-input-weight-register,
+.container-input-hight-register {
+  display: flex;
+  width: 49%;
+  justify-content: center;
+  border-bottom: 1px solid rgb(0, 0, 0);
+}
+
+.container-input-hight-register {
+  justify-content: center;
 }
 
 .container-first-content-register,
@@ -52,12 +71,12 @@
   padding-top: 2rem;
 }
 
-.container-choose-photo-register{
+.container-choose-photo-register {
   display: flex;
   align-items: center;
   gap: 5px;
 }
-.container-choose-photo-register p{
+.container-choose-photo-register p {
   font-size: 12px;
   font-weight: 500;
   color: rgba(115, 83, 186, 1);
@@ -121,21 +140,7 @@
   color: rgba(115, 83, 186, 1);
 }
 
-.input-weight-register {
-  font-size: 77%;
-  color: black;
-  background-color: transparent;
-  color: rgba(115, 83, 186, 1);
-  background: transparent !important;
-  font-weight: bold;
-  border-bottom: 1px solid rgb(0, 0, 0);
-  width: 50%;
-  height: 7.6vh;
-  outline: none;
-  caret-color: black;
-  padding: 2% 5% 3% 5%;
-}
-
+.input-weight-register,
 .input-hight-register {
   font-size: 77%;
   color: black;
@@ -143,12 +148,27 @@
   color: rgba(115, 83, 186, 1);
   background: transparent !important;
   font-weight: bold;
-  border-bottom: 1px solid rgb(0, 0, 0);
+  width: 45%;
+  height: 7.6vh;
+  outline: none;
+  caret-color: black;
+  padding: 2% 5% 3% 5%;
+}
+
+.input-weight-register-text,
+.input-hight-register-text {
+  font-size: 77%;
+  color: black;
+  background-color: transparent;
+  background: transparent !important;
+  font-weight: bold;
   width: 50%;
   height: 7.6vh;
   outline: none;
   caret-color: black;
   padding: 2% 5% 3% 5%;
+  display: flex;
+  align-items: center;
 }
 
 .input-hight-register::placeholder,
@@ -215,7 +235,6 @@ input:checked + .sliderR-round:before {
 .divButton-register {
   display: flex;
   justify-content: center;
-  padding: 2%;
 }
 
 /* Button config */
@@ -224,17 +243,15 @@ input:checked + .sliderR-round:before {
   font-size: 77%;
 }
 
-.input-register-age::-webkit-inner-spin-button { 
+.input-register-age::-webkit-inner-spin-button {
   -webkit-appearance: none;
-  
 }
-.input-register-age { 
+.input-register-age {
   -moz-appearance: textfield;
   appearance: textfield;
- 
- }
+}
 
- .select-gender-register{
+.select-gender-register {
   width: 100%;
   height: 6.5vh;
   color: rgb(0, 0, 0);
@@ -246,15 +263,13 @@ input:checked + .sliderR-round:before {
   caret-color: black;
   padding: 2% 5% 3% 2%;
   outline: 0;
- }
- .select-gender-register:focus{
-  outline: 0;
- }
- .select-gender-register option:not(:disabled) {
-  color: rgba(115, 83, 186, 1); 
 }
-
-
+.select-gender-register:focus {
+  outline: 0;
+}
+.select-gender-register option:not(:disabled) {
+  color: rgba(115, 83, 186, 1);
+}
 
 /* Button config */
 .divregisterprofessionalProfile {
@@ -297,10 +312,10 @@ input:checked + .sliderR-round:before {
   .menu-register {
     display: flex;
     flex-direction: column;
-    gap: 0rem; 
+    gap: 0rem;
     padding-top: 110px;
   }
-  .container-choose-photo-register{
+  .container-choose-photo-register {
     flex-direction: column;
     justify-content: center;
   }
@@ -308,10 +323,10 @@ input:checked + .sliderR-round:before {
     padding: 2% 5% 3% 5%;
     height: 40px;
   }
-  .select-gender-register{
+  .select-gender-register {
     height: 40px;
-   }
-  .form-register-allcontent{
+  }
+  .form-register-allcontent {
     max-height: 600px;
     overflow-y: auto;
   }
@@ -327,19 +342,20 @@ input:checked + .sliderR-round:before {
   .container-second-content-register {
     padding-top: 0.6rem;
   }
-  .input-weight-register, .input-hight-register {
+  .input-weight-register,
+  .input-hight-register {
     height: 52px;
   }
 }
 
 @media (min-width: 781px) and (max-width: 900px) {
-  .container-register-content{
+  .container-register-content {
     width: 80%;
-  }  
+  }
 }
 
 @media (min-width: 781px) and (max-width: 1100px) {
-  .container-register-content{
+  .container-register-content {
     width: 65%;
-  }  
+  }
 }

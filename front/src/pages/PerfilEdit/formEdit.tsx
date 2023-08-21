@@ -39,7 +39,6 @@ export default function EditForm(props: FormProps) {
 
       reader.onload = () => {
         setSelectedPhoto(reader.result as string);
-        props.handlePhotoChange(e);
       };
 
       reader.readAsDataURL(file);
@@ -48,11 +47,12 @@ export default function EditForm(props: FormProps) {
 
   const handleOccupationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setIsProfessional(e.target.checked);
+    props.handleOccupationChange(e);
   };
 
   const handleWeightChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
-    const formattedValue = value.replace(/[^0-9]/g, "") + "kg";
+    const formattedValue = value.replace(/[^0-9]/g, "");
     props.handleWeightChange({
       target: { value: formattedValue },
     } as React.ChangeEvent<HTMLInputElement>);
@@ -60,7 +60,7 @@ export default function EditForm(props: FormProps) {
 
   const handleHeightChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
-    const formattedValue = value.replace(/[^0-9]/g, "") + "cm";
+    const formattedValue = value.replace(/[^0-9]/g, "");
     props.handleHeightChange({
       target: { value: formattedValue },
     } as React.ChangeEvent<HTMLInputElement>);
@@ -138,28 +138,27 @@ export default function EditForm(props: FormProps) {
         </div>
 
         <div className="container-second-content-edit">
-          <div className="weightHight-edit">
-        <input
-            type="text"
-            className="input-edit"
-            placeholder="Nome Completo"
-            value={props.inputNameValue}
-            onChange={props.handleNameChange}
-          />
-            <input
-              type="text"
-              className="input-weight-edit"
-              placeholder="Peso"
-              value={props.inputsWeightValue}
-              onChange={handleWeightChange}
-            />
-            <input
-              type="text"
-              className="input-hight-edit"
-              placeholder="Altura"
-              value={props.inputsHeightValue}
-              onChange={handleHeightChange}
-            />
+          <div className="container-height-weight-edit">
+              <div  className="container-input-weight-edit">
+                <input
+                  type="text"
+                  className="input-weight-edit"
+                  placeholder="Peso"
+                  value={props.inputsWeightValue}
+                  onChange={handleWeightChange}
+                />
+                <p className="input-weight-edit-text">kg</p>
+              </div>
+              <div className="container-input-hight-edit">
+                <input
+                type="text"
+                className="input-hight-edit"
+                placeholder="Altura"
+                value={props.inputsHeightValue}
+                onChange={handleHeightChange}
+                />
+                <p className="input-hight-edit-text">cm</p>
+              </div>
           </div>
 
           <input

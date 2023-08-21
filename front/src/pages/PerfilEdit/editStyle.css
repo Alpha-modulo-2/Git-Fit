@@ -11,6 +11,7 @@
   justify-content: center;
   padding: 1.5rem 3rem;
   gap: 1rem;
+  width: 100%;
 }
 
 /* All content */
@@ -38,6 +39,7 @@
 .menu-edit {
   display: flex;
   gap: 4rem;
+  width: 100%;
 }
 
 .container-first-content-edit,
@@ -120,6 +122,23 @@
   color: rgba(115, 83, 186, 1);
 }
 
+.container-height-weight-edit{
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+.container-input-weight-edit,
+.container-input-hight-edit {
+  display: flex;
+  width: 49%;
+  justify-content: center;
+  border-bottom: 1px solid rgb(0, 0, 0);
+}
+
+.container-input-hight-edit {
+  justify-content: center;
+}
+
 .input-weight-edit,
 .input-hight-edit {
   font-size: 77%;
@@ -127,13 +146,26 @@
   background-color: transparent;
   color: rgba(115, 83, 186, 1);
   background: transparent !important;
-  font-weight: bold;
-  border-bottom: 1px solid rgb(0, 0, 0);
-  width: 50%;
+  font-weight: bold; 
+  width: 45%;
   height: 7.6vh;
   outline: none;
   caret-color: black;
   padding: 2% 5% 3% 5%;
+}
+.input-weight-edit-text,
+.input-hight-edit-text {
+  font-size: 77%;
+  color: black;
+  background-color: transparent;
+  background: transparent !important;
+  font-weight: bold;
+  height: 7.6vh;
+  outline: none;
+  caret-color: black;
+  padding: 2% 5% 3% 5%;
+  display: flex;
+  align-items: center;
 }
 
 .input-hight-edit::placeholder,
@@ -302,7 +334,7 @@ form {
     display: flex;
     flex-direction: column;
     gap: 0rem;
-    padding-top: 110px;
+    padding-top: 160px;
   }
   .container-choose-photo-edit {
     flex-direction: column;
@@ -335,7 +367,7 @@ form {
   .input-hight-edit {
     height: 52px;
   }
-  .divDeleteAccount-edit{
+  .divDeleteAccount-edit {
     justify-content: center;
   }
 }
