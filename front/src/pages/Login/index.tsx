@@ -53,6 +53,8 @@ export const Login = () => {
     if (!req.ok) {
         setMessageModal("Dados incorretos");
         openModal();
+        return
+        
     }
 
     const result = await req.json()  
