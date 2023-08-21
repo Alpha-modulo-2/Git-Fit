@@ -4,6 +4,7 @@ export default interface IMessage {
     chatId: Types.ObjectId,
     sender: Types.ObjectId,
     text: string,
-    id?: string,
+    isRead?: boolean,
+    _id?: string,
     created_at?: Date,
 }

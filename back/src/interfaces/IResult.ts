@@ -14,4 +14,5 @@ export default interface IResult {
     friendRequests?: IFriendsRequests | IFriendsRequests[],
     conversation?: IConversation | IConversation[],
     chatMessage?: IMessage | IMessage[]
+    unreadCount?: number
 }

@@ -35,7 +35,7 @@ export const Login = () => {
     }
   }, [isLoggedIn, navigate]);
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit =async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const userName = userNameValue;
     const password = passwordValue;
@@ -43,33 +43,31 @@ export const Login = () => {
 
     const urlPath = import.meta.env.VITE_URL_PATH || "";
 
-
-    fetch(`${urlPath}/login`, {
+    try {
+         const req = await fetch(`${urlPath}/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(user),
     })
-    .then((response) => {
-      if (response.ok) {
-        navigate("/profile");
-        return response.json() as Promise<ApiResponseRequests>;
-      } else {
+
+    if (!req.ok) {
         setMessageModal("Dados incorretos");
         openModal();
-      }
-    })
-    .then((data) => {
-      if (data) {
+    }
+
+    const result = await req.json()  
+
+    if (result) {
         login(user);
-        setCookie(data.token);
-        setLoggedUser(data.user);
-      }
-    })
-      .catch((error) => {
+        setCookie(result.token);
+        setLoggedUser(result.user);
+        navigate("/profile");
+    }
+    } catch (error) {
         console.error("Error:", error);
-        setMessageModal(`Erro: ${error.message}`);
+        setMessageModal(`Erro: ${error as string}`);
         openModal();
-      });
+      }
   };
 
   const handleUserNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
