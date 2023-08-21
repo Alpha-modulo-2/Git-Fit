@@ -4,7 +4,7 @@ import { Header } from "../../components/Header";
 
 import { useState, useEffect } from "react";
 import ContactCard from "../../components/ContactCard";
-import {Modal} from "../../components/Modal";
+import { Modal } from "../../components/Modal";
 import { useAuth } from '../../context/authContext';
 import { User } from '../../interfaces/IUser';
 import { Friend } from '../../interfaces/IUser';
@@ -19,7 +19,9 @@ export const Contacts = () => {
     const [showRequests, setShowRequests] = useState(false); // Estado para controlar exibição das solicitações
     const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
     const [messageModal, setMessageModal] = useState<string>('');
-    
+    const { setLoggedUser } = useAuth();
+
+
     const { user } = useAuth();
     /***************    MODAL    ********************/
     function openModal() {
@@ -28,17 +30,18 @@ export const Contacts = () => {
     function closeModal() {
         setModalIsOpen(false);
     }
-    
+
 
     /***************    GET USER'S FRIENDS    ********************/
     async function getContacts() {
-        if(user){
+        if (user) {
             const id = String(user._id)
             const response = await generalRequest(`/users/${id}`) as User;
-            if(response){
+            if (response) {
+                setLoggedUser(response)
                 setContacts(response.friends)
             }
-            if(typeof response !== "object"){
+            if (typeof response !== "object") {
                 setMessageModal('Você não tem contatos')
                 openModal();
             }
@@ -48,17 +51,17 @@ export const Contacts = () => {
 
     /***************    GET THE FRIEND REQUESTS    ********************/
     async function getRequests() {
-        if(user){
+        if (user) {
             const response = await generalRequest(`/friendRequests/${user._id}`) as ApiResponseRequests;
-            if(response){
+            if (response) {
                 setRequests(response.friendRequests)
             }
-            if(response.error){
+            if (response.error) {
                 setRequests([])
             }
         }
     }
-        
+
     useEffect(() => {
         getContacts().catch((error) => {
             console.error('Erro ao obter as solicitações:', error);
@@ -69,46 +72,48 @@ export const Contacts = () => {
         });
     }, []);
 
-    
+
     /***************    ACCEPT A FRIEND REQUEST     ********************/
     function updateFriends(requestId: string): void {
-        const response = generalRequest('/acceptFriend', {requestId}, 'PATCH') as Promise<ApiResponseRequests> ;
+        const response = generalRequest('/acceptFriend', { requestId }, 'PATCH') as Promise<ApiResponseRequests>;
         response
-        .then(data => {
-            if(data.message){
-                setMessageModal(data.message)
-                openModal();   
-                return getContacts()
-        }}).then(() =>{return getRequests()}
-        ).catch(error => {
-            console.error('Erro na requisição:', error);
-        });
+            .then(data => {
+                if (data.message) {
+                    setMessageModal(data.message)
+                    openModal();
+                    return getContacts()
+                }
+            }).then(() => { return getRequests() }
+            ).catch(error => {
+                console.error('Erro na requisição:', error);
+            });
     }
 
 
     /***************    REFUSE A FRIEND REQUEST     ********************/
     function removeFriends(requestId: string): void {
-        const response = generalRequest(`/rejectFriend/${requestId}`, {requestId}, 'DELETE') as Promise<ApiResponseRequests> ;
+        const response = generalRequest(`/rejectFriend/${requestId}`, { requestId }, 'DELETE') as Promise<ApiResponseRequests>;
         response
-        .then(data => {
-            if(data.message){
-                setMessageModal(data.message)
-                openModal();   
-                return getContacts()
-        }}).then(() => {return getRequests()}
-        ).catch(error => {
-            console.error('Erro na requisição:', error);
-        });
+            .then(data => {
+                if (data.message) {
+                    setMessageModal(data.message)
+                    openModal();
+                    return getContacts()
+                }
+            }).then(() => { return getRequests() }
+            ).catch(error => {
+                console.error('Erro na requisição:', error);
+            });
     }
-    
-const [isChatOpen, setIsChatOpen] = useState(false);
-const handleChatToggle = (isOpen: boolean) => {
-    setIsChatOpen(isOpen);
-};
+
+    const [isChatOpen, setIsChatOpen] = useState(false);
+    const handleChatToggle = (isOpen: boolean) => {
+        setIsChatOpen(isOpen);
+    };
 
     return (
         <div className="contacts-page">
-            <Header isLoggedIn={true}/>
+            <Header isLoggedIn={true} />
             <div className="container-contacts-request">
                 {isChatOpen ? (
                     <div className="message_box">
@@ -139,7 +144,7 @@ const handleChatToggle = (isOpen: boolean) => {
                                         requestId={requester._id}
                                         onUpdateFriends={updateFriends}
                                         onRemoveFriends={removeFriends}
-                                        typeOfCard="request" 
+                                        typeOfCard="request"
                                     />
                                 ))
                             ) : (
@@ -148,7 +153,7 @@ const handleChatToggle = (isOpen: boolean) => {
                                         key={friend._id}
                                         requesterInfo={friend}
                                         recipientId={friend._id}
-                                        typeOfCard="contact" 
+                                        typeOfCard="contact"
                                     />
                                 ))
                             )

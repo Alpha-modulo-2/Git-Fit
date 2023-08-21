@@ -15,6 +15,6 @@ COPY ./back .
 RUN npm run build
 COPY --from=build-stage /app/front/dist ./dist/public
 RUN mkdir -p ./uploads
-EXPOSE 3000 444
+EXPOSE 3000 443
 
 CMD [ "pm2-runtime", "start", "./dist/index.js" ]

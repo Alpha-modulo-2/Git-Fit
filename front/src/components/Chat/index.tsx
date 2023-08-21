@@ -92,24 +92,24 @@ export const Chat = ({ onChatOpen }: ChatProps) => {
 
     const initChat = async (friend: Friend) => {
         setCurrentlyFriend(friend.userName)
-        await chatWithFriend(friend._id)
+        await chatWithFriend(friend._id, chats)
     }
 
     const searchChats = async (userId: string) => {
         try {
             const response = await generalRequest(`/conversations/${userId}`);
-
             const userChats: Array<ChatData> = response as Array<ChatData>;
-            setChats(userChats);
-
+            setChats(userChats)
+            return userChats;
         } catch (error) {
             console.error("Error getting chats:", error);
+            return [];
         }
     };
 
-    const chatWithFriend = async (friendId: string) => {
+    const chatWithFriend = async (friendId: string, chatList: Array<ChatData>) => {
         try {
-            const chat = chats.find((chat: ChatData) =>
+            const chat = chatList.find((chat: ChatData) =>
                 chat.members.some((member) => member._id === friendId)
             );
 
@@ -117,7 +117,8 @@ export const Chat = ({ onChatOpen }: ChatProps) => {
                 openChatPopup(chat._id);
             } else {
                 await generalRequest(`/conversations`, { userId: userId, friendId: friendId }, 'POST');
-                await chatWithFriend(friendId);
+                const newChats = await searchChats(userId);
+                await chatWithFriend(friendId, newChats);
             }
         } catch (error) {
             console.error("Error getting chats:", error);
