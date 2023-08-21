@@ -89,7 +89,6 @@ export default class UserRepository {
 
             const user = await userModel.findByIdAndUpdate(id, { $set: updateData, updated_at: new Date }, { new: true }).select("-password").populate("friends", { userName: 1, name: 1, photo: 1, occupation: 1, _id: 1 });
 
-
             if (!user) {
                 const error = {
                     error: true,
