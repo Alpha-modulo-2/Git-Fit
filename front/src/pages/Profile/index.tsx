@@ -120,24 +120,16 @@ export const Profile = () => {
 
     const countTrainingCheckboxes = () => {
         const totalDays = cardData.length;
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        const checkedDays = Array.isArray(cardData) ? cardData.filter((day) => day.trainingCard.checked).length : 0;
-        if (isNaN(checkedDays)) {
-            return 0;
-        } else {
-            return (checkedDays / totalDays) * 100;
-        }
+        const checkedDays = cardData.filter((day) => day.trainingCard.checked).length;
+
+        return totalDays > 0 ? (checkedDays / totalDays) * 100 : 0;
     };
 
     const countMealCheckboxes = () => {
         const totalDays = cardData.length;
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        const checkedDays = Array.isArray(cardData) ? cardData.filter((day) => day.mealsCard.checked).length : 0;
-        if (isNaN(checkedDays)) {
-            return 0;
-        } else {
-            return (checkedDays / totalDays) * 100;
-        }
+        const checkedDays = cardData.filter((day) => day.mealsCard.checked).length;
+
+        return totalDays > 0 ? (checkedDays / totalDays) * 100 : 0;
     };
 
     const changeversion = () => {
