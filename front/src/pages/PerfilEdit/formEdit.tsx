@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 interface FormProps {
   onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
@@ -29,7 +29,8 @@ interface FormProps {
 
 export default function EditForm(props: FormProps) {
   const [isProfessional, setIsProfessional] = useState(false);
-  const [selectedPhoto, setSelectedPhoto] = useState<string | null>(null);
+  const [occupation, setOccupation] = useState('');
+  const [selectedPhoto, setSelectedPhoto] = useState<string>(`./uploads/${props.inputsPhotoValue}`);
 
   const handleLocalPhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -43,6 +44,22 @@ export default function EditForm(props: FormProps) {
       };
 
       reader.readAsDataURL(file);
+    }
+  };
+
+  useEffect(() => {
+    if (props.inputsOccupationValue) {
+      setIsProfessional(true);
+      setOccupation(props.inputsOccupationValue);
+    }
+  }, [props.inputsOccupationValue]);
+
+  const handleSwitchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const isChecked: boolean = e.target.checked
+    setIsProfessional(isChecked);
+
+    if (!isChecked) {
+      setOccupation('');
     }
   };
 
@@ -71,34 +88,27 @@ export default function EditForm(props: FormProps) {
       <div className="menu-edit">
         <div className="container-first-content-edit">
           <div className="container-choose-photo-edit">
-            <form encType="multipart/form-data" 
-              method="PATCH" 
-              action="/upload">
-              {selectedPhoto ? (
-                <img
-                  src={selectedPhoto}
-                  alt="Selected"
-                  className="custom-file-label-edit"
-                  onClick={() => {
-                    const input = document.getElementById("photo-upload");
-                    if (input) {
-                      input.click();
-                    }
-                  }}
-                />
-              ) : (
-                <label htmlFor="photo-upload" className="custom-file-label-edit">
-                </label>
-              )}
-              <input
-                id="photo-upload"
-                className="custom-file-input-edit"
-                type="file"
-                name="photo"
-                accept="image/*"
-                onChange={handleLocalPhotoChange}
-              />
-            </form>
+          <form encType="multipart/form-data" method="PATCH" action="/upload">
+            <img
+              src={selectedPhoto}
+              alt="Foto do usuário"
+              className="custom-file-label-edit"
+              onClick={() => {
+                const input = document.getElementById("photo-upload");
+                if (input) {
+                  input.click();
+                }
+              }}
+            />
+            <input
+              id="photo-upload"
+              className="custom-file-input-edit"
+              type="file"
+              name="photo"
+              accept="image/*"
+              onChange={handleLocalPhotoChange}
+            />
+          </form>
             <label htmlFor="photo-upload"><p>Alterar foto</p></label>
           </div>
 
@@ -108,6 +118,7 @@ export default function EditForm(props: FormProps) {
             placeholder="Nome do Usuário"
             value={props.inputsUserNameValue}
             onChange={props.handleUserNameChange}
+            minLength={5}
           />
 
           <input
@@ -124,7 +135,7 @@ export default function EditForm(props: FormProps) {
             placeholder="Idade"
             value={props.inputsAgeValue || ''}
             onChange={props.handleAgeChange}
-          />
+        />
 
           <select
             className="select-gender-edit"
@@ -145,6 +156,7 @@ export default function EditForm(props: FormProps) {
             placeholder="Nome Completo"
             value={props.inputNameValue}
             onChange={props.handleNameChange}
+            minLength={5}
           />
             <input
               type="text"
@@ -182,9 +194,7 @@ export default function EditForm(props: FormProps) {
             </label>
 
             <label className="switch">
-              <input type="checkbox" 
-              value={props.inputsOccupationValue}
-                onChange={handleOccupationChange} />
+              <input type="checkbox" checked={isProfessional} onChange={handleSwitchChange} />
               <span className="sliderR-round"></span>
             </label>
           </div>
@@ -194,7 +204,8 @@ export default function EditForm(props: FormProps) {
               type="text"
               className="input-edit"
               placeholder="Profissão"
-              onChange={props.handleOccupationChange}
+              value={occupation}
+              onChange={handleOccupationChange}
             />
           )}
         </div>
