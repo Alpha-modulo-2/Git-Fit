@@ -5,7 +5,7 @@
   padding: 0;
   font-family: "Poppins", sans-serif;
 }
-.form-register-allcontent{
+.form-register-allcontent {
   display: flex;
   justify-content: center;
   padding: 1.5rem 3rem;
@@ -52,12 +52,12 @@
   padding-top: 2rem;
 }
 
-.container-choose-photo-register{
+.container-choose-photo-register {
   display: flex;
   align-items: center;
   gap: 5px;
 }
-.container-choose-photo-register p{
+.container-choose-photo-register p {
   font-size: 12px;
   font-weight: 500;
   color: rgba(115, 83, 186, 1);
@@ -224,17 +224,15 @@ input:checked + .sliderR-round:before {
   font-size: 77%;
 }
 
-.input-register-age::-webkit-inner-spin-button { 
+.input-register-age::-webkit-inner-spin-button {
   -webkit-appearance: none;
-  
 }
-.input-register-age { 
+.input-register-age {
   -moz-appearance: textfield;
   appearance: textfield;
- 
- }
+}
 
- .select-gender-register{
+.select-gender-register {
   width: 100%;
   height: 6.5vh;
   color: rgb(0, 0, 0);
@@ -246,15 +244,13 @@ input:checked + .sliderR-round:before {
   caret-color: black;
   padding: 2% 5% 3% 2%;
   outline: 0;
- }
- .select-gender-register:focus{
-  outline: 0;
- }
- .select-gender-register option:not(:disabled) {
-  color: rgba(115, 83, 186, 1); 
 }
-
-
+.select-gender-register:focus {
+  outline: 0;
+}
+.select-gender-register option:not(:disabled) {
+  color: rgba(115, 83, 186, 1);
+}
 
 /* Button config */
 .divregisterprofessionalProfile {
@@ -297,10 +293,10 @@ input:checked + .sliderR-round:before {
   .menu-register {
     display: flex;
     flex-direction: column;
-    gap: 0rem; 
+    gap: 0rem;
     padding-top: 110px;
   }
-  .container-choose-photo-register{
+  .container-choose-photo-register {
     flex-direction: column;
     justify-content: center;
   }
@@ -308,10 +304,10 @@ input:checked + .sliderR-round:before {
     padding: 2% 5% 3% 5%;
     height: 40px;
   }
-  .select-gender-register{
+  .select-gender-register {
     height: 40px;
-   }
-  .form-register-allcontent{
+  }
+  .form-register-allcontent {
     max-height: 600px;
     overflow-y: auto;
   }
@@ -327,19 +323,20 @@ input:checked + .sliderR-round:before {
   .container-second-content-register {
     padding-top: 0.6rem;
   }
-  .input-weight-register, .input-hight-register {
+  .input-weight-register,
+  .input-hight-register {
     height: 52px;
   }
 }
 
 @media (min-width: 781px) and (max-width: 900px) {
-  .container-register-content{
+  .container-register-content {
     width: 80%;
-  }  
+  }
 }
 
 @media (min-width: 781px) and (max-width: 1100px) {
-  .container-register-content{
+  .container-register-content {
     width: 65%;
-  }  
+  }
 }

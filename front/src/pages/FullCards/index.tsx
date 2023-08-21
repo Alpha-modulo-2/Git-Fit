@@ -9,7 +9,7 @@ import { useParams } from 'react-router-dom';
 import { useAuth } from '../../context/authContext';
 import { Chat } from "../../components/Chat";
 import { generalRequest } from "../../generalFunction";
-
+import { PencilSimple, X } from "@phosphor-icons/react";
 
 interface CardData {
     card: [{}]
@@ -370,9 +370,18 @@ export const FullCard = () => {
                                                 <p>{option.description}</p>
                                                 {isEditingTraining && showEditButtons && (
                                                     <div className="edit_buttons">
-                                                        <Button category="edit_cards" label="E" onClick={() => handleEditTrainingClick(index)} />
-                                                        <Button category="edit_cards" label="X" onClick={() => handleDeleteTrainingClick(index)} />
-                                                    </div>
+                                                         <PencilSimple
+                                                            size={16}
+                                                            color="white"
+                                                            className="icons-edit-card"
+                                                            onClick={() => handleEditTrainingClick(index)}
+                                                        />
+                                                        <X
+                                                            size={16}
+                                                            color="white"
+                                                            className="icons-edit-card"
+                                                            onClick={() => handleDeleteTrainingClick(index)}
+                                                        />                          </div>
                                                 )}
                                             </li>
                                         ))}

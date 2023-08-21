@@ -131,9 +131,10 @@ align-items: center;
 
 .edit_form_meal input, .edit_form_training input{
 width: 68%;
-border-radius: 5rem;
+border-radius: 0.5rem;
 padding: 0.3rem;
 font-size: 90%;
+background-color: rgba(255, 255, 255, 0.786);
 }
 
 .add_form_meal input{
@@ -178,7 +179,7 @@ background-color: rgb(106, 99, 99);
 .task_line, .meal_line{
 display: flex;
 align-items: center;
-justify-content: flex-start;
+justify-content: space-between;
 }
 
 .task_line p{
@@ -254,4 +255,9 @@ z-index: 2;
 width: 40px;
 height: 40px;
 background-color: black;
+}
+
+.icons-edit-card:hover{
+  scale: 1.2;
+  cursor: pointer;
 }
