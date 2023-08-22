@@ -64,6 +64,7 @@ export default function EditForm(props: FormProps) {
 
   const handleOccupationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setIsProfessional(e.target.checked);
+    props.handleOccupationChange(e);
   };
 
   const handleWeightChange = (event: React.ChangeEvent<HTMLInputElement>) => {
