@@ -162,6 +162,7 @@ export const FullCard = () => {
             const updatedCard = updatedData.card.find((card) => card.name === selectedDay?.name);
             if (updatedCard) {
                 setMealsCard(updatedCard.mealsCard);
+                setDataChanged(!dataChanged);
             }
         } catch (error) {
             console.error('Erro ao adicionar nova refeição', error);
@@ -187,6 +188,7 @@ export const FullCard = () => {
 
                 if (updatedCard) {
                     setTrainingCard(updatedCard.trainingCard);
+                    setDataChanged(!dataChanged);
                 }
             } else {
                 console.error('Erro ao adicionar nova tarefa', response);
@@ -201,7 +203,6 @@ export const FullCard = () => {
         const description = trainingCard.tasks[index].description;
         setEditedTaskDescription(description);
         setIsEditingTraining(true);
-        setShowEditButtons(true);
         setEditingTaskIndex(index);
     };
 
@@ -210,7 +211,6 @@ export const FullCard = () => {
         const description = mealsCard.meals[index].description;
         setEditedMealDescription(description);
         setIsEditingMeal(true);
-        setShowEditMealButtons(true);
         setEditingMealIndex(index);
     };
 
@@ -225,6 +225,7 @@ export const FullCard = () => {
             const updatedCard = updatedData.card.find((card) => card.name === selectedDay?.name);
             if (updatedCard) {
                 setTrainingCard(updatedCard.trainingCard);
+                setDataChanged(!dataChanged);
             }
         } catch (error) {
             console.error('Erro ao excluir treino', error);
@@ -242,6 +243,7 @@ export const FullCard = () => {
             const updatedCard = updatedData.card.find((card) => card.name === selectedDay?.name);
             if (updatedCard) {
                 setMealsCard(updatedCard.mealsCard);
+                setDataChanged(!dataChanged);
             }
             
         } catch (error) {
@@ -258,8 +260,7 @@ export const FullCard = () => {
     const [newMealDescription, setNewMealDescription] = useState('');
     const [newTrainingDescription, setNewTrainingDescription] = useState('');
 
-    const [showEditButtons, setShowEditButtons] = useState(false);
-    const [showEditMealButtons, setShowEditMealButtons] = useState(false);
+
 
     const [showMiniCarrosel, setShowMiniCarrossel] = useState(true);
 
@@ -271,7 +272,6 @@ export const FullCard = () => {
 
     const handleEditCardTrainingSubmit = async () => {
         setIsEditingTraining(false);
-        setShowEditButtons(false);
         const updatedTaskDescription = editedTaskDescription;
         const editingTaskId = trainingCard.tasks[editingTaskIndex]._id;
         try {
@@ -283,10 +283,10 @@ export const FullCard = () => {
             const updatedCardResponse = await generalRequest(`/allcards/${userId}`) as CardDataTest;
             const updatedData = updatedCardResponse;
             const updatedCard = updatedData.card.find((card) => card.name === selectedDay?.name);
-
             if (updatedCard) {
                 setTrainingCard(updatedCard.trainingCard);
-                setEditedTaskDescription('')
+                setEditedTaskDescription('');
+                updateDailyCards();
             }
         } catch (error) {
             console.error('Erro ao atualizar a tarefa', error);
@@ -295,7 +295,6 @@ export const FullCard = () => {
 
     const handleEditCardMealSubmit = async () => {
         setIsEditingMeal(false);
-        setShowEditMealButtons(false);
 
         const updatedMealDescription = editedMealDescription;
         const editingMealId = mealsCard.meals[editingMealIndex]._id;
@@ -309,25 +308,15 @@ export const FullCard = () => {
             const updatedCardResponse = await generalRequest(`/allcards/${userId}`) as CardDataTest;
             const updatedData = updatedCardResponse;
             const updatedCard = updatedData.card.find((card) => card.name === selectedDay?.name);
-
             if (updatedCard) {
                 setMealsCard(updatedCard.mealsCard);
+                updateDailyCards();
             }
         } catch (error) {
             console.error('Erro ao atualizar a refeição', error);
         }
     };
-
-    const EditCardTraining = () => {
-        setIsEditingTraining(true);
-        setShowEditButtons(true);
-    };
-
-    const EditCardMeal = () => {
-        setIsEditingMeal(true);
-        setShowEditMealButtons(true)
-    };
-
+    
     const changeversion = () => {
         if (showMiniCarrosel) {
             setShowMiniCarrossel(false);
@@ -339,6 +328,17 @@ export const FullCard = () => {
     const handleChatToggle = (isOpen: boolean) => {
         setIsChatOpen(isOpen);
     };
+
+    
+    const [isHoveringTraining, setIsHoveringTraining] = useState(false);
+    const [isHoveringMeal, setIsHoveringMeal] = useState(false);
+
+    const [dataChanged, setDataChanged] = useState(false);
+
+    const updateDailyCards = () => {
+        setDataChanged(!dataChanged);
+    };
+
     return (
         <div className="fullcard">
             <Header isLoggedIn={true} />
@@ -357,7 +357,6 @@ export const FullCard = () => {
                     <div className="div_training_card">
                         <div className="title_training_card">
                             <h3>Treino:</h3>
-                            <Button category="primary" label="Editar Card" onClick={EditCardTraining} />
                         </div>
                         <div className="body_training_card">
                             <h3>{trainingCard.title}</h3>
@@ -367,9 +366,11 @@ export const FullCard = () => {
                                 <>
                                     <ul>
                                         {trainingCard.tasks.map((option, index) => (
-                                            <li key={index} className="task_line">
+                                            <li key={index} className="task_line"
+                                            onMouseEnter={() => setIsHoveringTraining(true)}
+                                            onMouseLeave={() => setIsHoveringTraining(false)}>
                                                 <p>{option.description}</p>
-                                                {isEditingTraining && showEditButtons && (
+                                                {isHoveringTraining && (
                                                     <div className="edit_buttons">
                                                         <PencilSimple
                                                             size={16}
@@ -424,7 +425,6 @@ export const FullCard = () => {
                     <div className="div_meal_card">
                         <div className="title_meal_card">
                             <h3>Refeições:</h3>
-                            <Button category="primary" label="Editar Card" onClick={EditCardMeal} />
                         </div>
                         <div className="body_meal_card">
                             {mealsCard.meals.length === 0 ? (
@@ -433,12 +433,24 @@ export const FullCard = () => {
                                 <>
                                     {mealsCard.meals.map((mealOption, index) => (
                                         <div key={index} className={`ul_meal_0${index + 1}`}>
-                                            <div className="meal_line">
+                                            <div className="meal_line"
+                                                onMouseEnter={() => setIsHoveringMeal(true)}
+                                                onMouseLeave={() => setIsHoveringMeal(false)}>
                                                 <h3>{mealOption.description}</h3>
-                                                {isEditingMeal && showEditMealButtons && (
+                                                {isHoveringMeal && (
                                                     <div className="edit_buttons">
-                                                        <Button category="edit_cards" label="E" onClick={() => handleEditMealClick(index)} />
-                                                        <Button category="edit_cards" label="X" onClick={() => handleDeleteMealClick(index)} />
+                                                        <PencilSimple
+                                                            size={16}
+                                                            color="white"
+                                                            className="icons-edit-card"
+                                                            onClick={() => handleEditMealClick(index)}
+                                                        />
+                                                        <X
+                                                            size={16}
+                                                            color="white"
+                                                            className="icons-edit-card"
+                                                            onClick={() => handleDeleteMealClick(index)}
+                                                        />       
                                                     </div>
                                                 )}
                                             </div>
@@ -488,13 +500,13 @@ export const FullCard = () => {
                 </div>
                 {!isChatOpen ? (
                     <div className="structure-carrossel-fc">
-                        <DailyCard week_number={0} onClick={() => navigate('/fullcard/0')}></DailyCard>
-                        <DailyCard week_number={1} onClick={() => navigate('/fullcard/1')}></DailyCard>
-                        <DailyCard week_number={2} onClick={() => navigate('/fullcard/2')}></DailyCard>
-                        <DailyCard week_number={3} onClick={() => navigate('/fullcard/3')}></DailyCard>
-                        <DailyCard week_number={4} onClick={() => navigate('/fullcard/4')}></DailyCard>
-                        <DailyCard week_number={5} onClick={() => navigate('/fullcard/5')}></DailyCard>
-                        <DailyCard week_number={6} onClick={() => navigate('/fullcard/6')}></DailyCard>
+                        <DailyCard week_number={0} dataChanged={dataChanged} onClick={() => navigate('/fullcard/0')}></DailyCard>
+                        <DailyCard week_number={1} dataChanged={dataChanged} onClick={() => navigate('/fullcard/1')}></DailyCard>
+                        <DailyCard week_number={2} dataChanged={dataChanged} onClick={() => navigate('/fullcard/2')}></DailyCard>
+                        <DailyCard week_number={3} dataChanged={dataChanged} onClick={() => navigate('/fullcard/3')}></DailyCard>
+                        <DailyCard week_number={4} dataChanged={dataChanged} onClick={() => navigate('/fullcard/4')}></DailyCard>
+                        <DailyCard week_number={5} dataChanged={dataChanged} onClick={() => navigate('/fullcard/5')}></DailyCard>
+                        <DailyCard week_number={6} dataChanged={dataChanged} onClick={() => navigate('/fullcard/6')}></DailyCard>
                     </div>
                 ) : (
                     <div className="structure-minicarrossel">

@@ -120,24 +120,16 @@ export const Profile = () => {
 
     const countTrainingCheckboxes = () => {
         const totalDays = cardData.length;
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        const checkedDays = Array.isArray(cardData) ? cardData.filter((day) => day.trainingCard.checked).length : 0;
-        if (isNaN(checkedDays)) {
-            return 0;
-        } else {
-            return (checkedDays / totalDays) * 100;
-        }
+        const checkedDays = cardData.filter((day) => day.trainingCard.checked).length;
+
+        return totalDays > 0 ? (checkedDays / totalDays) * 100 : 0;
     };
 
     const countMealCheckboxes = () => {
         const totalDays = cardData.length;
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        const checkedDays = Array.isArray(cardData) ? cardData.filter((day) => day.mealsCard.checked).length : 0;
-        if (isNaN(checkedDays)) {
-            return 0;
-        } else {
-            return (checkedDays / totalDays) * 100;
-        }
+        const checkedDays = cardData.filter((day) => day.mealsCard.checked).length;
+
+        return totalDays > 0 ? (checkedDays / totalDays) * 100 : 0;
     };
 
     const changeversion = () => {
@@ -188,13 +180,13 @@ export const Profile = () => {
                 </div>
                 {!isChatOpen ? (
                     <div className="structure-carrossel-fc">
-                        <DailyCard week_number={0} onClick={() => navigate('/fullcard/0')}></DailyCard>
-                        <DailyCard week_number={1} onClick={() => navigate('/fullcard/1')}></DailyCard>
-                        <DailyCard week_number={2} onClick={() => navigate('/fullcard/2')}></DailyCard>
-                        <DailyCard week_number={3} onClick={() => navigate('/fullcard/3')}></DailyCard>
-                        <DailyCard week_number={4} onClick={() => navigate('/fullcard/4')}></DailyCard>
-                        <DailyCard week_number={5} onClick={() => navigate('/fullcard/5')}></DailyCard>
-                        <DailyCard week_number={6} onClick={() => navigate('/fullcard/6')}></DailyCard>
+                        <DailyCard week_number={0} dataChanged={false} onClick={() => navigate('/fullcard/0')}></DailyCard>
+                        <DailyCard week_number={1} dataChanged={false} onClick={() => navigate('/fullcard/1')}></DailyCard>
+                        <DailyCard week_number={2} dataChanged={false} onClick={() => navigate('/fullcard/2')}></DailyCard>
+                        <DailyCard week_number={3} dataChanged={false} onClick={() => navigate('/fullcard/3')}></DailyCard>
+                        <DailyCard week_number={4} dataChanged={false} onClick={() => navigate('/fullcard/4')}></DailyCard>
+                        <DailyCard week_number={5} dataChanged={false} onClick={() => navigate('/fullcard/5')}></DailyCard>
+                        <DailyCard week_number={6} dataChanged={false} onClick={() => navigate('/fullcard/6')}></DailyCard>
                     </div>
                 ) : (
                     <div className="structure-minicarrossel">
