@@ -54,7 +54,7 @@ const RegisterForm: React.FC<FormProps> = (props) => {
 
   const handleWeightChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    const formattedValue = value.replace(/[^0-9]/g, "") + "kg";
+    const formattedValue = value.replace(/[^0-9]/g, "");
     props.handleWeightChange({
       target: { value: formattedValue },
     } as React.ChangeEvent<HTMLInputElement>);
@@ -62,7 +62,7 @@ const RegisterForm: React.FC<FormProps> = (props) => {
 
   const handleHeightChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    const formattedValue = value.replace(/[^0-9]/g, "") + "cm";
+    const formattedValue = value.replace(/[^0-9]/g, "");
     props.handleHeightChange({
       target: { value: formattedValue },
     } as React.ChangeEvent<HTMLInputElement>);
@@ -140,37 +140,37 @@ const RegisterForm: React.FC<FormProps> = (props) => {
         <div className="container-second-content-register">
           <div className="weightHight-register">
             <input
-              type="text"
-              className="input-register"
-              placeholder="Nome Completo"
-              onChange={props.handleNameChange}
-              value={props.nameValue}
-              minLength={5}
+                type="text"
+                className="input-register"
+                placeholder="Nome Completo"
+                onChange={props.handleNameChange}
+                value={props.nameValue}
+                minLength={6}
             />
-            <input
-              type="text"
-              className="input-weight-register"
-              placeholder="Peso"
-              onChange={handleWeightChange}
-              value={props.weightValue}
-            />
-            <input
-              type="text"
-              className="input-hight-register"
-              placeholder="Altura"
-              onChange={handleHeightChange}
-              value={props.heightValue}
-            />
+            <div className="container-height-weight-register">
+              <div  className="container-input-weight-register">
+                <input
+                  type="text"
+                  className="input-weight-register"
+                  placeholder="Peso"
+                  onChange={handleWeightChange}
+                  value={props.weightValue}
+                />
+                  <p className="input-weight-register-text">kg</p>
+              </div>
+              <div className="container-input-hight-register">
+                <input
+                  type="text"
+                  className="input-hight-register"
+                  placeholder="Altura"
+                  onChange={handleHeightChange}
+                  value={props.heightValue}
+                />
+                  <p className="input-hight-register-text">cm</p>
+              </div>
+            </div>
+
           </div>
-
-          <input
-            type="password"
-            className="input-register"
-            placeholder="Senha"
-            onChange={props.handlePasswordChange}
-            minLength={5}
-          />
-
           <input
             type="password"
             className="input-register"

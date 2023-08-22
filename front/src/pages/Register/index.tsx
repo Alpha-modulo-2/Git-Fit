@@ -104,8 +104,8 @@ export const Register = () => {
       formData.append("photo", photoValue, fileName);
     }
     formData.append("gender", genderValue);
-    formData.append("weight", weightValue);
-    formData.append("height", heightValue);
+    formData.append("weight", `${weightValue}kg`);
+    formData.append("height", `${heightValue}cm`);
     formData.append("occupation", occupationValue);
     formData.append("age", ageValue);
 
@@ -181,11 +181,11 @@ export const Register = () => {
   };
 
   const handleWeightChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setWeightValue(event.target.value);
+    setWeightValue(`${event.target.value}`);
   };
 
   const handleHeightChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setHeightValue(event.target.value);
+    setHeightValue(`${event.target.value}`);
   };
 
   const handleOccupationChange = (

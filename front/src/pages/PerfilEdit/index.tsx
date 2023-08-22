@@ -69,10 +69,13 @@ export const PerfilEdit = () => {
             setEmailValue(user.email);
             setPhotoValue(user.photo || '');
             setGenderValue(user.gender);
-            setWeightValue(user.weight);
-            setHeightValue(user.height);
             setOccupationValue(user.occupation);
             setAgeValue(user.age || 0);
+            const weightNumeric = user.weight.replace(/\D/g, "");
+            const heightNumeric = user.height.replace(/\D/g, "");
+
+            setWeightValue(weightNumeric);
+            setHeightValue(heightNumeric);
         }
     }, [user]);
 
@@ -113,10 +116,10 @@ export const PerfilEdit = () => {
             formData.append("gender", updatedGenderValue);
         }
         if (updatedWeightValue !== null && updatedWeightValue !== undefined && updatedWeightValue !== '') {
-            formData.append("weight", updatedWeightValue);
+            formData.append("weight", `${updatedWeightValue}kg`);
         }
         if (updatedHeightValue !== null && updatedHeightValue !== undefined && updatedHeightValue !== '') {
-            formData.append("height", updatedHeightValue);
+            formData.append("height", `${updatedHeightValue}cm`);
         }
         if (updatedOccupationValue !== null && updatedOccupationValue !== undefined && updatedOccupationValue !== '') {
             formData.append("occupation", updatedOccupationValue);
@@ -190,11 +193,11 @@ export const PerfilEdit = () => {
         }
     };
     const handleWeightChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setUpdatedWeightValue(event.target.value);
+        setUpdatedWeightValue(`${event.target.value}kg`);
         setWeightValue(event.target.value);
     };
     const handleHeightChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setUpdatedHeightValue(event.target.value);
+        setUpdatedHeightValue(`${event.target.value}cm`);
         setHeightValue(event.target.value);
     };
     const handleOccupationChange = (event: React.ChangeEvent<HTMLInputElement>) => {

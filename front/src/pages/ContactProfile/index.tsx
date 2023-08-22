@@ -71,6 +71,9 @@ export const Contact_profile: React.FC = () => {
     }
 
     const convertToNumber = (stringValue: string) => {
+        if (stringValue === undefined || stringValue === null) {
+            return 0; 
+        }
         const numericValue = stringValue.replace(/\D/g, '');
         const numberValue = parseFloat(numericValue) / (stringValue.includes('cm') ? 100 : 1);
         return numberValue;
@@ -177,6 +180,28 @@ export const Contact_profile: React.FC = () => {
             });
     }
 
+    function removeFriend(userId: string, friendId: string): void {
+        const response = generalRequest(`/user/${userId}/friend/${friendId}`, undefined , 'DELETE');
+        response.then(response => {
+        if (response && typeof response === 'object' && 'status' in response) {
+        if (response.status === 204) {
+            setMessageModal("Amigo removido com sucesso!")
+            openModal();
+            setisFriend(false);
+        } else {
+            setMessageModal("Erro ao remover amizade")
+            openModal()
+        }
+        } else {
+        setMessageModal("Não foi possível remover a amizade")
+        openModal()
+        }
+        })
+        .catch(error => {
+            console.error('Erro na requisição:', error);
+        });
+    }
+    
     const progress1 = parseInt(countMealCheckboxes().toFixed(0));
     const progress2 = parseInt(countTrainingCheckboxes().toFixed(0));
 
@@ -186,8 +211,10 @@ export const Contact_profile: React.FC = () => {
             <div className="structure-contact-profile">
                 <div className="container-contact-profile">
                     <div className="div-buttonAdd">
-                        {!isFriend && (
-                            <button className="buttonAdd" onClick={() => addFriends(user?._id, id)}>Adicionar ao Time</button>
+                        {!isFriend ? (
+                            <button className="buttonAdd" onClick={ () => addFriends(user?._id, id)}>Adicionar contato</button>
+                        ): (
+                            <button className="buttonAdd" onClick={ () => removeFriend(user?._id, id)}>Remover contato</button>
                         )}
                     </div>
                     <PhotoProfile user_name={user_name} url_photo={`/uploads/${user_photo}`} />

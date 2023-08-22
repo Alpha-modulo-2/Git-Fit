@@ -9,6 +9,7 @@
   display: flex;
   justify-content: center;
   padding: 1.5rem 3rem;
+  width: 100%;
   gap: 1rem;
 }
 /* All content */
@@ -36,6 +37,24 @@
 .menu-register {
   display: flex;
   gap: 4rem;
+  width: 100%;
+}
+
+.container-height-weight-register {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+.container-input-weight-register,
+.container-input-hight-register {
+  display: flex;
+  width: 49%;
+  justify-content: center;
+  border-bottom: 1px solid rgb(0, 0, 0);
+}
+
+.container-input-hight-register {
+  justify-content: center;
 }
 
 .container-first-content-register,
@@ -121,21 +140,7 @@
   color: rgba(115, 83, 186, 1);
 }
 
-.input-weight-register {
-  font-size: 77%;
-  color: black;
-  background-color: transparent;
-  color: rgba(115, 83, 186, 1);
-  background: transparent !important;
-  font-weight: bold;
-  border-bottom: 1px solid rgb(0, 0, 0);
-  width: 50%;
-  height: 7.6vh;
-  outline: none;
-  caret-color: black;
-  padding: 2% 5% 3% 5%;
-}
-
+.input-weight-register,
 .input-hight-register {
   font-size: 77%;
   color: black;
@@ -143,12 +148,29 @@
   color: rgba(115, 83, 186, 1);
   background: transparent !important;
   font-weight: bold;
+  width: 45%;
+  height: 7.6vh;
+  outline: none;
+  caret-color: black;
+  padding: 2% 5% 3% 5%;
+}
+
+.input-weight-register-text,
+.input-hight-register-text {
+  font-size: 77%;
+  color: black;
+  background-color: transparent;
+  color: rgba(115, 83, 186, 1);
+  background: transparent !important;
+  font-weight: bold;
   border-bottom: 1px solid rgb(0, 0, 0);
   width: 50%;
   height: 7.6vh;
   outline: none;
   caret-color: black;
   padding: 2% 5% 3% 5%;
+  display: flex;
+  align-items: center;
 }
 
 .input-hight-register::placeholder,
@@ -215,7 +237,6 @@ input:checked + .sliderR-round:before {
 .divButton-register {
   display: flex;
   justify-content: center;
-  padding: 2%;
 }
 
 /* Button config */
