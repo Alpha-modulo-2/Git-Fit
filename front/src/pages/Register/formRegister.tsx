@@ -169,8 +169,15 @@ const RegisterForm: React.FC<FormProps> = (props) => {
                   <p className="input-hight-register-text">cm</p>
               </div>
             </div>
-
           </div>
+
+          <input
+            type="password"
+            className="input-register"
+            placeholder="Senha"
+            onChange={props.handlePasswordChange}
+          />
+
           <input
             type="password"
             className="input-register"

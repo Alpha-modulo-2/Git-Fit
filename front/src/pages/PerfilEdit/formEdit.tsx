@@ -40,6 +40,7 @@ export default function EditForm(props: FormProps) {
 
       reader.onload = () => {
         setSelectedPhoto(reader.result as string);
+        props.handlePhotoChange(e);
       };
 
       reader.readAsDataURL(file);
@@ -64,7 +65,6 @@ export default function EditForm(props: FormProps) {
 
   const handleOccupationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setIsProfessional(e.target.checked);
-    props.handleOccupationChange(e);
   };
 
   const handleWeightChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -149,8 +149,18 @@ export default function EditForm(props: FormProps) {
         </div>
 
         <div className="container-second-content-edit">
+          <input
+                type="text"
+                className="input-edit"
+                placeholder="Nome Completo"
+                value={props.inputNameValue}
+                onChange={props.handleNameChange}
+                minLength={5}
+              />
           <div className="container-height-weight-edit">
+            
             <div  className="container-input-weight-edit">
+
               <input
                 type="text"
                 className="input-weight-edit"
