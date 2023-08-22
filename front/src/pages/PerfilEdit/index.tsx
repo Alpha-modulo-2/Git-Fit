@@ -117,8 +117,10 @@ export const PerfilEdit = () => {
         }
         if (updatedWeightValue !== null && updatedWeightValue !== undefined && updatedWeightValue !== '') {
             formData.append("weight", `${updatedWeightValue}kg`);
+        }
         if (updatedHeightValue !== null && updatedHeightValue !== undefined && updatedHeightValue !== '') {
             formData.append("height", `${updatedHeightValue}cm`);
+        }
         if (updatedOccupationValue !== null && updatedOccupationValue !== undefined && updatedOccupationValue !== '') {
             formData.append("occupation", updatedOccupationValue);
         }
