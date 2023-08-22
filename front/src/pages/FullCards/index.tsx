@@ -162,6 +162,7 @@ export const FullCard = () => {
             const updatedCard = updatedData.card.find((card) => card.name === selectedDay?.name);
             if (updatedCard) {
                 setMealsCard(updatedCard.mealsCard);
+                setDataChanged(!dataChanged);
             }
         } catch (error) {
             console.error('Erro ao adicionar nova refeição', error);
@@ -187,6 +188,7 @@ export const FullCard = () => {
 
                 if (updatedCard) {
                     setTrainingCard(updatedCard.trainingCard);
+                    setDataChanged(!dataChanged);
                 }
             } else {
                 console.error('Erro ao adicionar nova tarefa', response);
@@ -223,6 +225,7 @@ export const FullCard = () => {
             const updatedCard = updatedData.card.find((card) => card.name === selectedDay?.name);
             if (updatedCard) {
                 setTrainingCard(updatedCard.trainingCard);
+                setDataChanged(!dataChanged);
             }
         } catch (error) {
             console.error('Erro ao excluir treino', error);
@@ -240,6 +243,7 @@ export const FullCard = () => {
             const updatedCard = updatedData.card.find((card) => card.name === selectedDay?.name);
             if (updatedCard) {
                 setMealsCard(updatedCard.mealsCard);
+                setDataChanged(!dataChanged);
             }
             
         } catch (error) {
@@ -279,10 +283,10 @@ export const FullCard = () => {
             const updatedCardResponse = await generalRequest(`/allcards/${userId}`) as CardDataTest;
             const updatedData = updatedCardResponse;
             const updatedCard = updatedData.card.find((card) => card.name === selectedDay?.name);
-
             if (updatedCard) {
                 setTrainingCard(updatedCard.trainingCard);
-                setEditedTaskDescription('')
+                setEditedTaskDescription('');
+                updateDailyCards();
             }
         } catch (error) {
             console.error('Erro ao atualizar a tarefa', error);
@@ -304,9 +308,9 @@ export const FullCard = () => {
             const updatedCardResponse = await generalRequest(`/allcards/${userId}`) as CardDataTest;
             const updatedData = updatedCardResponse;
             const updatedCard = updatedData.card.find((card) => card.name === selectedDay?.name);
-
             if (updatedCard) {
                 setMealsCard(updatedCard.mealsCard);
+                updateDailyCards();
             }
         } catch (error) {
             console.error('Erro ao atualizar a refeição', error);
@@ -329,7 +333,11 @@ export const FullCard = () => {
     const [isHoveringTraining, setIsHoveringTraining] = useState(false);
     const [isHoveringMeal, setIsHoveringMeal] = useState(false);
 
-    console.log()
+    const [dataChanged, setDataChanged] = useState(false);
+
+    const updateDailyCards = () => {
+        setDataChanged(!dataChanged);
+    };
 
     return (
         <div className="fullcard">
@@ -492,13 +500,13 @@ export const FullCard = () => {
                 </div>
                 {!isChatOpen ? (
                     <div className="structure-carrossel-fc">
-                        <DailyCard week_number={0} onClick={() => navigate('/fullcard/0')}></DailyCard>
-                        <DailyCard week_number={1} onClick={() => navigate('/fullcard/1')}></DailyCard>
-                        <DailyCard week_number={2} onClick={() => navigate('/fullcard/2')}></DailyCard>
-                        <DailyCard week_number={3} onClick={() => navigate('/fullcard/3')}></DailyCard>
-                        <DailyCard week_number={4} onClick={() => navigate('/fullcard/4')}></DailyCard>
-                        <DailyCard week_number={5} onClick={() => navigate('/fullcard/5')}></DailyCard>
-                        <DailyCard week_number={6} onClick={() => navigate('/fullcard/6')}></DailyCard>
+                        <DailyCard week_number={0} dataChanged={dataChanged} onClick={() => navigate('/fullcard/0')}></DailyCard>
+                        <DailyCard week_number={1} dataChanged={dataChanged} onClick={() => navigate('/fullcard/1')}></DailyCard>
+                        <DailyCard week_number={2} dataChanged={dataChanged} onClick={() => navigate('/fullcard/2')}></DailyCard>
+                        <DailyCard week_number={3} dataChanged={dataChanged} onClick={() => navigate('/fullcard/3')}></DailyCard>
+                        <DailyCard week_number={4} dataChanged={dataChanged} onClick={() => navigate('/fullcard/4')}></DailyCard>
+                        <DailyCard week_number={5} dataChanged={dataChanged} onClick={() => navigate('/fullcard/5')}></DailyCard>
+                        <DailyCard week_number={6} dataChanged={dataChanged} onClick={() => navigate('/fullcard/6')}></DailyCard>
                     </div>
                 ) : (
                     <div className="structure-minicarrossel">

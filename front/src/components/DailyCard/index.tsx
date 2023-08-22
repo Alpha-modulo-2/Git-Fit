@@ -33,27 +33,28 @@ interface Meal {
 
 interface CardDataTest {
   card: {
-      trainingCard: {
-          checked: boolean;
-          title: string;
-          tasks: Task[];
-      };
-      mealsCard: {
-          checked: boolean;
-          meals: Meal[];
-      };
-      _id: string;
-      userId: string;
-      name: string;
-      created_at: string;
-      updated_at: string;
-      __v: number;
+    trainingCard: {
+      checked: boolean;
+      title: string;
+      tasks: Task[];
+    };
+    mealsCard: {
+      checked: boolean;
+      meals: Meal[];
+    };
+    _id: string;
+    userId: string;
+    name: string;
+    created_at: string;
+    updated_at: string;
+    __v: number;
   }[];
 }
 
 interface PropTypes {
   week_number: number;
   onClick?: MouseEventHandler;
+  dataChanged: boolean;
 }
 
 const weekDays = [
@@ -64,37 +65,47 @@ const weekDays = [
   { id: 4, name: 'Quinta-feira' },
   { id: 5, name: 'Sexta-feira' },
   { id: 6, name: 'Sábado' },
-  { default: 'Adicione um card'}
+  { default: 'Adicione um card' }
 ];
 
-export const DailyCard = ({ week_number, onClick }: PropTypes) => {
+export const DailyCard = ({ week_number, onClick, dataChanged }: PropTypes) => {
 
   const { user } = useAuth();
   const userId = String(user?._id);
-  
-    const [cardData, setCardData] = useState<CardData[]>([]);
+
+  const [cardData, setCardData] = useState<CardData[]>([]);
   const [dataResponse, setDataResponse] = useState(false);
 
+  const [isDataLoaded, setIsDataLoaded] = useState(false);
+  
   useEffect(() => {
-    const fetchCardsData = async () => {
-      try {
-        const response = await generalRequest(`/allcards/${userId}`) as CardDataTest;
-        const data = response;
-        setCardData(data.card);
-        if (data) {
-          setDataResponse(true);
-        } else {
-          setDataResponse(false);
-        }
-      } catch (error) {
-        setDataResponse(false);
-        console.error('Erro ao buscar dados dos cards', error);
-      }
-    };
-    fetchCardsData().catch(error => {
-      console.error('Erro ao buscar dados dos cards', error);
-    });
-  }, [userId]);
+    if (!isDataLoaded) {
+        const fetchInitialCardsData = async () => {
+            try {
+                const response = await generalRequest(`/allcards/${userId}`) as CardDataTest;
+                const data = response;
+                setCardData(data.card);
+                if (data) {
+                    setDataResponse(true);
+                } else {
+                    setDataResponse(false);
+                }
+            } catch (error) {
+                setDataResponse(false);
+                console.error('Erro ao buscar dados dos cards', error);
+            }
+            setIsDataLoaded(true);
+        };
+
+        fetchInitialCardsData().catch(error => {
+            console.error('Erro ao buscar dados dos cards', error);
+        });
+    }
+}, [userId, isDataLoaded]);
+
+  useEffect(() => {
+      setIsDataLoaded(false);
+  }, [userId, dataChanged]);
 
   let daily_theme = "Nenhum";
   let daily_food = "Nenhum";
@@ -126,6 +137,12 @@ export const DailyCard = ({ week_number, onClick }: PropTypes) => {
       daily_food = "Nenhuma Refeição!";
     }
   }
+
+  useEffect(() => {
+    if (dataChanged) {
+
+    }
+  }, [dataChanged]);
 
   return (
     <div className="structure-daily-card" onClick={onClick}>
