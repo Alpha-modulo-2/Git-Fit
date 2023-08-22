@@ -195,7 +195,7 @@ width: 80%;
 color: white;
 width: 80%;
 height: 75%;
-padding: 1rem;
+padding-top: 1rem;
 display: flex;
 flex-direction: column;
 overflow-y: scroll;
@@ -260,4 +260,13 @@ background-color: black;
 .icons-edit-card:hover{
   scale: 1.2;
   cursor: pointer;
+}
+
+.edit-buttons {
+  display: none;
+}
+
+.meal-line:hover .edit-buttons,
+.task-line:hover .edit-buttons {
+  display: block;
 }

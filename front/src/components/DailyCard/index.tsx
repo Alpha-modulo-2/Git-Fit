@@ -73,40 +73,60 @@ export const DailyCard = ({ week_number, onClick }: PropTypes) => {
   const userId = String(user?._id);
   
     const [cardData, setCardData] = useState<CardData[]>([]);
-    const [dataResponse, setDataResponse] = useState(false);
+  const [dataResponse, setDataResponse] = useState(false);
 
-    useEffect(() => {
-      const fetchCardsData = async () => {
-        try {
-          const response = await generalRequest(`/allcards/${userId}`) as CardDataTest;
-          const data = response;
-          setCardData(data.card);
-          if(data){
-            setDataResponse(true);
-          }else{
-            setDataResponse(false);
-          }
-        } catch (error) {
+  useEffect(() => {
+    const fetchCardsData = async () => {
+      try {
+        const response = await generalRequest(`/allcards/${userId}`) as CardDataTest;
+        const data = response;
+        setCardData(data.card);
+        if (data) {
+          setDataResponse(true);
+        } else {
           setDataResponse(false);
-          console.error('Erro ao buscar dados dos cards', error);
         }
-      };
-      fetchCardsData().catch(error => {
-        console.error('Erro ao buscar dados dos cards', error); });
-    }, [userId]);
+      } catch (error) {
+        setDataResponse(false);
+        console.error('Erro ao buscar dados dos cards', error);
+      }
+    };
+    fetchCardsData().catch(error => {
+      console.error('Erro ao buscar dados dos cards', error);
+    });
+  }, [userId]);
 
-let daily_theme = "Nenhum";
-let daily_food = "Nenhum";
-if(dataResponse){
-  const currentCard = cardData.find((card) => card.name === weekDays[week_number].name);
-  if (!currentCard) {
-    return <div className="structure-daily-card">Card não encontrado para a semana selecionada.</div>;
+  let daily_theme = "Nenhum";
+  let daily_food = "Nenhum";
+
+  if (dataResponse) {
+    const currentCard = cardData.find((card) => card.name === weekDays[week_number].name);
+    if (!currentCard) {
+      return <div className="structure-daily-card">Card não encontrado para a semana selecionada.</div>;
+    }
+
+    const trainingTasks = currentCard.trainingCard.tasks;
+    const mealDescriptions = currentCard.mealsCard.meals.map((meal) => meal.description);
+
+    if (trainingTasks.length > 0) {
+      daily_theme = trainingTasks.slice(0, 2).map((task) => task.description).join(', ');
+      if (trainingTasks.length > 2) {
+        daily_theme += ', ...';
+      }
+    } else {
+      daily_theme = "Nenhum Treino!";
+    }
+
+    if (mealDescriptions.length > 0) {
+      daily_food = mealDescriptions.slice(0, 2).join(', ');
+      if (mealDescriptions.length > 2) {
+        daily_food += ', ...';
+      }
+    } else {
+      daily_food = "Nenhuma Refeição!";
+    }
   }
-  
-  daily_theme = currentCard.trainingCard.title;
-  daily_food = currentCard.mealsCard.meals.map((meal) => meal.description).join(', ');
-}
-  
+
   return (
     <div className="structure-daily-card" onClick={onClick}>
       <div className="header-card">

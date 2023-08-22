@@ -201,7 +201,6 @@ export const FullCard = () => {
         const description = trainingCard.tasks[index].description;
         setEditedTaskDescription(description);
         setIsEditingTraining(true);
-        setShowEditButtons(true);
         setEditingTaskIndex(index);
     };
 
@@ -210,7 +209,6 @@ export const FullCard = () => {
         const description = mealsCard.meals[index].description;
         setEditedMealDescription(description);
         setIsEditingMeal(true);
-        setShowEditMealButtons(true);
         setEditingMealIndex(index);
     };
 
@@ -258,8 +256,7 @@ export const FullCard = () => {
     const [newMealDescription, setNewMealDescription] = useState('');
     const [newTrainingDescription, setNewTrainingDescription] = useState('');
 
-    const [showEditButtons, setShowEditButtons] = useState(false);
-    const [showEditMealButtons, setShowEditMealButtons] = useState(false);
+
 
     const [showMiniCarrosel, setShowMiniCarrossel] = useState(true);
 
@@ -271,7 +268,6 @@ export const FullCard = () => {
 
     const handleEditCardTrainingSubmit = async () => {
         setIsEditingTraining(false);
-        setShowEditButtons(false);
         const updatedTaskDescription = editedTaskDescription;
         const editingTaskId = trainingCard.tasks[editingTaskIndex]._id;
         try {
@@ -295,7 +291,6 @@ export const FullCard = () => {
 
     const handleEditCardMealSubmit = async () => {
         setIsEditingMeal(false);
-        setShowEditMealButtons(false);
 
         const updatedMealDescription = editedMealDescription;
         const editingMealId = mealsCard.meals[editingMealIndex]._id;
@@ -317,17 +312,7 @@ export const FullCard = () => {
             console.error('Erro ao atualizar a refeição', error);
         }
     };
-
-    const EditCardTraining = () => {
-        setIsEditingTraining(true);
-        setShowEditButtons(true);
-    };
-
-    const EditCardMeal = () => {
-        setIsEditingMeal(true);
-        setShowEditMealButtons(true)
-    };
-
+    
     const changeversion = () => {
         if (showMiniCarrosel) {
             setShowMiniCarrossel(false);
@@ -339,6 +324,13 @@ export const FullCard = () => {
     const handleChatToggle = (isOpen: boolean) => {
         setIsChatOpen(isOpen);
     };
+
+    
+    const [isHoveringTraining, setIsHoveringTraining] = useState(false);
+    const [isHoveringMeal, setIsHoveringMeal] = useState(false);
+
+    console.log()
+
     return (
         <div className="fullcard">
             <Header isLoggedIn={true} />
@@ -357,7 +349,6 @@ export const FullCard = () => {
                     <div className="div_training_card">
                         <div className="title_training_card">
                             <h3>Treino:</h3>
-                            <Button category="primary" label="Editar Card" onClick={EditCardTraining} />
                         </div>
                         <div className="body_training_card">
                             <h3>{trainingCard.title}</h3>
@@ -367,9 +358,11 @@ export const FullCard = () => {
                                 <>
                                     <ul>
                                         {trainingCard.tasks.map((option, index) => (
-                                            <li key={index} className="task_line">
+                                            <li key={index} className="task_line"
+                                            onMouseEnter={() => setIsHoveringTraining(true)}
+                                            onMouseLeave={() => setIsHoveringTraining(false)}>
                                                 <p>{option.description}</p>
-                                                {isEditingTraining && showEditButtons && (
+                                                {isHoveringTraining && (
                                                     <div className="edit_buttons">
                                                         <PencilSimple
                                                             size={16}
@@ -424,7 +417,6 @@ export const FullCard = () => {
                     <div className="div_meal_card">
                         <div className="title_meal_card">
                             <h3>Refeições:</h3>
-                            <Button category="primary" label="Editar Card" onClick={EditCardMeal} />
                         </div>
                         <div className="body_meal_card">
                             {mealsCard.meals.length === 0 ? (
@@ -433,12 +425,24 @@ export const FullCard = () => {
                                 <>
                                     {mealsCard.meals.map((mealOption, index) => (
                                         <div key={index} className={`ul_meal_0${index + 1}`}>
-                                            <div className="meal_line">
+                                            <div className="meal_line"
+                                                onMouseEnter={() => setIsHoveringMeal(true)}
+                                                onMouseLeave={() => setIsHoveringMeal(false)}>
                                                 <h3>{mealOption.description}</h3>
-                                                {isEditingMeal && showEditMealButtons && (
+                                                {isHoveringMeal && (
                                                     <div className="edit_buttons">
-                                                        <Button category="edit_cards" label="E" onClick={() => handleEditMealClick(index)} />
-                                                        <Button category="edit_cards" label="X" onClick={() => handleDeleteMealClick(index)} />
+                                                        <PencilSimple
+                                                            size={16}
+                                                            color="white"
+                                                            className="icons-edit-card"
+                                                            onClick={() => handleEditMealClick(index)}
+                                                        />
+                                                        <X
+                                                            size={16}
+                                                            color="white"
+                                                            className="icons-edit-card"
+                                                            onClick={() => handleDeleteMealClick(index)}
+                                                        />       
                                                     </div>
                                                 )}
                                             </div>
