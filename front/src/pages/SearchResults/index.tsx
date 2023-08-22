@@ -114,13 +114,17 @@ export const SearchedResults = () => {
     /***************    GET USERS FROM SEARCH    ********************/
     async function searchUsers() {
         const response = await generalRequest<User[]>(`/users/search?name=${query}`)
-        if(response){
-            if(response.length === 0){
-                setMessageModal('Não foi encontrado nenhum usuário na pesquisa')
-                openModal();
-            }else{
-                setUsersFromSearch(response)
+        if (Array.isArray(response)) {
+            if(response){
+                if(response.length === 0){
+                    setMessageModal('Não foi encontrado nenhum usuário na pesquisa')
+                    openModal();
+                }else{
+                    setUsersFromSearch(response)
+                }
             }
+        } else {
+            console.error('Erro ao procurar amigos:', response);
         }
     }
 
