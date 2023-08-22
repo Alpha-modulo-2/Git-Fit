@@ -133,7 +133,7 @@ export const PerfilEdit = () => {
             })
             console.log('antes', req)
             if (req.ok) {
-                console.log('meio',req)
+                console.log('meio', req)
                 const result = await req.json()
                 console.log(result)
 
@@ -149,7 +149,7 @@ export const PerfilEdit = () => {
                     }
                 }
             }
-            else{
+            else {
                 const result = await req.json()
                 setMessageModal(`Erro ao editar usuário: ${result.message}`);
                 openModal();
@@ -193,11 +193,11 @@ export const PerfilEdit = () => {
         }
     };
     const handleWeightChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setUpdatedWeightValue(`${event.target.value}kg`);
+        setUpdatedWeightValue(event.target.value);
         setWeightValue(event.target.value);
     };
     const handleHeightChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setUpdatedHeightValue(`${event.target.value}cm`);
+        setUpdatedHeightValue(event.target.value);
         setHeightValue(event.target.value);
     };
     const handleOccupationChange = (event: React.ChangeEvent<HTMLInputElement>) => {
