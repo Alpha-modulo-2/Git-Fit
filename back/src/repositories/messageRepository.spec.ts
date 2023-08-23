@@ -56,8 +56,14 @@ describe('MessageRepository', () => {
             statusCode: 500,
         });
     });
+
     it('should retrieve messages by chatId', async () => {
-        messageModel.find = jest.fn().mockResolvedValue([mockMessage, mockMessage]);
+        const mockFind = {
+            sort: jest.fn().mockReturnThis(),
+            limit: jest.fn().mockReturnThis()
+        };
+        messageModel.find = jest.fn().mockReturnValue(mockFind);
+        mockFind.limit.mockResolvedValue([mockMessage, mockMessage]);
 
         const messageRepository = new MessageRepository();
         const result = await messageRepository.get(mockChatId);
@@ -71,7 +77,12 @@ describe('MessageRepository', () => {
     });
 
     it('should handle exceptions when retrieving messages', async () => {
-        messageModel.find = jest.fn().mockRejectedValue(new Error('Server error'));
+        const mockFind = {
+            sort: jest.fn().mockReturnThis(),
+            limit: jest.fn().mockImplementation(() => { throw new Error('Server error') })
+        };
+
+        messageModel.find = jest.fn().mockReturnValue(mockFind);
 
         const messageRepository = new MessageRepository();
         const result = await messageRepository.get(mockChatId);
