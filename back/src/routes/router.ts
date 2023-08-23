@@ -12,6 +12,7 @@ import MessageController from "../controllers/messageController";
 import { clearCache, clearCacheForCards } from "../middleware/clearCacheMiddleware";
 import multer from 'multer';
 import multerConfig from "../middleware/multer";
+import UserSummaryController from "../controllers/userSummaryController";
 
 const router: Router = Router();
 
@@ -65,6 +66,10 @@ router.get("/conversations/:userId", conversationController.get)
 router.post("/messages", messageController.create)
 router.get("/messages/:chatId", messageController.get)
 router.post("/messages/markAsRead", messageController.markAsRead);
+
+const userSummaryController = new UserSummaryController();
+
+router.post("/userSummary/:userId", authenticate, userSummaryController.getOne);
 
 router.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, '../public/index.html'));

@@ -3,6 +3,7 @@ import IUser from "./IUser";
 import IFriendsRequests from "./IFriendRequests";
 import IConversation from "./IConversation";
 import IMessage from "./IMessage";
+import IUserSummary from "./IUserSummary";
 
 export default interface IResult {
     error: boolean,
@@ -15,4 +16,5 @@ export default interface IResult {
     conversation?: IConversation | IConversation[],
     chatMessage?: IMessage | IMessage[]
     unreadCount?: number
+    userSummary?: IUserSummary | IUserSummary[]
 }

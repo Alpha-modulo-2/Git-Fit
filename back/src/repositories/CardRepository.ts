@@ -447,4 +447,6 @@ cron.schedule('0 0 * * SUN', async () => {
     } catch (error) {
         console.error('Error updating checks:', error);
     }
+}, {
+    timezone: "America/Sao_Paulo"
 });

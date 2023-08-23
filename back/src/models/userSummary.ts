@@ -1,6 +1,7 @@
 import { Schema, model } from "mongoose";
+import IUserSummary from "../interfaces/IUserSummary";
 
-const UserSummarySchema = new Schema({
+const UserSummarySchema = new Schema<IUserSummary>({
     user: {
         type: Schema.Types.ObjectId,
         ref: 'User',
@@ -12,6 +13,8 @@ const UserSummarySchema = new Schema({
     },
     date: {
         type: Date,
+        immutable: true,
+        required: true,
         default: () => new Date()
     },
     checks: {
@@ -23,10 +26,9 @@ const UserSummarySchema = new Schema({
             type: Number,
             default: 0
         }
-        // You can expand this with other card categories if needed
     }
 });
 
-const UserSummaryModel = model("UserSummary", UserSummarySchema);
+const userSummaryModel = model("UserSummary", UserSummarySchema);
 
-export { UserSummaryModel };
+export { userSummaryModel };
