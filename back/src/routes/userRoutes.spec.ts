@@ -1,7 +1,7 @@
 import request from 'supertest';
 import express from 'express';
 import bodyParser from 'body-parser';
-import { connectToTestDatabase, closeDatabase, resetDatabase } from  '../database/mockDatabase'
+import { connectToTestDatabase, closeDatabase, resetDatabase } from '../database/mockDatabase'
 import { router } from './router';
 import { userModel } from '../models/user';
 import UserRepository from '../repositories/UserRepository';
@@ -10,6 +10,8 @@ import mongoose from 'mongoose';
 import Redis from 'ioredis';
 import jwtLib from "jsonwebtoken";
 import bcrypt from "bcrypt";
+import { cardCronJob } from '../repositories/CardRepository';
+import { summaryCronJob } from '../repositories/userSummaryRepository';
 
 let redis: any
 
@@ -35,11 +37,13 @@ afterEach(async () => {
 
 afterAll(async () => {
     await closeDatabase();
+    cardCronJob.stop()
+    summaryCronJob.stop()
 });
 
 async function createUser(username: string) {
     const passwordHash = await bcrypt.hash('test12345', 10);
-    
+
     const user = {
         name: `${username} Surname`,
         userName: username,
@@ -55,13 +59,13 @@ async function createUser(username: string) {
     };
 
     const result = await userModel.create(user)
-    
+
     const response = await request(app)
-    .post('/login')
-    .send({
-        "userName": user.userName,
-        "password": "test12345"
-    });
+        .post('/login')
+        .send({
+            "userName": user.userName,
+            "password": "test12345"
+        });
 
     const jwt = response.body.token
 
@@ -91,7 +95,7 @@ describe('POST /users/', () => {
             occupation: 'Engineer',
             age: 30
         };
-        
+
         const response = await request(app)
             .post('/users')
             .send(user);
@@ -209,9 +213,9 @@ describe('GET /users/search', () => {
         const response = await request(app)
             .get(`/users/search`)
             .set('Cookie', [`session=wrong`]);
-        
+
         expect(response.status).toBe(401);
-        expect(response.body).toMatchObject({"errors": "jwt malformed"});
+        expect(response.body).toMatchObject({ "errors": "jwt malformed" });
     });
 
     it('should return 400 if no name is provided in the query', async () => {
@@ -219,7 +223,7 @@ describe('GET /users/search', () => {
         const response = await request(app)
             .get(`/users/search`)
             .set('Cookie', [`session=${jwt}`]);
-        
+
         expect(response.status).toBe(400);
         expect(response.body).toMatchObject({ error: true, message: "O nome é obrigatório" });
     });
@@ -230,7 +234,7 @@ describe('GET /users/search', () => {
         const response = await request(app)
             .get(`/users/search?name=usuarioteste`)
             .set('Cookie', [`session=${jwt}`]);
-        
+
         expect(response.status).toBe(500);
         expect(response.body).toContain("Forced error");
     });
@@ -244,7 +248,7 @@ describe('GET /users/:id', () => {
             .set('Cookie', [`session=${jwt}`]);
 
         expect(response.status).toBe(200);
-        expect(response.body.userName).toEqual(result.userName.toString());; 
+        expect(response.body.userName).toEqual(result.userName.toString());;
         expect(response.body._id).toEqual(result._id.toString());
     });
 
@@ -253,9 +257,9 @@ describe('GET /users/:id', () => {
         const response = await request(app)
             .get(`/users/${result._id}`)
             .set('Cookie', [`session=wrong`]);
-        
+
         expect(response.status).toBe(401);
-        expect(response.body).toMatchObject({"errors": "jwt malformed"});
+        expect(response.body).toMatchObject({ "errors": "jwt malformed" });
     });
 
     it('should return 400 for invalid ID format', async () => {
@@ -299,7 +303,7 @@ describe('GET /users/', () => {
         const response = await request(app).get(`/users/`);
 
         expect(response.status).toBe(401);
-        expect(response.body).toMatchObject({"errors": "jwt must be provided"});
+        expect(response.body).toMatchObject({ "errors": "jwt must be provided" });
     });
 
     it('should return 500 for internal server error', async () => {
@@ -344,18 +348,18 @@ describe('PATCH /users/:id', () => {
         const response = await request(app)
             .patch(`/users/${result._id}`)
             .set('Cookie', [`session=wrong`]);
-        
+
         expect(response.status).toBe(401);
-        expect(response.body).toMatchObject({"errors": "jwt malformed"});
+        expect(response.body).toMatchObject({ "errors": "jwt malformed" });
     });
-    
+
     it('should return 400 for invalid user ID', async () => {
         const { jwt } = await createUser('testuser')
         const invalidId = '12345';
         const response = await request(app)
             .patch(`/users/${invalidId}`)
             .set('Cookie', [`session=${jwt}`]);
-    
+
         expect(response.status).toBe(400);
         expect(response.body.message).toBe('ID fornecido é inválido.');
     });
@@ -365,12 +369,12 @@ describe('PATCH /users/:id', () => {
         const invalidData = {
             name: '123456'
         };
-    
+
         const response = await request(app)
             .patch(`/users/${result._id}`)
             .set('Cookie', [`session=${jwt}`])
             .send(invalidData);
-    
+
         expect(response.status).toBe(400);
         expect(response.body.message).toBe('Nome inválido');
     });
@@ -380,12 +384,12 @@ describe('PATCH /users/:id', () => {
         const invalidData = {
             email: 'invalidEmail'
         };
-    
+
         const response = await request(app)
             .patch(`/users/${result._id}`)
             .set('Cookie', [`session=${jwt}`])
             .send(invalidData);
-    
+
         expect(response.status).toBe(400);
         expect(response.body.message).toBe('Email inválido');
     });
@@ -393,14 +397,14 @@ describe('PATCH /users/:id', () => {
     it('should return 400 for invalid password', async () => {
         const { jwt, result } = await createUser('testuser')
         const invalidData = {
-            password: 'abc' 
+            password: 'abc'
         };
-    
+
         const response = await request(app)
             .patch(`/users/${result._id}`)
             .set('Cookie', [`session=${jwt}`])
             .send(invalidData);
-    
+
         expect(response.status).toBe(400);
         expect(response.body.message).toBe('password must be at least 5 characters');
     });
@@ -410,7 +414,7 @@ describe('PATCH /users/:id', () => {
             .mockImplementationOnce(() => {
                 throw new Error('Forced internal server error');
             });
-            const { jwt, result } = await createUser('testuser')
+        const { jwt, result } = await createUser('testuser')
         const response = await request(app)
             .patch(`/users/${result._id}`)
             .set('Cookie', [`session=${jwt}`]);
@@ -444,7 +448,7 @@ describe('DELETE /user/:userId/friend/:friendId', () => {
             .set('Cookie', 'session=invalid_token');
 
         expect(response.status).toBe(401);
-        expect(response.body).toMatchObject({"errors": "jwt malformed"});
+        expect(response.body).toMatchObject({ "errors": "jwt malformed" });
     });
 
     it('should return not found if friend does not exist', async () => {

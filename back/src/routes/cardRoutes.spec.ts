@@ -1,7 +1,7 @@
 import request from 'supertest';
 import express from 'express';
 import bodyParser from 'body-parser';
-import { connectToTestDatabase, closeDatabase, resetDatabase } from  '../database/mockDatabase'
+import { connectToTestDatabase, closeDatabase, resetDatabase } from '../database/mockDatabase'
 import { router } from './router';
 import { userModel } from '../models/user';
 import { cardModel } from '../models/card';
@@ -10,6 +10,8 @@ import cookieParser from 'cookie-parser';
 import bcrypt from "bcrypt";
 import mongoose from 'mongoose';
 import Redis from 'ioredis';
+import { cardCronJob } from '../repositories/CardRepository';
+import { summaryCronJob } from '../repositories/userSummaryRepository';
 
 const app = express();
 app.use(bodyParser.json());
@@ -30,16 +32,18 @@ afterEach(async () => {
 
 afterAll(async () => {
     await closeDatabase();
+    cardCronJob.stop()
+    summaryCronJob.stop()
 });
 
 async function createLogin(username: string) {
     const response = await request(app)
-    .post('/login')
-    .send({
-        userName: username,
-        password: 'test12345'
-    })
-    return response.body; 
+        .post('/login')
+        .send({
+            userName: username,
+            password: 'test12345'
+        })
+    return response.body;
 }
 
 async function createUser(username: string) {
@@ -66,7 +70,7 @@ async function createUser(username: string) {
 
 async function getCardsFromDatabase(userId: string): Promise<ICard[]> {
     try {
-        const cards:ICard[] = await cardModel.find({ userId: userId });
+        const cards: ICard[] = await cardModel.find({ userId: userId });
         return cards;
     } catch (error: any) {
         throw new Error(`Failed to get cards from database: ${error.message}`);
@@ -90,7 +94,7 @@ describe('POST /cards/:userId', () => {
             occupation: 'Engineer',
             age: 30
         };
-    
+
         await userModel.create(testname)
         const { token, user } = await createLogin('testname');
 
@@ -100,7 +104,7 @@ describe('POST /cards/:userId', () => {
 
         expect(response.status).toBe(201);
         expect(response.body.error).toBe(false);
-        
+
         const cards = await getCardsFromDatabase(user._id);
         expect(cards.length).toBe(7);
         expect(cards[0].name).toBe('Segunda-feira')
@@ -109,11 +113,11 @@ describe('POST /cards/:userId', () => {
     it('should fail if the userId is invalid (wrong size)', async () => {
         await createUser('usuarioteste');
         const { token } = await createLogin('usuarioteste');
-    
+
         const response = await request(app)
             .post('/cards/invalidUserId')
             .set('Cookie', `session=${token}`);
-    
+
         expect(response.status).toBe(400);
         expect(response.body.message).toBe("ID do usuário inválido");
     });
@@ -121,11 +125,11 @@ describe('POST /cards/:userId', () => {
     it('should fail if the userId is invalid (wrong characters)', async () => {
         await createUser('usuarioteste');
         const { token } = await createLogin('usuarioteste');
-    
+
         const response = await request(app)
             .post('/cards/1234567890abcdefg12345z')
             .set('Cookie', `session=${token}`);
-    
+
         expect(response.status).toBe(400);
         expect(response.body.message).toBe("ID do usuário inválido");
     });
@@ -133,15 +137,15 @@ describe('POST /cards/:userId', () => {
     it('should fail if the cards already exist for the user', async () => {
         await createUser('usuarioteste');
         const { token, user } = await createLogin('usuarioteste');
-        
+
         await request(app)
             .post(`/cards/${user._id}`)
             .set('Cookie', `session=${token}`);
-    
+
         const response = await request(app)
             .post(`/cards/${user._id}`)
             .set('Cookie', `session=${token}`);
-    
+
         expect(response.status).toBe(400);
         expect(response.body.message).toBe("Cards já existem para este usuário");
     });
@@ -165,9 +169,9 @@ describe('GET /allcards/:userId', () => {
 
     it('should return an error when not authenticated', async () => {
         const user = await createUser('usuarioteste');
-        
+
         const response = await request(app).get(`/allcards/${user._id}`);
-        
+
         expect(response.status).toBe(401);
         expect(response.body.errors).toBe("jwt must be provided");
     });
@@ -178,7 +182,7 @@ describe('GET /allcards/:userId', () => {
         const response = await request(app)
             .get(`/allcards/invalid-user-id`)
             .set('Cookie', `session=${token}`);
-        
+
         expect(response.status).toBe(400);
         expect(response.body.error).toBe(true);
         expect(response.body.message).toBe('ID do usuário inválido');
@@ -200,14 +204,14 @@ describe('GET /allcards/:userId', () => {
             occupation: 'Engineer',
             age: 30
         };
-    
+
         await userModel.create(testname)
         const { token, user } = await createLogin('testname');
-    
+
         const response = await request(app)
             .get(`/allcards/${user._id}`)
             .set('Cookie', `session=${token}`);
-    
+
         expect(response.status).toBe(404);
         expect(response.body.error).toBe(true);
         expect(response.body.message).toBe('Cards não encontrados.');
@@ -218,14 +222,14 @@ describe('GET /card/:cardId', () => {
     it('should retrieve the card by ID successfully', async () => {
         await createUser('usuarioteste');
         const { token, user } = await createLogin('usuarioteste');
-        
+
         const allcards = await getCardsFromDatabase(user._id)
         const onecard = allcards[0]._id
 
         const response = await request(app)
             .get(`/card/${onecard}`)
             .set('Cookie', `session=${token}`);
-    
+
         expect(response.status).toBe(200);
         expect(response.body.error).toBe(false);
         expect(response.body.card._id).toBe(onecard?.toString());
@@ -234,14 +238,14 @@ describe('GET /card/:cardId', () => {
 
     it('should return an error when not authenticated', async () => {
         const user = await createUser('usuarioteste');
-        
+
         const allcards = await getCardsFromDatabase(user._id)
         const onecard = allcards[0]._id
 
         const response = await request(app)
             .get(`/card/${onecard}`)
             .set('Cookie', `session=${'invalid'}`);
-        
+
         expect(response.status).toBe(401);
         expect(response.body.errors).toBe("jwt malformed");
     });
@@ -249,11 +253,11 @@ describe('GET /card/:cardId', () => {
     it('should fail to retrieve the card with an invalid ID', async () => {
         await createUser('usuarioteste');
         const { token } = await createLogin('usuarioteste');
-        
+
         const response = await request(app)
             .get(`/card/invalid-card-id`)
             .set('Cookie', `session=${token}`);
-        
+
         expect(response.status).toBe(400);
         expect(response.body.error).toBe(true);
         expect(response.body.message).toBe('ID do card inválido');
@@ -263,11 +267,11 @@ describe('GET /card/:cardId', () => {
         await createUser('usuarioteste');
         const { token } = await createLogin('usuarioteste');
         const nonExistentCardId = '123456789012345678901234';
-    
+
         const response = await request(app)
             .get(`/card/${nonExistentCardId}`)
             .set('Cookie', `session=${token}`);
-        
+
         expect(response.status).toBe(404);
         expect(response.body.error).toBe(true);
         expect(response.body.message).toBe('Card não encontrado.');
@@ -278,11 +282,11 @@ describe('POST /card/:cardId/task', () => {
     it('should add a task to the card successfully', async () => {
         await createUser('usuarioteste');
         const { token, user } = await createLogin('usuarioteste');
-    
+
         const allcardsbefore = await getCardsFromDatabase(user._id);
         const cardId = allcardsbefore[0]._id;
         const taskDescription = 'Nova tarefa de teste';
-    
+
         const response = await request(app)
             .post(`/card/${cardId}/task`)
             .send({ description: taskDescription })
@@ -296,7 +300,7 @@ describe('POST /card/:cardId/task', () => {
 
     it('should return an error when not authenticated', async () => {
         const user = await createUser('usuarioteste');
-        
+
         const allcardsbefore = await getCardsFromDatabase(user._id);
         const cardId = allcardsbefore[0]._id;
         const taskDescription = 'Nova tarefa de teste';
@@ -314,12 +318,12 @@ describe('POST /card/:cardId/task', () => {
         await createUser('usuarioteste');
         const { token } = await createLogin('usuarioteste');
         const invalidCardId = '123';
-    
+
         const response = await request(app)
             .post(`/card/${invalidCardId}/task`)
             .send({ description: 'Nova tarefa' })
             .set('Cookie', `session=${token}`);
-    
+
         expect(response.status).toBe(400);
         expect(response.body.error).toBe(true);
         expect(response.body.message).toBe('ID do card inválido');
@@ -328,15 +332,15 @@ describe('POST /card/:cardId/task', () => {
     it('should return an error for invalid task description', async () => {
         await createUser('usuarioteste');
         const { token, user } = await createLogin('usuarioteste');
-    
+
         const allcards = await getCardsFromDatabase(user._id);
         const cardId = allcards[0]._id;
-    
+
         const response = await request(app)
             .post(`/card/${cardId}/task`)
             .send({ description: '' })
             .set('Cookie', `session=${token}`);
-    
+
         expect(response.status).toBe(400);
         expect(response.body.error).toBe(true);
         expect(response.body.message).toBe('Descrição da tarefa inválida');
@@ -347,16 +351,16 @@ describe('POST /card/:cardId/meal', () => {
     it('should add a meal to the card successfully', async () => {
         await createUser('usuarioteste');
         const { token, user } = await createLogin('usuarioteste');
-    
+
         const allcardsbefore = await getCardsFromDatabase(user._id);
         const cardId = allcardsbefore[0]._id;
         const mealDescription = 'Nova refeição de teste';
-    
+
         const response = await request(app)
             .post(`/card/${cardId}/meal`)
             .send({ description: mealDescription })
             .set('Cookie', `session=${token}`);
-    
+
         expect(response.status).toBe(200);
         expect(response.body.error).toBe(false);
         expect(response.body.card._id).toBe(cardId?.toString());
@@ -368,7 +372,7 @@ describe('POST /card/:cardId/meal', () => {
         const allcardsbefore = await getCardsFromDatabase(user._id);
         const cardId = allcardsbefore[0]._id;
         const mealDescription = 'Nova refeição de teste';
-    
+
         const response = await request(app)
             .post(`/card/${cardId}/meal`)
             .send({ description: mealDescription })
@@ -382,12 +386,12 @@ describe('POST /card/:cardId/meal', () => {
         await createUser('usuarioteste');
         const { token } = await createLogin('usuarioteste');
         const mealDescription = 'Nova refeição de teste';
-    
+
         const response = await request(app)
             .post('/card/invalid_card_id/meal')
             .send({ description: mealDescription })
             .set('Cookie', `session=${token}`);
-    
+
         expect(response.status).toBe(400);
         expect(response.body.error).toBe(true);
         expect(response.body.message).toBe('ID do card inválido');
@@ -398,12 +402,12 @@ describe('POST /card/:cardId/meal', () => {
         const { token, user } = await createLogin('usuarioteste');
         const allcards = await getCardsFromDatabase(user._id);
         const cardId = allcards[0]._id;
-    
+
         const response = await request(app)
             .post(`/card/${cardId}/meal`)
-            .send({ description: '' }) 
+            .send({ description: '' })
             .set('Cookie', `session=${token}`);
-    
+
         expect(response.status).toBe(400);
         expect(response.body.error).toBe(true);
         expect(response.body.message).toBe('Descrição de refeição inválida');
@@ -414,16 +418,16 @@ describe('POST /card/updateTitle', () => {
     it('should update the card title successfully', async () => {
         await createUser('usuarioteste');
         const { token, user } = await createLogin('usuarioteste');
-    
+
         const allcards = await getCardsFromDatabase(user._id);
         const cardId = allcards[0]._id;
         const newTitle = 'Novo Título de Teste';
-    
+
         const response = await request(app)
             .patch('/card/updateTitle')
             .send({ cardId, title: newTitle })
             .set('Cookie', `session=${token}`);
-    
+
         expect(response.status).toBe(200);
         expect(response.body.error).toBe(false);
         expect(response.body.card._id).toBe(cardId?.toString());
@@ -435,12 +439,12 @@ describe('POST /card/updateTitle', () => {
         const allcards = await getCardsFromDatabase(user._id);
         const cardId = allcards[0]._id;
         const newTitle = 'Novo Título de Teste';
-    
+
         const response = await request(app)
             .patch('/card/updateTitle')
             .send({ cardId, title: newTitle })
             .set('Cookie', `session=${'token'}`);
-    
+
         expect(response.status).toBe(401);
         expect(response.body.errors).toBe("jwt malformed");
     });
@@ -448,12 +452,12 @@ describe('POST /card/updateTitle', () => {
     it('should return an error for invalid card ID', async () => {
         await createUser('usuarioteste');
         const { token } = await createLogin('usuarioteste');
-        
+
         const response = await request(app)
             .patch('/card/updateTitle')
             .send({ cardId: 'invalidID', title: 'Novo Título' })
             .set('Cookie', `session=${token}`);
-        
+
         expect(response.status).toBe(400);
         expect(response.body.error).toBe(true);
         expect(response.body.message).toBe('ID do card inválido');
@@ -464,12 +468,12 @@ describe('POST /card/updateTitle', () => {
         const { token, user } = await createLogin('usuarioteste');
         const allcards = await getCardsFromDatabase(user._id);
         const cardId = allcards[0]._id;
-    
+
         const response = await request(app)
             .patch('/card/updateTitle')
             .send({ cardId, title: '' })
             .set('Cookie', `session=${token}`);
-        
+
         expect(response.status).toBe(400);
         expect(response.body.error).toBe(true);
         expect(response.body.message).toBe('Título inválido');
@@ -483,12 +487,12 @@ describe('POST /trainingCard/check', () => {
         const allcards = await getCardsFromDatabase(user._id);
         const cardId = allcards[0]._id;
         const checked = true;
-    
+
         const response = await request(app)
             .patch('/trainingCard/check')
             .send({ cardId, checked })
             .set('Cookie', `session=${token}`);
-        
+
         expect(response.status).toBe(200);
         expect(response.body.error).toBe(false);
         expect(response.body.card._id).toBe(cardId?.toString());
@@ -500,12 +504,12 @@ describe('POST /trainingCard/check', () => {
         const allcards = await getCardsFromDatabase(user._id);
         const cardId = allcards[0]._id;
         const checked = true;
-    
+
         const response = await request(app)
             .patch('/trainingCard/check')
             .send({ cardId, checked })
             .set('Cookie', `session=${'token'}`);
-        
+
         expect(response.status).toBe(401);
         expect(response.body.errors).toBe("jwt malformed");
     });
@@ -513,14 +517,14 @@ describe('POST /trainingCard/check', () => {
     it('should return an error for an invalid card ID', async () => {
         await createUser('usuarioteste');
         const { token } = await createLogin('usuarioteste');
-        const cardId = "invalid_id"; 
+        const cardId = "invalid_id";
         const checked = true;
-    
+
         const response = await request(app)
             .patch('/trainingCard/check')
             .send({ cardId, checked })
             .set('Cookie', `session=${token}`);
-        
+
         expect(response.status).toBe(400);
         expect(response.body.error).toBe(true);
         expect(response.body.message).toBe("ID do card inválido");
@@ -532,12 +536,12 @@ describe('POST /trainingCard/check', () => {
         const allcards = await getCardsFromDatabase(user._id);
         const cardId = allcards[0]._id;
         const checked = "non_boolean_value";
-    
+
         const response = await request(app)
             .patch('/trainingCard/check')
             .send({ cardId, checked })
             .set('Cookie', `session=${token}`);
-        
+
         expect(response.status).toBe(400);
         expect(response.body.error).toBe(true);
         expect(response.body.message).toBe("O campo checked precisa ser booleano");
@@ -548,12 +552,12 @@ describe('POST /trainingCard/check', () => {
         const { token } = await createLogin('usuarioteste');
         const cardId = new mongoose.Types.ObjectId();
         const checked = true;
-    
+
         const response = await request(app)
             .patch('/trainingCard/check')
             .send({ cardId, checked })
             .set('Cookie', `session=${token}`);
-        
+
         expect(response.status).toBe(404);
         expect(response.body.error).toBe(true);
         expect(response.body.message).toBe("Card não encontrado.");
@@ -567,12 +571,12 @@ describe('POST /mealsCard/check', () => {
         const allcards = await getCardsFromDatabase(user._id);
         const cardId = allcards[0]._id;
         const checked = true;
-    
+
         const response = await request(app)
             .patch('/mealsCard/check')
             .send({ cardId, checked })
             .set('Cookie', `session=${token}`);
-    
+
         expect(response.status).toBe(200);
         expect(response.body.error).toBe(false);
         expect(response.body.card._id).toBe(cardId?.toString());
@@ -584,12 +588,12 @@ describe('POST /mealsCard/check', () => {
         const allcards = await getCardsFromDatabase(user._id);
         const cardId = allcards[0]._id;
         const checked = true;
-    
+
         const response = await request(app)
             .patch('/mealsCard/check')
             .send({ cardId, checked })
             .set('Cookie', `session=${'token'}`);
-    
+
         expect(response.status).toBe(401);
         expect(response.body.errors).toBe("jwt malformed");
     });
@@ -599,12 +603,12 @@ describe('POST /mealsCard/check', () => {
         const { token } = await createLogin('usuarioteste');
         const cardId = '123';
         const checked = true;
-    
+
         const response = await request(app)
             .patch('/mealsCard/check')
             .send({ cardId, checked })
             .set('Cookie', `session=${token}`);
-    
+
         expect(response.status).toBe(400);
         expect(response.body.error).toBe(true);
         expect(response.body.message).toBe('ID do card inválido');
@@ -616,12 +620,12 @@ describe('POST /mealsCard/check', () => {
         const allcards = await getCardsFromDatabase(user._id);
         const cardId = allcards[0]._id;
         const checked = 'notABoolean';
-    
+
         const response = await request(app)
             .patch('/mealsCard/check')
             .send({ cardId, checked })
             .set('Cookie', `session=${token}`);
-    
+
         expect(response.status).toBe(400);
         expect(response.body.error).toBe(true);
         expect(response.body.message).toBe('O campo checked precisa ser booleano');
@@ -642,14 +646,14 @@ describe('POST /updateTask', () => {
         }
         await cardModel.findByIdAndUpdate(
             cardId, { $push: { "trainingCard.tasks": task } });
-        
+
         const description = 'Nova descrição da tarefa';
-    
+
         const response = await request(app)
             .patch('/updateTask')
             .send({ taskId, description })
             .set('Cookie', `session=${token}`);
-    
+
         expect(response.status).toBe(200);
         expect(response.body.error).toBe(false);
         expect(response.body.card.trainingCard.tasks[0].description).toBe(description);
@@ -667,14 +671,14 @@ describe('POST /updateTask', () => {
         }
         await cardModel.findByIdAndUpdate(
             cardId, { $push: { "trainingCard.tasks": task } });
-        
+
         const description = 'Nova descrição da tarefa';
-    
+
         const response = await request(app)
             .patch('/updateTask')
             .send({ taskId, description })
             .set('Cookie', `session=${'token'}`);
-    
+
         expect(response.status).toBe(401);
         expect(response.body.errors).toBe("jwt malformed");
     });
@@ -684,12 +688,12 @@ describe('POST /updateTask', () => {
         const { token } = await createLogin('usuarioteste');
         const taskId = 'invalid-task-id';
         const description = 'Nova descrição da tarefa';
-    
+
         const response = await request(app)
             .patch('/updateTask')
             .send({ taskId, description })
             .set('Cookie', `session=${token}`);
-    
+
         expect(response.status).toBe(400);
         expect(response.body.error).toBe(true);
         expect(response.body.message).toBe("ID da tarefa inválido");
@@ -699,13 +703,13 @@ describe('POST /updateTask', () => {
         await createUser('usuarioteste');
         const { token, user } = await createLogin('usuarioteste')
         const taskId = new mongoose.Types.ObjectId()
-        const description = ''; 
-    
+        const description = '';
+
         const response = await request(app)
             .patch('/updateTask')
             .send({ taskId, description })
             .set('Cookie', `session=${token}`);
-    
+
         expect(response.status).toBe(400);
         expect(response.body.error).toBe(true);
         expect(response.body.message).toBe("Descrição da tarefa inválida");
@@ -719,21 +723,21 @@ describe('POST /updateMeal', () => {
         const allcards = await getCardsFromDatabase(user._id);
         const cardId = allcards[0]._id
         const mealId = new mongoose.Types.ObjectId();
-    
+
         const meal = {
             _id: mealId,
             description: 'Velha descrição da refeição'
         }
         await cardModel.findByIdAndUpdate(
             cardId, { $push: { "mealsCard.meals": meal } });
-        
+
         const description = 'Nova descrição da refeição';
-    
+
         const response = await request(app)
             .patch('/updateMeal')
             .send({ mealId, description })
             .set('Cookie', `session=${token}`);
-    
+
         expect(response.status).toBe(200);
         expect(response.body.error).toBe(false);
         expect(response.body.card.mealsCard.meals[0].description).toBe(description);
@@ -744,21 +748,21 @@ describe('POST /updateMeal', () => {
         const allcards = await getCardsFromDatabase(user._id);
         const cardId = allcards[0]._id
         const mealId = new mongoose.Types.ObjectId();
-    
+
         const meal = {
             _id: mealId,
             description: 'Velha descrição da refeição'
         }
         await cardModel.findByIdAndUpdate(
             cardId, { $push: { "mealsCard.meals": meal } });
-        
+
         const description = 'Nova descrição da refeição';
-    
+
         const response = await request(app)
             .patch('/updateMeal')
             .send({ mealId, description })
             .set('Cookie', `session=${'token'}`);
-    
+
         expect(response.status).toBe(401);
         expect(response.body.errors).toBe("jwt malformed");
     });
@@ -768,12 +772,12 @@ describe('POST /updateMeal', () => {
         const { token } = await createLogin('usuarioteste');
         const mealId = 'invalid-mealId';
         const description = 'Nova descrição da refeição';
-    
+
         const response = await request(app)
             .patch('/updateMeal')
             .send({ mealId, description })
             .set('Cookie', `session=${token}`);
-    
+
         expect(response.status).toBe(400);
         expect(response.body.error).toBe(true);
         expect(response.body.message).toBe('ID da tarefa inválido');
@@ -783,12 +787,12 @@ describe('POST /updateMeal', () => {
         await createUser('usuarioteste');
         const { token } = await createLogin('usuarioteste');
         const mealId = new mongoose.Types.ObjectId().toString();
-    
+
         const response = await request(app)
             .patch('/updateMeal')
             .send({ mealId, description: '   ' })
             .set('Cookie', `session=${token}`);
-    
+
         expect(response.status).toBe(400);
         expect(response.body.error).toBe(true);
         expect(response.body.message).toBe('Descrição da tarefa inválida');
@@ -799,12 +803,12 @@ describe('POST /updateMeal', () => {
         const { token } = await createLogin('usuarioteste');
         const mealId = new mongoose.Types.ObjectId().toString()
         const description = 'Nova descrição da refeição';
-    
+
         const response = await request(app)
             .patch('/updateMeal')
             .send({ mealId, description })
             .set('Cookie', `session=${token}`);
-    
+
         expect(response.status).toBe(404);
         expect(response.body.error).toBe(true);
         expect(response.body.message).toBe('Refeição não encontrada.');
@@ -817,12 +821,12 @@ describe('DELETE /delTask', () => {
         const { token, user } = await createLogin('usuarioteste');
         const allcards = await getCardsFromDatabase(user._id);
         const cardId = allcards[0]._id;
-        
+
         const taskId = new mongoose.Types.ObjectId();
         const task = { _id: taskId, description: 'Descrição da tarefa' };
         await cardModel.findByIdAndUpdate(
             cardId, { $push: { "trainingCard.tasks": task } });
-        
+
         const response = await request(app)
             .delete(`/task/${taskId}`)
             .set('Cookie', `session=${token}`);
@@ -839,16 +843,16 @@ describe('DELETE /delTask', () => {
         const user = await createUser('usuarioteste');
         const allcards = await getCardsFromDatabase(user._id);
         const cardId = allcards[0]._id;
-        
+
         const taskId = new mongoose.Types.ObjectId();
         const task = { _id: taskId, description: 'Descrição da tarefa' };
         await cardModel.findByIdAndUpdate(
             cardId, { $push: { "trainingCard.tasks": task } });
-        
+
         const response = await request(app)
             .delete(`/task/${taskId}`)
             .set('Cookie', `session=${'token'}`);
-    
+
         expect(response.status).toBe(401);
         expect(response.body.errors).toBe("jwt malformed");
     });
@@ -857,11 +861,11 @@ describe('DELETE /delTask', () => {
         await createUser('usuarioteste');
         const taskId = 'invalidTaskId';
         const { token } = await createLogin('usuarioteste');
-    
+
         const response = await request(app)
             .delete(`/task/${taskId}`)
             .set('Cookie', `session=${token}`);
-    
+
         expect(response.status).toBe(400);
         expect(response.body.error).toBe(true);
         expect(response.body.message).toBe('ID da tarefa inválido');
@@ -874,18 +878,18 @@ describe('DELETE /delMeal', () => {
         const { token, user } = await createLogin('usuarioteste');
         const allcards = await getCardsFromDatabase(user._id);
         const cardId = allcards[0]._id;
-    
+
         const mealId = new mongoose.Types.ObjectId();
         const meal = { _id: mealId, description: 'Descrição da tarefa' };
         await cardModel.findByIdAndUpdate(
             cardId, { $push: { "mealsCard.meals": meal } });
-    
+
         const response = await request(app)
             .delete(`/meal/${mealId}`)
             .set('Cookie', `session=${token}`);
 
-            const updatedCard = await cardModel.findById(cardId);
-    
+        const updatedCard = await cardModel.findById(cardId);
+
         expect(response.status).toBe(200);
         expect(response.body.error).toBe(false);
         expect(response.body.message).toBe('Refeição deletada.');
@@ -896,16 +900,16 @@ describe('DELETE /delMeal', () => {
         const user = await createUser('usuarioteste');
         const allcards = await getCardsFromDatabase(user._id);
         const cardId = allcards[0]._id;
-    
+
         const mealId = new mongoose.Types.ObjectId();
         const meal = { _id: mealId, description: 'Descrição da tarefa' };
         await cardModel.findByIdAndUpdate(
             cardId, { $push: { "mealsCard.meals": meal } });
-    
+
         const response = await request(app)
             .delete(`/meal/${mealId}`)
             .set('Cookie', `session=${'token'}`);
-    
+
         expect(response.status).toBe(401);
         expect(response.body.errors).toBe("jwt malformed");
     });
@@ -914,11 +918,11 @@ describe('DELETE /delMeal', () => {
         await createUser('usuarioteste');
         const { token } = await createLogin('usuarioteste');
         const mealId = 'invalid-meal-id';
-    
+
         const response = await request(app)
             .delete(`/meal/${mealId}`)
             .set('Cookie', `session=${token}`);
-    
+
         expect(response.status).toBe(400);
         expect(response.body.error).toBe(true);
         expect(response.body.message).toBe('ID da tarefa inválido');
@@ -928,11 +932,11 @@ describe('DELETE /delMeal', () => {
         await createUser('usuarioteste');
         const { token } = await createLogin('usuarioteste');
         const mealId = new mongoose.Types.ObjectId();
-    
+
         const response = await request(app)
             .delete(`/meal/${mealId}`)
             .set('Cookie', `session=${token}`);
-    
+
         expect(response.status).toBe(404);
         expect(response.body.error).toBe(true);
         expect(response.body.message).toBe('Refeição não encontrada.');

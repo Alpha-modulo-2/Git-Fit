@@ -1,8 +1,16 @@
+import cron from 'node-cron';
 import UserSummaryService from './userSummaryService';
 import UserSummaryRepository, { summaryCronJob } from '../repositories/userSummaryRepository';
 import { Types } from 'mongoose';
 
 jest.mock('../repositories/userSummaryRepository');
+
+jest.mock('node-cron', () => ({
+    schedule: jest.fn((timing, callback, options) => ({
+        start: jest.fn(),
+        stop: jest.fn(),
+    })),
+}));
 
 describe('UserSummaryService', () => {
     let userSummaryService: UserSummaryService;
@@ -73,5 +81,4 @@ describe('UserSummaryService', () => {
         expect(userSummaryRepository.getOne).toHaveBeenCalledWith(mockId);
     });
 
-    // Add more tests based on different conditions or scenarios as required...
 });
