@@ -431,7 +431,7 @@ export default class CardRepository {
     }
 }
 
-cron.schedule('0 0 * * SUN', async () => {
+export const cardCronJob = cron.schedule('0 0 * * SUN', async () => {
     console.log('Running a job every Sunday at 00:00 to reset checks');
     try {
         await cardModel.updateMany(

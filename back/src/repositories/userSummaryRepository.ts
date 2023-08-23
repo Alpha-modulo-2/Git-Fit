@@ -36,7 +36,7 @@ export default class UserSummaryRepository {
     }
 }
 
-cron.schedule('0 0 * * SUN', async () => {
+export const summaryCronJob = cron.schedule('0 0 * * SUN', async () => {
 
     try {
         console.log('Populating UserSummary data');
