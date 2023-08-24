@@ -71,17 +71,6 @@ export const Contact_profile: React.FC = () => {
         setModalIsOpen(false);
     }
 
-    const convertToNumber = (stringValue: string) => {
-        if (stringValue === undefined || stringValue === null) {
-            return 0; 
-        }
-        const numericValue = stringValue.replace(/\D/g, '');
-        const numberValue = parseFloat(numericValue) / (stringValue.includes('cm') ? 100 : 1);
-        return numberValue;
-    };
-
-
-
     useEffect(() => {
         const fetchUserData = async () => {
             try {

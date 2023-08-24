@@ -12,11 +12,6 @@ import { Chat } from "../../components/Chat";
 import { MiniCard } from "../../components/MiniCard";
 import ApexChart from "../../components/Chart";
 
-const convertToNumber = (stringValue: string) => {
-    const numericValue = stringValue ? stringValue.replace(/\D/g, '') : '';
-    const numberValue = parseFloat(numericValue) / (stringValue && stringValue.includes('cm') ? 100 : 1);
-    return numberValue;
-};
 interface Task {
     _id: string;
     description: string;
@@ -126,7 +121,7 @@ export const Profile = () => {
     const progress1 = parseInt(countMealCheckboxes().toFixed(0));
     const progress2 = parseInt(countTrainingCheckboxes().toFixed(0));
 
-    const history = {
+    const history: History = {
         dates: ["2023-06-04", "2023-06-04", "2023-06-04"],
         tasks: [45, 44, 42, 45],
         meals: [70],
