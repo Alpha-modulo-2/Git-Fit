@@ -218,7 +218,7 @@ export const Contact_profile: React.FC = () => {
                         )}
                     </div>
                     <div className={`${history.dates.length > 2 && userData?.occupation && isFriend ? "container-photo-bars" : "align-centered"}`}>
-                        <PhotoProfile user_name={user_name} url_photo={user_photo} />
+                        <PhotoProfile user_name={user_name} userOccupation={userData?.occupation} url_photo={user_photo} />
                         <div className="container-profile-progress-bar">
                             <div className="div-profile-progress-bar">
                                 <ProgressBar progress={progress1} title_bar="Alimentação" />

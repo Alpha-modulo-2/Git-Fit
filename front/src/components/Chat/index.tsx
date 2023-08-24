@@ -103,7 +103,6 @@ export const Chat = ({ onChatOpen }: ChatProps) => {
         if(user){
             try {
                 const response = await generalRequest(`/users/${user?._id}`);
-                console.log(response, 'res')
                 setLoggedUser(response as User);
             } catch (error) {
                 console.error('Erro ao buscar dados do usuário', error);
@@ -163,15 +162,17 @@ export const Chat = ({ onChatOpen }: ChatProps) => {
 
                 const newMessages = Array.isArray(messageData.chatMessage) ? messageData.chatMessage : [messageData.chatMessage];
                 setMessages(prevMessages => [...prevMessages, ...newMessages]);
+                
             }
         });
 
         socket.on('chatHistory', async (messages: SocketMessage) => {
-
             const messageList = Array.isArray(messages.chatMessage) ? messages.chatMessage : [messages.chatMessage];
-            setMessages(messageList);
+            const reversedMessages = [...messageList].reverse(); // Cria uma cópia do array e inverte a ordem
+    
+            setMessages(reversedMessages);
 
-            const unreadMessages = messageList.filter(message => !message.isRead && message.sender !== userId);
+            const unreadMessages = reversedMessages.filter(message => !message.isRead && message.sender !== userId);
 
             if (unreadMessages.length !== 0) {
                 await markMessagesAsRead(unreadMessages.map(message => message._id as string));
@@ -251,7 +252,6 @@ export const Chat = ({ onChatOpen }: ChatProps) => {
         }
         currentChatId = null;
         setShowChat(false);
-        console.log(showChat, 'show')
         setCurrentlyFriend('Other');
     }
 
