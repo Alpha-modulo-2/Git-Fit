@@ -60,33 +60,6 @@ interface History {
     weight: number[];
 }
 
-interface Props {
-    history: History;
-}
-
-/* const Calc_IMC = (weight_imc: number, height_imc: number) => {
-    const imc = weight_imc / (height_imc * height_imc);
-    const imc_obj = {
-        imc_media: imc,
-        imc_class: "",
-        imc_color: "#00ff3c"
-    }
-    if (imc < 18.5) {
-        imc_obj.imc_class = "IMC: Abaixo";
-    }
-    if (imc >= 18.5 && imc < 25) {
-        imc_obj.imc_class = "IMC: Normal";
-    }
-    if (imc >= 25 && imc < 30) {
-        imc_obj.imc_class = "IMC: Sobrepeso";
-    }
-    if (imc >= 30) {
-        imc_obj.imc_class = "IMC: Obesidade";
-    }
-    return (imc_obj);
-}
- */
-
 export const Profile = () => {
     const navigate: NavigateFunction = useNavigate();
 
@@ -114,14 +87,10 @@ export const Profile = () => {
     }, [userId]);
 
     let user_name = "";
-    let weight = 0;
-    let heigth = 0;
     let user_photo = new URL("../../assets/images/placeholderphoto.jpg", import.meta.url).href
 
     if (user != null) {
         user_name = user.userName;
-        weight = convertToNumber(user.weight);
-        heigth = convertToNumber(user.height);
         if (user.photo) {
             user_photo = `/uploads/${user.photo}`;
         }

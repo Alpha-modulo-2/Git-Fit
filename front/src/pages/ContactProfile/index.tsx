@@ -80,27 +80,7 @@ export const Contact_profile: React.FC = () => {
         return numberValue;
     };
 
-    const Calc_IMC = (weight_imc: number, height_imc: number) => {
-        const imc = weight_imc / (height_imc * height_imc);
-        const imc_obj = {
-            imc_media: imc,
-            imc_class: "",
-            imc_color: "#00ff3c"
-        }
-        if (imc < 18.5) {
-            imc_obj.imc_class = "IMC: Abaixo";
-        }
-        if (imc >= 18.5 && imc < 25) {
-            imc_obj.imc_class = "IMC: Normal";
-        }
-        if (imc >= 25 && imc < 30) {
-            imc_obj.imc_class = "IMC: Sobrepeso";
-        }
-        if (imc >= 30) {
-            imc_obj.imc_class = "IMC: Obesidade";
-        }
-        return (imc_obj);
-    }
+
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -126,14 +106,10 @@ export const Contact_profile: React.FC = () => {
     }, []);
 
     let user_name = "";
-    let weight = 0;
-    let heigth = 0;
     let user_photo = "https://www.logolynx.com/images/logolynx/b4/b4ef8b89b08d503b37f526bca624c19a.jpeg";
 
     if (userData != null) {
         user_name = userData.userName;
-        weight = convertToNumber(userData.weight);
-        heigth = convertToNumber(userData.height);
         if (userData.photo) {
             user_photo = userData.photo;
         }

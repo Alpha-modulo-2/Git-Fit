@@ -8,11 +8,18 @@ interface HistoryProps {
     weight: number[];
 }
 
+interface State {
+    series: any[];
+    options: any;
+    seriesLine: any[];
+    optionsLine: any;
+}
+
 interface ApexChartProps {
     history: HistoryProps;
 }
 
-class ApexChart extends React.Component<ApexChartProps> {
+class ApexChart extends React.Component<ApexChartProps, State> {
     constructor(props: ApexChartProps) {
         super(props);
 
