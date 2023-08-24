@@ -10,6 +10,7 @@ import { useAuth } from '../../context/authContext';
 import { generalRequest } from "../../generalFunction";
 import { Chat } from "../../components/Chat";
 import { MiniCard } from "../../components/MiniCard";
+import ApexChart from "../../components/Chart";
 
 const convertToNumber = (stringValue: string) => {
     const numericValue = stringValue ? stringValue.replace(/\D/g, '') : '';
@@ -52,7 +53,18 @@ interface CardData {
     }[];
 }
 
-const Calc_IMC = (weight_imc: number, height_imc: number) => {
+interface History {
+    dates: string[];
+    tasks: number[];
+    meals: number[];
+    weight: number[];
+}
+
+interface Props {
+    history: History;
+}
+
+/* const Calc_IMC = (weight_imc: number, height_imc: number) => {
     const imc = weight_imc / (height_imc * height_imc);
     const imc_obj = {
         imc_media: imc,
@@ -73,7 +85,7 @@ const Calc_IMC = (weight_imc: number, height_imc: number) => {
     }
     return (imc_obj);
 }
-
+ */
 
 export const Profile = () => {
     const navigate: NavigateFunction = useNavigate();
@@ -114,9 +126,6 @@ export const Profile = () => {
             user_photo = `/uploads/${user.photo}`;
         }
     }
-    const calcIMC = Calc_IMC(weight, heigth);
-    const progressIMC = (calcIMC.imc_media * 100) / 40;
-    const progressIMCircle = parseInt(progressIMC.toFixed(0));
 
     const countTrainingCheckboxes = () => {
         const totalDays = cardData.length;
@@ -148,6 +157,13 @@ export const Profile = () => {
     const progress1 = parseInt(countMealCheckboxes().toFixed(0));
     const progress2 = parseInt(countTrainingCheckboxes().toFixed(0));
 
+    const history = {
+        dates: ["2023-06-04", "2023-06-04", "2023-06-04"],
+        tasks: [45, 44, 42, 45],
+        meals: [70],
+        weight: [120]
+    };
+
     return (
         <div className="profile">
             <Header isLoggedIn={true} />
@@ -162,21 +178,23 @@ export const Profile = () => {
                     </div>
                 )}
                 <div className="container-profile">
-                    <PhotoProfile user_name={user_name} url_photo={user_photo} />
-                    <div className="container-progress-bar">
-                        <div className="div-progress-bar">
-                            <ProgressBar progress={progress1} title_bar="Alimentação" />
-                            <CircleProgressBar progress={progress1} title_bar={""} />
-                        </div >
-                        <div className="div-progress-bar">
-                            <ProgressBar progress={progress2} title_bar="Exercícios" />
-                            <CircleProgressBar progress={progress2} title_bar={""} />
-                        </div>
-                        <div className="div-progress-bar">
-                            <ProgressBar progress={progressIMC} title_bar={calcIMC.imc_class} />
-                            <CircleProgressBar progress={progressIMCircle} title_bar={calcIMC.imc_media.toFixed(1)} />
+                    <div className={`${history.dates.length <= 2 ? "align-centered": "container-photo-bars"}`}>
+                        <PhotoProfile user_name={user_name} url_photo={user_photo} />
+                        <div className="container-profile-progress-bar">
+                            <div className="div-profile-progress-bar">
+                                <ProgressBar progress={progress1} title_bar="Alimentação" />
+                                <CircleProgressBar progress={progress1} title_bar={""} />
+                            </div >
+                            <div className="div-profile-progress-bar">
+                                <ProgressBar progress={progress2} title_bar="Exercícios" />
+                                <CircleProgressBar progress={progress2} title_bar={""} />
+                            </div>
                         </div>
                     </div>
+                    {
+                        history.dates.length > 2 &&
+                        <ApexChart history={history} />
+                    }
                 </div>
                 {!isChatOpen ? (
                     <div className="structure-carrossel-fc">

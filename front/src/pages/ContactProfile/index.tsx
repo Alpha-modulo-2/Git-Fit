@@ -9,6 +9,7 @@ import { generalRequest } from "../../generalFunction";
 import { User } from "../../interfaces/IUser.ts"
 import { useAuth } from '../../context/authContext';
 import { Modal } from "../../components/Modal";
+import ApexChart from "../../components/Chart";
 
 interface Task {
     _id: string;
@@ -137,9 +138,6 @@ export const Contact_profile: React.FC = () => {
             user_photo = userData.photo;
         }
     }
-    const calcIMC = Calc_IMC(weight, heigth);
-    const progressIMC = (calcIMC.imc_media * 100) / 40;
-    const progressIMCircle = parseInt(progressIMC.toFixed(0));
 
     //-------------------------
     const countTrainingCheckboxes = () => {
@@ -204,6 +202,13 @@ export const Contact_profile: React.FC = () => {
     
     const progress1 = parseInt(countMealCheckboxes().toFixed(0));
     const progress2 = parseInt(countTrainingCheckboxes().toFixed(0));
+    
+    const history = {
+        dates: ["2023-06-04", "2023-06-04", "2023-06-04"],
+        tasks: [45, 44, 42, 45],
+        meals: [70],
+        weight: [120]
+    };
 
     return (
         <div className="profile">
@@ -217,21 +222,23 @@ export const Contact_profile: React.FC = () => {
                             <button className="buttonAdd" onClick={ () => removeFriend(user?._id, id)}>Remover contato</button>
                         )}
                     </div>
-                    <PhotoProfile user_name={user_name} url_photo={`/uploads/${user_photo}`} />
-                    <div className="container-progress-bar">
-                        <div className="div-progress-bar">
-                            <ProgressBar progress={progress1} title_bar="Alimentação" />
-                            <CircleProgressBar progress={progress1} title_bar={""} />
-                        </div >
-                        <div className="div-progress-bar">
-                            <ProgressBar progress={progress2} title_bar="Exercícios" />
-                            <CircleProgressBar progress={progress2} title_bar={""} />
-                        </div>
-                        <div className="div-progress-bar">
-                            <ProgressBar progress={progressIMC} title_bar={calcIMC.imc_class} />
-                            <CircleProgressBar progress={progressIMCircle} title_bar={calcIMC.imc_media.toFixed(1)} />
+                    <div className={`${history.dates.length > 2 && userData?.occupation && isFriend ? "container-photo-bars" : "align-centered"}`}>
+                        <PhotoProfile user_name={user_name} url_photo={user_photo} />
+                        <div className="container-profile-progress-bar">
+                            <div className="div-profile-progress-bar">
+                                <ProgressBar progress={progress1} title_bar="Alimentação" />
+                                <CircleProgressBar progress={progress1} title_bar={""} />
+                            </div >
+                            <div className="div-profile-progress-bar">
+                                <ProgressBar progress={progress2} title_bar="Exercícios" />
+                                <CircleProgressBar progress={progress2} title_bar={""} />
+                            </div>
                         </div>
                     </div>
+                    {
+                        history.dates.length > 2 && userData?.occupation && isFriend &&
+                        <ApexChart history={history} />
+                    }
                 </div>
                 {modalIsOpen && (
                     <Modal children={messageModal} onClick={closeModal} />
