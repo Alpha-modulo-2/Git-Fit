@@ -121,9 +121,8 @@ export const PerfilEdit = () => {
         if (updatedHeightValue !== null && updatedHeightValue !== undefined && updatedHeightValue !== '') {
             formData.append("height", `${updatedHeightValue}cm`);
         }
-        if (updatedOccupationValue !== null && updatedOccupationValue !== undefined && updatedOccupationValue !== '') {
-            formData.append("occupation", updatedOccupationValue);
-        }
+
+        formData.append("occupation", updatedOccupationValue || "");
 
         try {
             const req = await fetch(`${urlPath}/users/${userId}`, {
@@ -202,9 +201,9 @@ export const PerfilEdit = () => {
         setUpdatedHeightValue(event.target.value);
         setHeightValue(event.target.value);
     };
-    const handleOccupationChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setUpdatedOccupationValue(event.target.value);
-        setOccupationValue(event.target.value);
+    const handleOccupationChange = (occupation: string) => {
+        setUpdatedOccupationValue(occupation);
+        setOccupationValue(occupation);
     };
     const handleGenderChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         setUpdatedGenderValue(event.target.value);
