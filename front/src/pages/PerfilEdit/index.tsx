@@ -167,8 +167,9 @@ export const PerfilEdit = () => {
         setNameValue(event.target.value);
     };
     const handleUserNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setUpdatedUserNameValue(event.target.value);
-        setUserNameValue(event.target.value);
+        setUpdatedUserNameValue(event.target.value.replace(/[^a-zA-Z]/g, ""));
+        let currentValue = event.target.value.replace(/[^a-zA-Z]/g, "")
+        setUserNameValue(currentValue);
     };
     const handleConfirmPasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setConfirmPasswordValue(event.target.value);
@@ -181,6 +182,7 @@ export const PerfilEdit = () => {
         setUpdatedEmailValue(event.target.value);
         setEmailValue(event.target.value);
     };
+
     const handlePhotoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.files && event.target.files.length > 0) {
             const file = event.target.files[0];

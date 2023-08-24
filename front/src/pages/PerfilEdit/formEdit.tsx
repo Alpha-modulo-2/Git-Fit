@@ -30,11 +30,12 @@ interface FormProps {
 export default function EditForm(props: FormProps) {
   const [isProfessional, setIsProfessional] = useState(false);
   const [occupation, setOccupation] = useState('');
-  const [selectedPhoto, setSelectedPhoto] = useState<string>(`./uploads/${props.inputsPhotoValue}`);
+
+  const [selectedPhoto, setSelectedPhoto] = useState<string>('');
 
   const handleLocalPhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-
+    console.log(file)
     if (file) {
       const reader = new FileReader();
 
@@ -46,6 +47,11 @@ export default function EditForm(props: FormProps) {
       reader.readAsDataURL(file);
     }
   };
+
+  useEffect(() => {
+      const photoAddress = `/uploads/${props.inputsPhotoValue}`;
+      setSelectedPhoto(photoAddress);
+  }, [props.inputsPhotoValue]);
 
   useEffect(() => {
     if (props.inputsOccupationValue) {
@@ -60,11 +66,13 @@ export default function EditForm(props: FormProps) {
 
     if (!isChecked) {
       setOccupation('');
+      setIsProfessional(false);
     }
   };
 
   const handleOccupationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setIsProfessional(e.target.checked);
+    setIsProfessional(true);
+    setOccupation(e.target.value)
   };
 
   const handleWeightChange = (event: React.ChangeEvent<HTMLInputElement>) => {
