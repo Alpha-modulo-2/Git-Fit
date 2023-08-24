@@ -9,15 +9,18 @@ body {
 
 .centered {
   justify-content: center;
+  width: 100%;
 }
 
 .container-contact-profile {
   font-family: "Poppins", sans-serif;
-  width: 72%;
+  padding-right: 40px;
+  width: 70%;
+  height: 89vh;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-right: 40px;
+  justify-content: space-around;
 }
 
 .structure-carrossel {
@@ -32,19 +35,12 @@ body {
   width: 0px;
 }
 
-.container-progress-bar {
-  width: 80%;
-  height: 50vh;
-  display: flex;
+.align-centered{
   flex-direction: column;
-  justify-content: center;
-  /* justify-content: space-around; */
-  gap: 50px;
-}
+  width: 100%;
+  height: 50%;
+  margin-bottom: 200px;
 
-.div-progress-bar {
-  display: flex;
-  align-items: center;
 }
 
 .buttonAdd {

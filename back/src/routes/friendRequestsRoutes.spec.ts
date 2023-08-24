@@ -1,11 +1,13 @@
 import request from 'supertest';
 import express from 'express';
 import bodyParser from 'body-parser';
-import { connectToTestDatabase, closeDatabase, resetDatabase } from  '../database/mockDatabase'
+import { connectToTestDatabase, closeDatabase, resetDatabase } from '../database/mockDatabase'
 import { router } from './router';
 import cookieParser from 'cookie-parser';
 import mongoose from 'mongoose';
 import Redis from 'ioredis';
+import { cardCronJob } from '../repositories/CardRepository';
+import { summaryCronJob } from '../repositories/userSummaryRepository';
 let redis: any
 
 const app = express();
@@ -30,16 +32,18 @@ afterEach(async () => {
 
 afterAll(async () => {
     await closeDatabase();
+    cardCronJob.stop()
+    summaryCronJob.stop()
 });
 
 async function createLogin(username: string) {
     const response = await request(app)
-    .post('/login')
-    .send({
-        userName: username,
-        password: 'test12345'
-    })
-    return response.body; 
+        .post('/login')
+        .send({
+            userName: username,
+            password: 'test12345'
+        })
+    return response.body;
 }
 
 async function createUser(username: string) {
@@ -155,12 +159,12 @@ describe('POST /solicitation', () => {
         const { token } = await createLogin('requesterUser');
 
         await request(app)
-        .post('/solicitation')
-        .set('Cookie', `session=${token}`)
-        .send({
-            requesterId: requester._id,
-            recipientId: recipient._id,
-        });
+            .post('/solicitation')
+            .set('Cookie', `session=${token}`)
+            .send({
+                requesterId: requester._id,
+                recipientId: recipient._id,
+            });
 
         const response = await request(app)
             .post('/solicitation')
@@ -173,7 +177,7 @@ describe('POST /solicitation', () => {
         expect(response.status).toBe(409);
         expect(response.body.message).toBe('A solicitação de amizade já existe.');
     });
-    
+
     it('should reject a friend request if users are already friends', async () => {
         const { token, requester, recipient } = await createUserWithFriend()
 
@@ -208,7 +212,7 @@ describe('GET /friendRequests/:userId', () => {
         const { recipient } = await createUserWithRequest();
         const response = await request(app)
             .get(`/friendRequests/${recipient._id}`);
-    
+
         expect(response.status).toBe(401);
         expect(response.body.errors).toContain('jwt must be provided');
     });
@@ -231,7 +235,7 @@ describe('GET /friendRequests/:userId', () => {
         const response = await request(app)
             .get(`/friendRequests/${nonExistentId}`)
             .set('Cookie', `session=${token}`);
-    
+
         expect(response.status).toBe(404);
         expect(response.body.message).toBe('Nenhuma solicitação de amizade encontrada.');
     });
@@ -240,12 +244,12 @@ describe('GET /friendRequests/:userId', () => {
 describe('PATCH /acceptFriend', () => {
     it('should successfully accept a friend request', async () => {
         const { token, requestId } = await createUserWithRequest();
-    
+
         const response = await request(app)
             .patch('/acceptFriend')
             .set('Cookie', `session=${token}`)
             .send({ requestId });
-    
+
         expect(response.status).toBe(200);
         expect(response.body.error).toBeFalsy();
         expect(response.body.statusCode).toBe(200);
@@ -257,7 +261,7 @@ describe('PATCH /acceptFriend', () => {
         const response = await request(app)
             .patch('/acceptFriend')
             .send({ requestId });
-    
+
         expect(response.status).toBe(401);
         expect(response.body.errors).toContain('jwt must be provided');
     });
@@ -265,12 +269,12 @@ describe('PATCH /acceptFriend', () => {
     it('should return an error for an invalid request ID', async () => {
         await createUser('testUser');
         const { token } = await createLogin('testUser');
-    
+
         const response = await request(app)
             .patch('/acceptFriend')
             .set('Cookie', `session=${token}`)
             .send({ requestId: '123' });
-    
+
         expect(response.status).toBe(400);
         expect(response.body.error).toBeTruthy();
         expect(response.body.message).toBe('ID da solicitação inválido');
@@ -280,12 +284,12 @@ describe('PATCH /acceptFriend', () => {
         await createUser('testUser');
         const { token } = await createLogin('testUser');
         const nonExistentId = new mongoose.Types.ObjectId();
-    
+
         const response = await request(app)
             .patch('/acceptFriend')
             .set('Cookie', `session=${token}`)
             .send({ requestId: `${nonExistentId}` });
-    
+
         expect(response.status).toBe(500);
         expect(response.body.error).toBeTruthy();
         expect(response.body.message).toBe('Solicitação de amizade não encontrada.');
@@ -295,11 +299,11 @@ describe('PATCH /acceptFriend', () => {
 describe('DELETE /rejectFriend/:requestId', () => {
     it('should successfully reject and delete a friend request', async () => {
         const { token, requestId } = await createUserWithRequest();
-    
+
         const response = await request(app)
             .delete(`/rejectFriend/${requestId}`)
             .set('Cookie', `session=${token}`);
-    
+
         expect(response.status).toBe(200);
         expect(response.body.error).toBeFalsy();
         expect(response.body.statusCode).toBe(200);
@@ -310,7 +314,7 @@ describe('DELETE /rejectFriend/:requestId', () => {
         const { requestId } = await createUserWithRequest();
         const response = await request(app)
             .delete(`/rejectFriend/${requestId}`)
-    
+
         expect(response.status).toBe(401);
         expect(response.body.errors).toContain('jwt must be provided');
     });
@@ -318,11 +322,11 @@ describe('DELETE /rejectFriend/:requestId', () => {
     it('should return 400 if request ID is invalid', async () => {
         await createUser('testUser');
         const { token } = await createLogin('testUser');
-    
+
         const response = await request(app)
             .delete('/rejectFriend/123')
             .set('Cookie', `session=${token}`);
-    
+
         expect(response.status).toBe(400);
         expect(response.body.error).toBeTruthy();
         expect(response.body.message).toBe('ID da solicitação inválido');
@@ -336,7 +340,7 @@ describe('DELETE /rejectFriend/:requestId', () => {
         const response = await request(app)
             .delete(`/rejectFriend/${nonExistentId}`)
             .set('Cookie', `session=${token}`);
-    
+
         expect(response.status).toBe(404);
         expect(response.body.error).toBeTruthy();
         expect(response.body.message).toBe('Solicitação de amizade não encontrada.');

@@ -21,21 +21,47 @@ body {
 
 .container-profile{
   font-family: "Poppins", sans-serif;
-  width: 72%;
+  width: 60%;
+  height: 89vh;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: space-around;
+}
+.container-photo-bars{
+  width: 100%;
+  height: 30%;
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
 }
 
-.container-progress-bar{
-  width: 80%;
-  height: 50vh;
+.container-profile-progress-bar{
+  width: 100%;
+  height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: space-around;  
 }
 
-.div-progress-bar{
+.div-profile-progress-bar{
   display: flex;
-  align-items: center;
+  justify-content: space-between;
+  padding-left: 10px;
+}
+
+.align-centered{
+  flex-direction: column;
+  width: 100%;
+  height: 50%;
+  margin-bottom: 200px;
+}
+
+#wrapper{
+  width: 100%;
+  height: 60%;
+  padding: 10px 10px 10px 0px;
+  background-color: #C7D3EB;
+  border-radius: 20px;
+  align-self: center;
 }
