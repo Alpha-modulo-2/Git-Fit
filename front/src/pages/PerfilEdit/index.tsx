@@ -121,9 +121,8 @@ export const PerfilEdit = () => {
         if (updatedHeightValue !== null && updatedHeightValue !== undefined && updatedHeightValue !== '') {
             formData.append("height", `${updatedHeightValue}cm`);
         }
-        if (updatedOccupationValue !== null && updatedOccupationValue !== undefined && updatedOccupationValue !== '') {
-            formData.append("occupation", updatedOccupationValue);
-        }
+
+        formData.append("occupation", updatedOccupationValue || "");
 
         try {
             const req = await fetch(`${urlPath}/users/${userId}`, {
@@ -167,8 +166,9 @@ export const PerfilEdit = () => {
         setNameValue(event.target.value);
     };
     const handleUserNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setUpdatedUserNameValue(event.target.value);
-        setUserNameValue(event.target.value);
+        setUpdatedUserNameValue(event.target.value.replace(/[^a-zA-Z]/g, ""));
+        let currentValue = event.target.value.replace(/[^a-zA-Z]/g, "")
+        setUserNameValue(currentValue);
     };
     const handleConfirmPasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setConfirmPasswordValue(event.target.value);
@@ -181,6 +181,7 @@ export const PerfilEdit = () => {
         setUpdatedEmailValue(event.target.value);
         setEmailValue(event.target.value);
     };
+
     const handlePhotoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.files && event.target.files.length > 0) {
             const file = event.target.files[0];
@@ -200,9 +201,9 @@ export const PerfilEdit = () => {
         setUpdatedHeightValue(event.target.value);
         setHeightValue(event.target.value);
     };
-    const handleOccupationChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setUpdatedOccupationValue(event.target.value);
-        setOccupationValue(event.target.value);
+    const handleOccupationChange = (occupation: string) => {
+        setUpdatedOccupationValue(occupation);
+        setOccupationValue(occupation);
     };
     const handleGenderChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         setUpdatedGenderValue(event.target.value);

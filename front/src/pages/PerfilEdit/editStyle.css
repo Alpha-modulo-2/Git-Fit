@@ -52,7 +52,7 @@
   height: 100%;
 }
 .container-second-content-edit {
-  padding-top: 2rem;
+  padding-top: 3.1rem;
 }
 .container-choose-photo-edit {
   display: flex;
@@ -72,8 +72,8 @@
 }
 
 .custom-file-label-edit {
-  width: 8vw;
-  height: 8vw;
+  width: 12rem;
+  height: 12rem;
   display: inline-block;
   padding: 10px;
   border-radius: 50%;
@@ -87,8 +87,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 7vw;
-  height: 7vw;
+  width: 10rem;
+  height: 10rem;
   content: "+";
   font-size: 7vw;
   border-radius: 50%;
@@ -361,9 +361,7 @@ form {
     height: 75px;
     font-size: 75px;
   }
-  .container-second-content-edit {
-    padding-top: 0.6rem;
-  }
+
   .input-weight-edit,
   .input-hight-edit {
     height: 52px;
