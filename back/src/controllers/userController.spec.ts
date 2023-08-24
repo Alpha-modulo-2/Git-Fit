@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken"
 import UserService from '../services/UserServices';
 import * as validators from '../middleware/validators';
 import { Request, Response } from 'express';
+import { cardCronJob } from '../repositories/CardRepository';
 
 interface MockUserService extends UserService {
     insert: jest.Mock;
@@ -66,6 +67,10 @@ describe('UserController', () => {
         userController = new UserController(userService);
     });
 
+    afterAll(async () => {
+        cardCronJob.stop()
+    });
+
     it('should insert a user', async () => {
         userService.insert.mockResolvedValue({ error: false, statusCode: 200, user: mockUser });
 
@@ -98,7 +103,7 @@ describe('UserController', () => {
     });
 
     it('should update a user', async () => {
-        const mockUser1 = {...mockUser, _id: mockUserId}
+        const mockUser1 = { ...mockUser, _id: mockUserId }
         //const { _id, ...restOfUser } = mockUser
         const req = {
             params: {

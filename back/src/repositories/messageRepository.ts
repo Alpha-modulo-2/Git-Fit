@@ -34,12 +34,12 @@ export default class MessageRepository {
     async get(chatId: string): Promise<IResult> {
         try {
 
-            const results = await messageModel.find({ chatId: chatId })
+            const results = await messageModel.find({ chatId: chatId }).sort({ createdAt: -1 }).limit(50)
 
             return {
                 error: false,
                 statusCode: 200,
-                chatMessage: results || []
+                chatMessage: results.reverse() || []
             }
 
         } catch (error: any) {

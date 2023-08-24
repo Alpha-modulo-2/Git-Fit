@@ -5,13 +5,14 @@ import ITask from "../interfaces/ITask";
 import IMeal from "../interfaces/IMeal";
 import { cardModel } from "../models/card";
 import CustomError from "../helpers/CustomError";
+import cron from 'node-cron';
 
 export default class CardRepository {
 
     async insert(cards: ICard[]): Promise<IResult> {
         try {
             const result = await cardModel.insertMany(cards);
-    
+
             return {
                 error: false,
                 statusCode: 201,
@@ -25,10 +26,10 @@ export default class CardRepository {
             };
         }
     }
-    
+
     async getAllCardsByUser(userId: string): Promise<IResult> {
         try {
-            const cards = await cardModel.find({userId: userId})
+            const cards = await cardModel.find({ userId: userId })
 
             if (!cards || cards.length === 0) {
                 throw new CustomError("Cards não encontrados.", 404);
@@ -47,7 +48,7 @@ export default class CardRepository {
                     message: error.message,
                 };
             }
-            
+
             return {
                 error: true,
                 message: error.message || "Erro interno do servidor",
@@ -62,7 +63,7 @@ export default class CardRepository {
 
             if (!card) {
                 throw new CustomError("Card não encontrado.", 404);
-            } 
+            }
 
             return {
                 error: false,
@@ -77,7 +78,7 @@ export default class CardRepository {
                     message: error.message,
                 };
             }
-            
+
             return {
                 error: true,
                 message: error.message || "Erro interno do servidor",
@@ -89,14 +90,14 @@ export default class CardRepository {
     async updateTrainingCardChecked(cardId: string, checked: boolean): Promise<IResult> {
         try {
             const card = await cardModel.findById(cardId);
-    
+
             if (!card) {
                 throw new CustomError("Card não encontrado.", 404);
             }
-    
+
             card.trainingCard.checked = checked;
             const updatedCard = await card.save();
-    
+
             return {
                 error: false,
                 statusCode: 200,
@@ -110,7 +111,7 @@ export default class CardRepository {
                     message: error.message,
                 };
             }
-            
+
             return {
                 error: true,
                 message: error.message || "Erro interno do servidor",
@@ -122,14 +123,14 @@ export default class CardRepository {
     async updateMealsCardChecked(cardId: string, checked: boolean): Promise<IResult> {
         try {
             const card = await cardModel.findById(cardId);
-    
+
             if (!card) {
                 throw new CustomError("Card não encontrado.", 404);
             }
-    
+
             card.mealsCard.checked = checked;
             const updatedCard = await card.save();
-    
+
             return {
                 error: false,
                 statusCode: 200,
@@ -143,7 +144,7 @@ export default class CardRepository {
                     message: error.message,
                 };
             }
-            
+
             return {
                 error: true,
                 message: error.message || "Erro interno do servidor",
@@ -162,13 +163,13 @@ export default class CardRepository {
             const card = await cardModel.findByIdAndUpdate(
                 cardId,
                 { $push: { "trainingCard.tasks": task } },
-                { new: true } 
+                { new: true }
             );
-    
+
             if (!card) {
                 throw new CustomError("Card não encontrado.", 404);
             }
-    
+
             return {
                 error: false,
                 statusCode: 200,
@@ -182,7 +183,7 @@ export default class CardRepository {
                     message: error.message,
                 };
             }
-            
+
             return {
                 error: true,
                 message: error.message || "Erro interno do servidor",
@@ -220,7 +221,7 @@ export default class CardRepository {
                     message: error.message,
                 };
             }
-            
+
             return {
                 error: true,
                 message: error.message || "Erro interno do servidor",
@@ -236,11 +237,11 @@ export default class CardRepository {
                 { 'trainingCard.title': title },
                 { new: true }
             );
-    
+
             if (!card) {
                 throw new CustomError("Card não encontrado.", 404);
             }
-    
+
             return {
                 error: false,
                 statusCode: 200,
@@ -269,7 +270,7 @@ export default class CardRepository {
             if (!card) {
                 throw new CustomError("Task não encontrado.", 404);
             }
-    
+
             const updatedCard = await cardModel.findOneAndUpdate(
                 { _id: card._id, "trainingCard.tasks._id": taskId },
                 { $set: { "trainingCard.tasks.$.description": description } },
@@ -283,7 +284,7 @@ export default class CardRepository {
             return {
                 error: false,
                 statusCode: 200,
-                card: updatedCard ,
+                card: updatedCard,
             }
         } catch (error: any) {
             if (error instanceof CustomError) {
@@ -293,7 +294,7 @@ export default class CardRepository {
                     message: error.message,
                 };
             }
-            
+
             return {
                 error: true,
                 message: error.message || "Erro interno do servidor",
@@ -310,7 +311,7 @@ export default class CardRepository {
             if (!card) {
                 throw new CustomError("Refeição não encontrada.", 404);
             }
-    
+
             const updatedCard = await cardModel.findOneAndUpdate(
                 { _id: card._id, "mealsCard.meals._id": mealId },
                 { $set: { "mealsCard.meals.$.description": description } },
@@ -334,7 +335,7 @@ export default class CardRepository {
                     message: error.message,
                 };
             }
-            
+
             return {
                 error: true,
                 message: error.message || "Erro interno do servidor",
@@ -354,7 +355,7 @@ export default class CardRepository {
 
             const updatedCard = await cardModel.findOneAndUpdate(
                 { _id: card._id },
-                { $pull: { 'trainingCard.tasks': { _id: taskId } } },	
+                { $pull: { 'trainingCard.tasks': { _id: taskId } } },
                 { new: true }
             );
 
@@ -375,7 +376,7 @@ export default class CardRepository {
                     message: error.message,
                 };
             }
-            
+
             return {
                 error: true,
                 message: error.message || "Erro interno do servidor",
@@ -415,7 +416,7 @@ export default class CardRepository {
                     message: error.message,
                 };
             }
-            
+
             return {
                 error: true,
                 message: error.message || "Erro interno do servidor",
@@ -429,3 +430,23 @@ export default class CardRepository {
         return !!existingCards;
     }
 }
+
+export const cardCronJob = cron.schedule('0 0 * * SUN', async () => {
+    console.log('Running a job every Sunday at 00:00 to reset checks');
+    try {
+        await cardModel.updateMany(
+            {},
+            {
+                $set: {
+                    'trainingCard.checked': false,
+                    'mealsCard.checked': false
+                }
+            }
+        );
+        console.log('All checked values in trainingCard and mealsCard have been set to false');
+    } catch (error) {
+        console.error('Error updating checks:', error);
+    }
+}, {
+    timezone: "America/Sao_Paulo"
+});

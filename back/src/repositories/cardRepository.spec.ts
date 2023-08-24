@@ -1,8 +1,8 @@
-import CardRepository from "../repositories/CardRepository";
+import CardRepository, { cardCronJob } from "../repositories/CardRepository";
 import ICard from "../interfaces/ICard";
 import ITask from "../interfaces/ITask";
 import IMeal from "../interfaces/IMeal";
-import { Types  } from 'mongoose';
+import { Types } from 'mongoose';
 import CustomError from "../helpers/CustomError";
 import { cardModel } from "../models/card";
 
@@ -53,6 +53,10 @@ describe('CardRepository', () => {
         jest.clearAllMocks();
     });
 
+    afterAll(async () => {
+        cardCronJob.stop()
+    });
+
     describe('insert', () => {
         it('should insert cards', async () => {
             cardModel.insertMany = jest.fn().mockResolvedValue(mockCards);
@@ -85,36 +89,36 @@ describe('CardRepository', () => {
     describe('getAllCardsByUser', () => {
         it('should return all cards of a user', async () => {
             cardModel.find = jest.fn().mockResolvedValue(mockCards);
-    
+
             const result = await cardRepository.getAllCardsByUser(userId);
-    
-            expect(cardModel.find).toHaveBeenCalledWith({userId: userId});
+
+            expect(cardModel.find).toHaveBeenCalledWith({ userId: userId });
             expect(result).toEqual({
                 error: false,
                 statusCode: 200,
                 card: mockCards
             });
         });
-    
+
         it('should handle the situation when no cards are found', async () => {
             cardModel.find = jest.fn().mockResolvedValue([]);
-    
+
             try {
                 await cardRepository.getAllCardsByUser(userId);
             } catch (error) {
-                expect(cardModel.find).toHaveBeenCalledWith({userId: userId});
+                expect(cardModel.find).toHaveBeenCalledWith({ userId: userId });
                 expect(error).toEqual(new CustomError("Cards não encontrados.", 404));
             }
         });
-    
+
         it('should handle errors thrown from the model', async () => {
-            
+
             const errorMsg = 'Test error';
             cardModel.find = jest.fn().mockRejectedValue(new Error(errorMsg));
-    
+
             const result = await cardRepository.getAllCardsByUser(userId);
-    
-            expect(cardModel.find).toHaveBeenCalledWith({userId: userId});
+
+            expect(cardModel.find).toHaveBeenCalledWith({ userId: userId });
             expect(result).toEqual({
                 error: true,
                 message: errorMsg,
@@ -166,7 +170,7 @@ describe('CardRepository', () => {
     describe('updateTrainingCardChecked', () => {
         it('should update the checked property of a card', async () => {
             const checked = true;
-            const mockCard = { ...mockCards[0], save: jest.fn().mockResolvedValue({...mockCards[0], trainingCard: { checked: checked }}) };
+            const mockCard = { ...mockCards[0], save: jest.fn().mockResolvedValue({ ...mockCards[0], trainingCard: { checked: checked } }) };
 
             cardModel.findById = jest.fn().mockResolvedValue(mockCard);
 
@@ -177,7 +181,7 @@ describe('CardRepository', () => {
             expect(result).toEqual({
                 error: false,
                 statusCode: 200,
-                card: {...mockCards[0], trainingCard: { checked: checked }}
+                card: { ...mockCards[0], trainingCard: { checked: checked } }
             });
         });
 
@@ -212,7 +216,7 @@ describe('CardRepository', () => {
     describe('updateMealsCardChecked', () => {
         it('should update the checked property of a meals card', async () => {
             const checked = true;
-            const mockCard = { ...mockCards[0], save: jest.fn().mockResolvedValue({...mockCards[0], mealsCard: { checked: checked }}) };
+            const mockCard = { ...mockCards[0], save: jest.fn().mockResolvedValue({ ...mockCards[0], mealsCard: { checked: checked } }) };
 
             cardModel.findById = jest.fn().mockResolvedValue(mockCard);
 
@@ -223,7 +227,7 @@ describe('CardRepository', () => {
             expect(result).toEqual({
                 error: false,
                 statusCode: 200,
-                card: {...mockCards[0], mealsCard: { checked: checked }}
+                card: { ...mockCards[0], mealsCard: { checked: checked } }
             });
         });
 
@@ -257,13 +261,13 @@ describe('CardRepository', () => {
 
     describe('addTask', () => {
         it('should add a task to a card', async () => {
-            const updatedCard = {...mockCards[0], trainingCard: { ...mockCards[0].trainingCard, tasks: [...mockCards[0].trainingCard.tasks, mockTask]}};
+            const updatedCard = { ...mockCards[0], trainingCard: { ...mockCards[0].trainingCard, tasks: [...mockCards[0].trainingCard.tasks, mockTask] } };
 
             cardModel.findByIdAndUpdate = jest.fn().mockResolvedValue(updatedCard);
 
             const result = await cardRepository.addTask(cardId, mockTask);
 
-            expect(cardModel.findByIdAndUpdate).toHaveBeenCalledWith(cardId, {$push: {"trainingCard.tasks": mockTask}}, {new: true});
+            expect(cardModel.findByIdAndUpdate).toHaveBeenCalledWith(cardId, { $push: { "trainingCard.tasks": mockTask } }, { new: true });
             expect(result).toEqual({
                 error: false,
                 statusCode: 200,
@@ -277,7 +281,7 @@ describe('CardRepository', () => {
             try {
                 await cardRepository.addTask(cardId, mockTask);
             } catch (error) {
-                expect(cardModel.findByIdAndUpdate).toHaveBeenCalledWith(cardId, {$push: {"trainingCard.tasks": mockTask}}, {new: true});
+                expect(cardModel.findByIdAndUpdate).toHaveBeenCalledWith(cardId, { $push: { "trainingCard.tasks": mockTask } }, { new: true });
                 expect(error).toEqual(new CustomError("Card não encontrado.", 404));
             }
         });
@@ -289,7 +293,7 @@ describe('CardRepository', () => {
 
             const result = await cardRepository.addTask(cardId, mockTask);
 
-            expect(cardModel.findByIdAndUpdate).toHaveBeenCalledWith(cardId, {$push: {"trainingCard.tasks": mockTask}}, {new: true});
+            expect(cardModel.findByIdAndUpdate).toHaveBeenCalledWith(cardId, { $push: { "trainingCard.tasks": mockTask } }, { new: true });
             expect(result).toEqual({
                 error: true,
                 message: errorMsg,
@@ -300,13 +304,13 @@ describe('CardRepository', () => {
 
     describe('addMeal', () => {
         it('should add a meal to a card', async () => {
-            const updatedCard = {...mockCards[0], mealsCard: { ...mockCards[0].mealsCard, meals: [...mockCards[0].mealsCard.meals, mockMeal]}};
+            const updatedCard = { ...mockCards[0], mealsCard: { ...mockCards[0].mealsCard, meals: [...mockCards[0].mealsCard.meals, mockMeal] } };
 
             cardModel.findByIdAndUpdate = jest.fn().mockResolvedValue(updatedCard);
 
             const result = await cardRepository.addMeal(cardId, mockMeal);
 
-            expect(cardModel.findByIdAndUpdate).toHaveBeenCalledWith(cardId, {$push: {"mealsCard.meals": mockMeal}}, {new: true});
+            expect(cardModel.findByIdAndUpdate).toHaveBeenCalledWith(cardId, { $push: { "mealsCard.meals": mockMeal } }, { new: true });
             expect(result).toEqual({
                 error: false,
                 statusCode: 200,
@@ -320,7 +324,7 @@ describe('CardRepository', () => {
             try {
                 await cardRepository.addMeal(cardId, mockMeal);
             } catch (error) {
-                expect(cardModel.findByIdAndUpdate).toHaveBeenCalledWith(cardId, {$push: {"mealsCard.meals": mockMeal}}, {new: true});
+                expect(cardModel.findByIdAndUpdate).toHaveBeenCalledWith(cardId, { $push: { "mealsCard.meals": mockMeal } }, { new: true });
                 expect(error).toEqual(new CustomError("Card não encontrado.", 404));
             }
         });
@@ -332,7 +336,7 @@ describe('CardRepository', () => {
 
             const result = await cardRepository.addMeal(cardId, mockMeal);
 
-            expect(cardModel.findByIdAndUpdate).toHaveBeenCalledWith(cardId, {$push: {"mealsCard.meals": mockMeal}}, {new: true});
+            expect(cardModel.findByIdAndUpdate).toHaveBeenCalledWith(cardId, { $push: { "mealsCard.meals": mockMeal } }, { new: true });
             expect(result).toEqual({
                 error: true,
                 message: errorMsg,
@@ -344,13 +348,13 @@ describe('CardRepository', () => {
     describe('updateTitle', () => {
         it('should update a title of a card', async () => {
             const newTitle = "Novo título";
-            const updatedCard = {...mockCards[0], trainingCard: { ...mockCards[0].trainingCard, title: newTitle }};
+            const updatedCard = { ...mockCards[0], trainingCard: { ...mockCards[0].trainingCard, title: newTitle } };
 
             cardModel.findOneAndUpdate = jest.fn().mockResolvedValue(updatedCard);
 
             const result = await cardRepository.updateTitle(cardId, newTitle);
 
-            expect(cardModel.findOneAndUpdate).toHaveBeenCalledWith({_id: cardId}, {'trainingCard.title': newTitle}, {new: true});
+            expect(cardModel.findOneAndUpdate).toHaveBeenCalledWith({ _id: cardId }, { 'trainingCard.title': newTitle }, { new: true });
             expect(result).toEqual({
                 error: false,
                 statusCode: 200,
@@ -365,7 +369,7 @@ describe('CardRepository', () => {
 
             const result = await cardRepository.updateTitle(cardId, newTitle);
 
-            expect(cardModel.findOneAndUpdate).toHaveBeenCalledWith({_id: cardId}, {'trainingCard.title': newTitle}, {new: true});
+            expect(cardModel.findOneAndUpdate).toHaveBeenCalledWith({ _id: cardId }, { 'trainingCard.title': newTitle }, { new: true });
             expect(result).toEqual({
                 error: true,
                 statusCode: 404,
@@ -381,7 +385,7 @@ describe('CardRepository', () => {
 
             const result = await cardRepository.updateTitle(cardId, newTitle);
 
-            expect(cardModel.findOneAndUpdate).toHaveBeenCalledWith({_id: cardId}, {'trainingCard.title': newTitle}, {new: true});
+            expect(cardModel.findOneAndUpdate).toHaveBeenCalledWith({ _id: cardId }, { 'trainingCard.title': newTitle }, { new: true });
             expect(result).toEqual({
                 error: true,
                 message: "Erro interno do servidor.",
@@ -394,13 +398,15 @@ describe('CardRepository', () => {
         it('should update a task', async () => {
             const taskId = "123456789101112131415161";
             const newDescription = "Nova descrição";
-            const updatedCard = {...mockCards[0], 
+            const updatedCard = {
+                ...mockCards[0],
                 trainingCard: {
-                    ...mockCards[0].trainingCard, 
-                    tasks: mockCards[0].trainingCard.tasks.map(task => 
+                    ...mockCards[0].trainingCard,
+                    tasks: mockCards[0].trainingCard.tasks.map(task =>
                         task._id === taskId ? { ...task, description: newDescription } : task
                     )
-                }};
+                }
+            };
 
             cardModel.findOne = jest.fn().mockResolvedValue(mockCards[0]);
             cardModel.findOneAndUpdate = jest.fn().mockResolvedValue(updatedCard);
@@ -409,8 +415,8 @@ describe('CardRepository', () => {
 
             expect(cardModel.findOne).toHaveBeenCalledWith({ "trainingCard.tasks._id": taskId });
             expect(cardModel.findOneAndUpdate).toHaveBeenCalledWith(
-                { _id: mockCards[0]._id, "trainingCard.tasks._id": taskId }, 
-                { $set: { "trainingCard.tasks.$.description": newDescription } }, 
+                { _id: mockCards[0]._id, "trainingCard.tasks._id": taskId },
+                { $set: { "trainingCard.tasks.$.description": newDescription } },
                 { new: true }
             );
             expect(result).toEqual({
@@ -458,13 +464,15 @@ describe('CardRepository', () => {
         it('should update a meal', async () => {
             const mealId = "123456789101112131415161";
             const newDescription = "Nova descrição";
-            const updatedCard = {...mockCards[0], 
+            const updatedCard = {
+                ...mockCards[0],
                 mealsCard: {
-                    ...mockCards[0].mealsCard, 
-                    meals: mockCards[0].mealsCard.meals.map(meal => 
+                    ...mockCards[0].mealsCard,
+                    meals: mockCards[0].mealsCard.meals.map(meal =>
                         meal._id === mealId ? { ...meal, description: newDescription } : meal
                     )
-                }};
+                }
+            };
 
             cardModel.findOne = jest.fn().mockResolvedValue(mockCards[0]);
             cardModel.findOneAndUpdate = jest.fn().mockResolvedValue(updatedCard);
@@ -473,8 +481,8 @@ describe('CardRepository', () => {
 
             expect(cardModel.findOne).toHaveBeenCalledWith({ "mealsCard.meals._id": mealId });
             expect(cardModel.findOneAndUpdate).toHaveBeenCalledWith(
-                { _id: mockCards[0]._id, "mealsCard.meals._id": mealId }, 
-                { $set: { "mealsCard.meals.$.description": newDescription } }, 
+                { _id: mockCards[0]._id, "mealsCard.meals._id": mealId },
+                { $set: { "mealsCard.meals.$.description": newDescription } },
                 { new: true }
             );
             expect(result).toEqual({
@@ -521,13 +529,15 @@ describe('CardRepository', () => {
     describe('delTask', () => {
         it('should delete a task', async () => {
             const taskId = "123456789101112131415161";
-            const updatedCard = {...mockCards[0], 
+            const updatedCard = {
+                ...mockCards[0],
                 trainingCard: {
-                    ...mockCards[0].trainingCard, 
-                    tasks: mockCards[0].trainingCard.tasks.filter(task => 
+                    ...mockCards[0].trainingCard,
+                    tasks: mockCards[0].trainingCard.tasks.filter(task =>
                         task._id !== taskId
                     )
-                }};
+                }
+            };
 
             cardModel.findOne = jest.fn().mockResolvedValue(mockCards[0]);
             cardModel.findOneAndUpdate = jest.fn().mockResolvedValue(updatedCard);
@@ -536,7 +546,7 @@ describe('CardRepository', () => {
 
             expect(cardModel.findOne).toHaveBeenCalledWith({ "trainingCard.tasks._id": taskId });
             expect(cardModel.findOneAndUpdate).toHaveBeenCalledWith(
-                { _id: mockCards[0]._id }, 
+                { _id: mockCards[0]._id },
                 { $pull: { 'trainingCard.tasks': { _id: taskId } } },
                 { new: true }
             );
@@ -582,13 +592,15 @@ describe('CardRepository', () => {
     describe('delMeal', () => {
         it('should delete a meal', async () => {
             const mealId = "123456789101112131415161";
-            const updatedCard = {...mockCards[0], 
+            const updatedCard = {
+                ...mockCards[0],
                 mealsCard: {
-                    ...mockCards[0].mealsCard, 
-                    meals: mockCards[0].mealsCard.meals.filter(meal => 
+                    ...mockCards[0].mealsCard,
+                    meals: mockCards[0].mealsCard.meals.filter(meal =>
                         meal._id !== mealId
                     )
-                }};
+                }
+            };
 
             cardModel.findOne = jest.fn().mockResolvedValue(mockCards[0]);
             cardModel.findOneAndUpdate = jest.fn().mockResolvedValue(updatedCard);
@@ -597,7 +609,7 @@ describe('CardRepository', () => {
 
             expect(cardModel.findOne).toHaveBeenCalledWith({ "mealsCard.meals._id": mealId });
             expect(cardModel.findOneAndUpdate).toHaveBeenCalledWith(
-                { _id: mockCards[0]._id }, 
+                { _id: mockCards[0]._id },
                 { $pull: { 'mealsCard.meals': { _id: mealId } } },
                 { new: true }
             );

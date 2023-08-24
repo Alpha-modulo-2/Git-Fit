@@ -1,11 +1,13 @@
 import request from 'supertest';
 import express from 'express';
 import bodyParser from 'body-parser';
-import { connectToTestDatabase, closeDatabase, resetDatabase } from  '../database/mockDatabase'
+import { connectToTestDatabase, closeDatabase, resetDatabase } from '../database/mockDatabase'
 import { router } from './router';
 import cookieParser from 'cookie-parser';
 import mongoose from 'mongoose';
 import Redis from 'ioredis';
+import { summaryCronJob } from '../repositories/userSummaryRepository';
+import { cardCronJob } from '../repositories/CardRepository';
 let redis: any
 
 const app = express();
@@ -30,6 +32,8 @@ afterEach(async () => {
 
 afterAll(async () => {
     await closeDatabase();
+    summaryCronJob.stop()
+    cardCronJob.stop()
 });
 
 async function createUser(username: string) {
@@ -65,7 +69,7 @@ describe('POST /login', () => {
         const response = await request(app)
             .post('/login')
             .send(credentials);
-    
+
         expect(response.status).toBe(200);
         expect(response.body.message).toBe(`Usuário '${credentials.userName}' logado com sucesso.`);
         expect(response.body.user.userName).toBe(credentials.userName);
@@ -78,11 +82,11 @@ describe('POST /login', () => {
             userName: 'testuser',
             password: 'wrongPassword'
         };
-    
+
         const response = await request(app)
             .post('/login')
             .send(credentials);
-        
+
         expect(response.status).toBe(401);
         expect(response.body).toBe('Usuário ou senha incorretos.');
     });
@@ -90,14 +94,14 @@ describe('POST /login', () => {
     it('should require both username and password', async () => {
         let response = await request(app).post('/login').send({
             userName: '',
-            password: 'testPassword' 
+            password: 'testPassword'
         });
         expect(response.status).toBe(400);
         expect(response.body.message).toBe('O username é obrigatório');
-    
-        response = await request(app).post('/login').send({ 
+
+        response = await request(app).post('/login').send({
             userName: 'testUser',
-            password: '' 
+            password: ''
         });
         expect(response.status).toBe(400);
         expect(response.body.message).toBe('Senha inválida');
@@ -105,16 +109,16 @@ describe('POST /login', () => {
 
     it('should handle JWTSECRET not defined', async () => {
         process.env.JWTSECRET = '';
-    
+
         const credentials = {
             userName: 'testUser',
             password: 'testPassword'
         };
-    
+
         const response = await request(app)
             .post('/login')
             .send(credentials);
-    
+
         expect(response.status).toBe(500);
         expect(response.body.message).toBe('JWTSECRET nao definido');
     });

@@ -3,6 +3,7 @@ import UserRepository from '../repositories/UserRepository';
 import IUser from '../interfaces/IUser';
 import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
+import { cardCronJob } from '../repositories/CardRepository';
 
 jest.mock('../repositories/UserRepository');
 jest.mock('bcrypt');
@@ -38,6 +39,10 @@ describe('UserService', () => {
         process.env.JWTSECRET = 'your-test-secret';
         (bcrypt.hash as jest.Mock).mockReturnValue('hashedPassword');
 
+    });
+
+    afterAll(async () => {
+        cardCronJob.stop()
     });
 
     it('should insert a user', async () => {
