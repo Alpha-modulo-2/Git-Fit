@@ -114,14 +114,14 @@ export const Contacts = () => {
     function handleContactsPage(){
         setShowRequests(false);
         getContacts().catch((err) => {
-            console.error("Erro ao obter contatos")
+            console.error(err)
         })
     }
 
     function handleRequestsPage(){
         setShowRequests(true);
         getRequests().catch((err) => {
-            console.error("Erro ao obter solicitações")
+            console.error(err)
         })
     }
 
