@@ -2,20 +2,25 @@ body {
   caret-color: transparent;
 }
 
-.structure-contact-profile{
+.structure-contact-profile {
   display: flex;
+  position: relative;
+}
+
+.centered {
   justify-content: center;
 }
 
-.container-contact-profile{
+.container-contact-profile {
   font-family: "Poppins", sans-serif;
-  width: 85%;
+  width: 72%;
   display: flex;
   flex-direction: column;
   align-items: center;
+  padding-right: 40px;
 }
 
-.structure-carrossel{
+.structure-carrossel {
   position: absolute;
   right: 0.1rem;
   width: 30vw;
@@ -27,29 +32,22 @@ body {
   width: 0px;
 }
 
-.container-profile{
-  font-family: "Poppins", sans-serif;
-  max-width: 75vw;
-  display: flex;
-  flex-direction: column;
-  padding-right: 40px;
-  align-items: center;
-}
-
-.container-progress-bar{
+.container-progress-bar {
   width: 80%;
   height: 50vh;
   display: flex;
   flex-direction: column;
-  justify-content: space-around;  
+  justify-content: center;
+  /* justify-content: space-around; */
+  gap: 50px;
 }
 
-.div-progress-bar{
+.div-progress-bar {
   display: flex;
   align-items: center;
 }
 
-.buttonAdd{
+.buttonAdd {
   background-color: rgba(115, 83, 186, 1);
   width: 10rem;
   height: 2rem;
@@ -57,12 +55,25 @@ body {
   color: rgb(255, 255, 255);
 }
 
-.buttonAdd:hover{
+.buttonAdd:hover {
   background-color: rgb(135, 105, 199);
   cursor: pointer;
 }
-.div-buttonAdd{
-  width: 90%;
+.div-buttonAdd {
+  width: 80%;
   display: flex;
   justify-content: right;
+}
+
+@media (min-width: 380px) and (max-width: 900px) {
+  .container-contact-profile {
+    gap: 10px;
+  }
+  .container-progress-bar {
+    height: 42vh;
+    gap: 30px;
+  }
+  .div-buttonAdd {
+    justify-content: center;
+  }
 }

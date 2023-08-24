@@ -5,6 +5,7 @@ import { useAuth } from '../../context/authContext';
 import { io } from "socket.io-client";
 import "./styles.css"
 import { ChatCircleText, X, PaperPlaneRight } from "@phosphor-icons/react";
+import { User } from "../../interfaces/IUser.ts"
 import Badge from '@mui/material/Badge';
 import MailIcon from '@mui/icons-material/Mail';
 
@@ -56,10 +57,10 @@ let socket: Socket | null = null;
 let currentChatId: string | null = null;
 
 export const Chat = ({ onChatOpen }: ChatProps) => {
-    const { user } = useAuth();
+    const { user, setLoggedUser } = useAuth();
 
     if (!user) {
-        throw new Error('Usuário não exite')
+        throw new Error('Usuário não existe')
     }
 
     const userId = String(user._id);
@@ -83,7 +84,9 @@ export const Chat = ({ onChatOpen }: ChatProps) => {
         if (chatOpen) {
             closeChat()
         } else {
-
+            fetchUserData().catch(() => {
+                console.error("deu ruim")
+            })
             await searchChats(userId);
         }
 
@@ -94,6 +97,24 @@ export const Chat = ({ onChatOpen }: ChatProps) => {
         setCurrentlyFriend(friend.userName)
         await chatWithFriend(friend._id, chats)
     }
+
+
+    const fetchUserData = async () => {
+        if(user){
+            try {
+                const response = await generalRequest(`/users/${user?._id}`);
+                console.log(response, 'res')
+                setLoggedUser(response as User);
+            } catch (error) {
+                console.error('Erro ao buscar dados do usuário', error);
+            } 
+        }
+        
+    };
+        
+        
+        
+ 
 
     const searchChats = async (userId: string) => {
         try {
@@ -230,6 +251,7 @@ export const Chat = ({ onChatOpen }: ChatProps) => {
         }
         currentChatId = null;
         setShowChat(false);
+        console.log(showChat, 'show')
         setCurrentlyFriend('Other');
     }
 
@@ -243,7 +265,7 @@ export const Chat = ({ onChatOpen }: ChatProps) => {
 
     return (
         <div className="chat-container">
-            <div className="chat-button" onClick={toggleChat}>
+            <div className="chat-button" onClick={()=> toggleChat()}>
                 {chatOpen ?
                     <X size={40} color="white" className="close-button-msg" />
                     : <ChatCircleText size={40} color="white" />}

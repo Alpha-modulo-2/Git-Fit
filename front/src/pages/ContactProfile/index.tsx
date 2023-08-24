@@ -4,11 +4,14 @@ import { Header } from "../../components/Header";
 import { ProgressBar } from "../../components/ProgressBar";
 import { CircleProgressBar } from "../../components/CircleProgressBar";
 import { PhotoProfile } from "../../components/PhotoProfile";
+import { Chat } from "../../components/Chat";
 import { useParams } from 'react-router-dom';
 import { generalRequest } from "../../generalFunction";
 import { User } from "../../interfaces/IUser.ts"
 import { useAuth } from '../../context/authContext';
 import { Modal } from "../../components/Modal";
+import { ContactDailyCard } from "../../components/ContactDailyCard/index.tsx";
+import { MiniCard } from "../../components/MiniCard/index.tsx";
 
 interface Task {
     _id: string;
@@ -62,43 +65,13 @@ export const Contact_profile: React.FC = () => {
     const [isFriend, setisFriend] = useState<boolean>(false);
     const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
     const [messageModal, setMessageModal] = useState<string>('');
+    const [showMiniCarrosel, setShowMiniCarrossel] = useState(true);
 
     function openModal() {
         setModalIsOpen(true);
     }
     function closeModal() {
         setModalIsOpen(false);
-    }
-
-    const convertToNumber = (stringValue: string) => {
-        if (stringValue === undefined || stringValue === null) {
-            return 0; 
-        }
-        const numericValue = stringValue.replace(/\D/g, '');
-        const numberValue = parseFloat(numericValue) / (stringValue.includes('cm') ? 100 : 1);
-        return numberValue;
-    };
-
-    const Calc_IMC = (weight_imc: number, height_imc: number) => {
-        const imc = weight_imc / (height_imc * height_imc);
-        const imc_obj = {
-            imc_media: imc,
-            imc_class: "",
-            imc_color: "#00ff3c"
-        }
-        if (imc < 18.5) {
-            imc_obj.imc_class = "IMC: Abaixo";
-        }
-        if (imc >= 18.5 && imc < 25) {
-            imc_obj.imc_class = "IMC: Normal";
-        }
-        if (imc >= 25 && imc < 30) {
-            imc_obj.imc_class = "IMC: Sobrepeso";
-        }
-        if (imc >= 30) {
-            imc_obj.imc_class = "IMC: Obesidade";
-        }
-        return (imc_obj);
     }
 
     useEffect(() => {
@@ -120,26 +93,23 @@ export const Contact_profile: React.FC = () => {
                 console.error('Erro ao buscar dados dos cards', error);
             }
         };
-        fetchUserData();
-        fetchCardsData();
+        fetchUserData().catch(()=>{
+            console.error("Erro ao obter seus dados")
+        });
+        fetchCardsData().catch(()=>{
+            console.error("Erro ao obter os cards")
+        });
     }, []);
 
     let user_name = "";
-    let weight = 0;
-    let heigth = 0;
     let user_photo = "https://www.logolynx.com/images/logolynx/b4/b4ef8b89b08d503b37f526bca624c19a.jpeg";
 
     if (userData != null) {
         user_name = userData.userName;
-        weight = convertToNumber(userData.weight);
-        heigth = convertToNumber(userData.height);
         if (userData.photo) {
             user_photo = userData.photo;
         }
     }
-    const calcIMC = Calc_IMC(weight, heigth);
-    const progressIMC = (calcIMC.imc_media * 100) / 40;
-    const progressIMCircle = parseInt(progressIMC.toFixed(0));
 
     //-------------------------
     const countTrainingCheckboxes = () => {
@@ -164,6 +134,7 @@ export const Contact_profile: React.FC = () => {
 
     useEffect(() => {
         checkFriendButton()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [userData])
 
     function addFriends(requesterId: string, recipientId: string): void {
@@ -201,6 +172,18 @@ export const Contact_profile: React.FC = () => {
             console.error('Erro na requisição:', error);
         });
     }
+    const changeversion = () => {
+        if (showMiniCarrosel) {
+            setShowMiniCarrossel(false);
+        } else {
+            setShowMiniCarrossel(true);
+        }
+    }
+
+    const [isChatOpen, setIsChatOpen] = useState(false);
+    const handleChatToggle = (isOpen: boolean) => {
+        setIsChatOpen(isOpen);
+    };
     
     const progress1 = parseInt(countMealCheckboxes().toFixed(0));
     const progress2 = parseInt(countTrainingCheckboxes().toFixed(0));
@@ -208,7 +191,16 @@ export const Contact_profile: React.FC = () => {
     return (
         <div className="profile">
             <Header isLoggedIn={true} />
-            <div className="structure-contact-profile">
+            <div className={`structure-contact-profile ${!isFriend ? "centered" : ""} `}>
+                {isChatOpen ? (
+                    <div className="message_box">
+                        <Chat onChatOpen={handleChatToggle}></Chat>
+                    </div>
+                ) : (
+                    <div className="buttoncarrossel" onClick={changeversion}>
+                        <Chat onChatOpen={handleChatToggle}></Chat>
+                    </div>
+                )}
                 <div className="container-contact-profile">
                     <div className="div-buttonAdd">
                         {!isFriend ? (
@@ -217,7 +209,7 @@ export const Contact_profile: React.FC = () => {
                             <button className="buttonAdd" onClick={ () => removeFriend(user?._id, id)}>Remover contato</button>
                         )}
                     </div>
-                    <PhotoProfile user_name={user_name} url_photo={`/uploads/${user_photo}`} />
+                    <PhotoProfile user_name={user_name} userOccupation={user.occupation} url_photo={`/uploads/${user_photo}`} />
                     <div className="container-progress-bar">
                         <div className="div-progress-bar">
                             <ProgressBar progress={progress1} title_bar="Alimentação" />
@@ -227,12 +219,34 @@ export const Contact_profile: React.FC = () => {
                             <ProgressBar progress={progress2} title_bar="Exercícios" />
                             <CircleProgressBar progress={progress2} title_bar={""} />
                         </div>
-                        <div className="div-progress-bar">
-                            <ProgressBar progress={progressIMC} title_bar={calcIMC.imc_class} />
-                            <CircleProgressBar progress={progressIMCircle} title_bar={calcIMC.imc_media.toFixed(1)} />
-                        </div>
                     </div>
                 </div>
+                {isFriend ? (
+                    !isChatOpen? (
+                        <div className="structure-carrossel-fc">
+                        <ContactDailyCard week_number={0} dataChanged={false} contactId={id}></ContactDailyCard>
+                        <ContactDailyCard week_number={1} dataChanged={false} contactId={id}></ContactDailyCard>
+                        <ContactDailyCard week_number={2} dataChanged={false} contactId={id}></ContactDailyCard>
+                        <ContactDailyCard week_number={3} dataChanged={false} contactId={id}></ContactDailyCard>
+                        <ContactDailyCard week_number={4} dataChanged={false} contactId={id}></ContactDailyCard>
+                        <ContactDailyCard week_number={5} dataChanged={false} contactId={id}></ContactDailyCard>
+                        <ContactDailyCard week_number={6} dataChanged={false} contactId={id}></ContactDailyCard>
+                    </div>
+                    ) : (
+                        <div className="structure-minicarrossel">
+                        <MiniCard week_number={0}></MiniCard>
+                        <MiniCard week_number={1}></MiniCard>
+                        <MiniCard week_number={2}></MiniCard>
+                        <MiniCard week_number={3}></MiniCard>
+                        <MiniCard week_number={4}></MiniCard>
+                        <MiniCard week_number={5}></MiniCard>
+                        <MiniCard week_number={6}></MiniCard>
+                    </div>
+                    )
+                ): (
+                    <div></div>
+                )}
+                
                 {modalIsOpen && (
                     <Modal children={messageModal} onClick={closeModal} />
                 )}
