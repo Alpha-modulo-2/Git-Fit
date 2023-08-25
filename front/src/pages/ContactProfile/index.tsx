@@ -219,7 +219,7 @@ export const Contact_profile: React.FC = () => {
                         newSummary.meals.push(mealPercentage);
                         newSummary.weight.push(parseFloat(userSummary.weight));
                     });
-                    console.log('newSummary', newSummary)
+
                     setSummary(newSummary)
                 }
             } catch (error) {
@@ -229,7 +229,7 @@ export const Contact_profile: React.FC = () => {
         fetchUserSummary().catch(error => {
             console.error('Erro ao buscar summary do usuário', error);
         });
-    }, [id]);
+    }, [userData]);
 
     return (
         <div className="profile">
@@ -252,7 +252,7 @@ export const Contact_profile: React.FC = () => {
                             <button className="buttonAdd" onClick={ () => removeFriend(user?._id, id)}>Remover contato</button>
                         )}
                     </div>
-                    <div className={`${summary.dates.length > 2 && userData?.occupation && isFriend ? "container-photo-bars" : "align-centered"}`}>
+                    <div className={`${summary.dates.length > 2 && user?.occupation && isFriend ? "container-photo-bars" : "align-centered"}`}>
                         <PhotoProfile user_name={user_name} url_photo={user_photo} />
                         <div className="container-profile-progress-bar">
                             <div className="div-profile-progress-bar">
@@ -266,7 +266,7 @@ export const Contact_profile: React.FC = () => {
                         </div>
                     </div>
                     {
-                        summary.dates.length > 2 && userData?.occupation && isFriend &&
+                        summary.dates.length > 2 && user?.occupation && isFriend &&
                         <ApexChart summary={summary} />
                     }
                 </div>

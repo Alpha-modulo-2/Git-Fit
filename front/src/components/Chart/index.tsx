@@ -7,7 +7,6 @@ class ApexChart extends React.Component<ApexChartProps, State> {
         super(props);
 
         const { dates, tasks, meals, weight } = props.summary;
-        console.log('chart', props.summary)
     
         this.state = {
             series: [{
