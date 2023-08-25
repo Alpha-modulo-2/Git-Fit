@@ -1,5 +1,6 @@
 import "./styles.css"
 import { useEffect, useState } from 'react';
+import { DotsThreeVertical } from "@phosphor-icons/react";
 import { Header } from "../../components/Header";
 import { ProgressBar } from "../../components/ProgressBar";
 import { CircleProgressBar } from "../../components/CircleProgressBar";
@@ -109,7 +110,7 @@ export const Contact_profile: React.FC = () => {
     }, []);
 
     let user_name = "";
-    let user_photo = "https://www.logolynx.com/images/logolynx/b4/b4ef8b89b08d503b37f526bca624c19a.jpeg";
+    let user_photo = new URL("../../assets/images/placeholderphoto.jpg", import.meta.url).href
 
     if (userData != null) {
         user_name = userData.userName;
@@ -191,6 +192,12 @@ export const Contact_profile: React.FC = () => {
     const handleChatToggle = (isOpen: boolean) => {
         setIsChatOpen(isOpen);
     };
+
+    const [isMiniCarrossel, setIsMiniCarrossel] = useState(false);
+    const handleMiniCarrossel = (isOpen: boolean) => {
+        console.log('caiu', isMiniCarrossel)
+        setIsMiniCarrossel(isOpen)
+    };
     
     const progress1 = parseInt(countMealCheckboxes().toFixed(0));
     const progress2 = parseInt(countTrainingCheckboxes().toFixed(0));
@@ -235,7 +242,7 @@ export const Contact_profile: React.FC = () => {
         <div className="profile">
             <Header isLoggedIn={true} />
             <div className={`structure-contact-profile ${!isFriend ? "centered" : ""} `}>
-                {isChatOpen ? (
+                {isChatOpen || isMiniCarrossel ? (
                     <div className="message_box">
                         <Chat onChatOpen={handleChatToggle}></Chat>
                     </div>
@@ -253,7 +260,7 @@ export const Contact_profile: React.FC = () => {
                         )}
                     </div>
                     <div className={`${summary.dates.length > 2 && user?.occupation && isFriend ? "container-photo-bars" : "align-centered"}`}>
-                        <PhotoProfile user_name={user_name} url_photo={user_photo} />
+                        <PhotoProfile user_name={user_name} url_photo={`/uploads/${user_photo}`} userOccupation={user.occupation} />
                         <div className="container-profile-progress-bar">
                             <div className="div-profile-progress-bar">
                                 <ProgressBar progress={progress1} title_bar="Alimentação" />
@@ -271,26 +278,43 @@ export const Contact_profile: React.FC = () => {
                     }
                 </div>
                 {isFriend ? (
-                    !isChatOpen? (
+                    (!isChatOpen && !isMiniCarrossel) ? (
                         <div className="structure-carrossel-fc">
-                        <ContactDailyCard week_number={0} dataChanged={false} contactId={id}></ContactDailyCard>
-                        <ContactDailyCard week_number={1} dataChanged={false} contactId={id}></ContactDailyCard>
-                        <ContactDailyCard week_number={2} dataChanged={false} contactId={id}></ContactDailyCard>
-                        <ContactDailyCard week_number={3} dataChanged={false} contactId={id}></ContactDailyCard>
-                        <ContactDailyCard week_number={4} dataChanged={false} contactId={id}></ContactDailyCard>
-                        <ContactDailyCard week_number={5} dataChanged={false} contactId={id}></ContactDailyCard>
-                        <ContactDailyCard week_number={6} dataChanged={false} contactId={id}></ContactDailyCard>
-                    </div>
+                            <div className="container-icon-change-cards">
+                                <DotsThreeVertical
+                                    size={35}
+                                    color="white"
+                                    className="icon-change-cards"
+                                    onClick={()=> handleMiniCarrossel(!isMiniCarrossel)}
+                                />
+                            </div>
+
+                            <ContactDailyCard week_number={0} dataChanged={false} contactId={id}></ContactDailyCard>
+                            <ContactDailyCard week_number={1} dataChanged={false} contactId={id}></ContactDailyCard>
+                            <ContactDailyCard week_number={2} dataChanged={false} contactId={id}></ContactDailyCard>
+                            <ContactDailyCard week_number={3} dataChanged={false} contactId={id}></ContactDailyCard>
+                            <ContactDailyCard week_number={4} dataChanged={false} contactId={id}></ContactDailyCard>
+                            <ContactDailyCard week_number={5} dataChanged={false} contactId={id}></ContactDailyCard>
+                            <ContactDailyCard week_number={6} dataChanged={false} contactId={id}></ContactDailyCard>
+                        </div>
                     ) : (
                         <div className="structure-minicarrossel">
-                        <MiniCard week_number={0}></MiniCard>
-                        <MiniCard week_number={1}></MiniCard>
-                        <MiniCard week_number={2}></MiniCard>
-                        <MiniCard week_number={3}></MiniCard>
-                        <MiniCard week_number={4}></MiniCard>
-                        <MiniCard week_number={5}></MiniCard>
-                        <MiniCard week_number={6}></MiniCard>
-                    </div>
+                            <div className="container-icon-change-cards">
+                                <DotsThreeVertical
+                                    size={35}
+                                    color="white"
+                                    className="icon-change-cards"
+                                    onClick={()=> handleMiniCarrossel(!isMiniCarrossel)}
+                                />
+                            </div>
+                            <MiniCard week_number={0}></MiniCard>
+                            <MiniCard week_number={1}></MiniCard>
+                            <MiniCard week_number={2}></MiniCard>
+                            <MiniCard week_number={3}></MiniCard>
+                            <MiniCard week_number={4}></MiniCard>
+                            <MiniCard week_number={5}></MiniCard>
+                            <MiniCard week_number={6}></MiniCard>
+                        </div>
                     )
                 ): (
                     <div></div>

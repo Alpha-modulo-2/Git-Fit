@@ -498,7 +498,17 @@ export const FullCard = () => {
                         )}
                     </div>
                 </div>
-                {!isChatOpen ? (
+                {(isChatOpen || window.screen.width < 900) ? (
+                        <div className="structure-minicarrossel">
+                            <MiniCard week_number={0} onClick={() => navigate('/fullcard/0')}></MiniCard>
+                            <MiniCard week_number={1} onClick={() => navigate('/fullcard/1')}></MiniCard>
+                            <MiniCard week_number={2} onClick={() => navigate('/fullcard/2')}></MiniCard>
+                            <MiniCard week_number={3} onClick={() => navigate('/fullcard/3')}></MiniCard>
+                            <MiniCard week_number={4} onClick={() => navigate('/fullcard/4')}></MiniCard>
+                            <MiniCard week_number={5} onClick={() => navigate('/fullcard/5')}></MiniCard>
+                            <MiniCard week_number={6} onClick={() => navigate('/fullcard/6')}></MiniCard>
+                        </div>
+                ) : (
                     <div className="structure-carrossel-fc">
                         <DailyCard week_number={0} dataChanged={dataChanged} onClick={() => navigate('/fullcard/0')}></DailyCard>
                         <DailyCard week_number={1} dataChanged={dataChanged} onClick={() => navigate('/fullcard/1')}></DailyCard>
@@ -508,18 +518,8 @@ export const FullCard = () => {
                         <DailyCard week_number={5} dataChanged={dataChanged} onClick={() => navigate('/fullcard/5')}></DailyCard>
                         <DailyCard week_number={6} dataChanged={dataChanged} onClick={() => navigate('/fullcard/6')}></DailyCard>
                     </div>
-                ) : (
-                    <div className="structure-minicarrossel">
-                        <MiniCard week_number={0} onClick={() => navigate('/fullcard/0')}></MiniCard>
-                        <MiniCard week_number={1} onClick={() => navigate('/fullcard/1')}></MiniCard>
-                        <MiniCard week_number={2} onClick={() => navigate('/fullcard/2')}></MiniCard>
-                        <MiniCard week_number={3} onClick={() => navigate('/fullcard/3')}></MiniCard>
-                        <MiniCard week_number={4} onClick={() => navigate('/fullcard/4')}></MiniCard>
-                        <MiniCard week_number={5} onClick={() => navigate('/fullcard/5')}></MiniCard>
-                        <MiniCard week_number={6} onClick={() => navigate('/fullcard/6')}></MiniCard>
-                    </div>
                 )}
-            </div>
+        </div>
         </div>
     );
 };

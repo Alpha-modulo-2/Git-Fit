@@ -138,12 +138,6 @@ export const DailyCard = ({ week_number, onClick, dataChanged }: PropTypes) => {
     }
   }
 
-  useEffect(() => {
-    if (dataChanged) {
-
-    }
-  }, [dataChanged]);
-
   return (
     <div className="structure-daily-card" onClick={onClick}>
       <div className="header-card">

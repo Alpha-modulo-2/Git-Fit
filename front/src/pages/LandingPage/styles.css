@@ -56,3 +56,10 @@
   width: 400px;
   height: 500px;
 }
+
+@media (max-width: 768px) {
+  .container-all-content {
+    flex-direction: column;
+    padding: 0;
+  }
+}
