@@ -19,10 +19,15 @@ services:
     image: mongo
     volumes:
       - mongo_data:/data/db
+    command: ["--auth"]
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
   redis:
     image: redis
     volumes:
       - redis_data:/data
+    command: redis-server --requirepass ${REDIS_PASSWORD}
 volumes:
   mongo_data:
   redis_data:
