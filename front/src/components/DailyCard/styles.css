@@ -1,4 +1,4 @@
-.structure-daily-card{
+.structure-daily-card {
     margin-bottom: 1rem;
     width: 95%;
     height: 15rem;
@@ -7,86 +7,138 @@
     border-radius: 1.5rem;
     display: flex;
     flex-direction: column;
-    padding: 1.5rem;
+    padding: 1.3rem;
     color: rgb(255, 255, 255);
     font-family: "Arial";
     cursor: pointer;
-}
-
-.structure-daily-card:hover{
-  background-color: #151b22e9;
-}
-
-.structure-daily-card:active{
+  }
+  
+  .structure-daily-card:hover {
+    background-color: #151b22e9;
+  }
+  
+  .structure-daily-card:active {
     background-color: #151b22e7;
     border: 2px solid rgb(0, 0, 0);
-}
-
-.structure-daily-card h2{
+  }
+  
+  .structure-daily-card h2 {
     line-height: 2rem;
-}
-
-.body-card{
+  }
+  
+  .body-card {
     margin: 1%;
     border-top: 1.5px solid rgb(255, 255, 255);
     display: flex;
     height: 70%;
     flex-direction: column;
     justify-content: space-around;
-}
-
-.training-day-card{
+  }
+  
+  .training-day-card {
     display: flex;
     align-items: center;
-}
-
-.training-day-card p{
-    font-size: 0.9rem;
+    flex-wrap: wrap;
+    width: 95%;
+  }
+  
+  .training-day-card p {
+    width: 100%;
+    font-size: 14px;
     margin-left: 0.5rem;
-}
-
-@media (max-width: 900px) {
+    word-wrap: break-word;
+  }
+  
+  .meal-day-card {
+    width: 100%;
+    font-size: 14px;
+    flex-wrap: wrap;
+  }
+  
+  @media (max-width: 900px) {
     .structure-daily-card {
-        width: 95%;
-        height: 15rem;
-        padding: 0.8rem;
-        align-items: center;
+      width: 95%;
+      height: 15rem;
+      padding: 0.8rem;
+      align-items: center;
     }
     .structure-daily-card h2 {
-        font-size: 1rem;
+      font-size: 1rem;
     }
     .body-card {
-        margin: 1%;
-        border-top: 1.5px solid rgb(255, 255, 255);
-        height: 70%;
-        align-items: center;
+      margin: 1%;
+      border-top: 1.5px solid rgb(255, 255, 255);
+      height: 70%;
+      align-items: center;
     }
-
+  
     .training-day-card {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
-
+  
     .training-day-card p {
-        font-size: 0.8rem;
-        margin-left: 0;
+      font-size: 0.8rem;
+      margin-left: 0;
     }
     .training-day-card h3 {
-        font-size: 0.9rem;
-        margin-left: 0;
+      font-size: 0.9rem;
+      margin-left: 0;
     }
-
-    .meal-day-card{
-        display: flex;
-        flex-direction: column;
-        align-items: center;
+  
+    .meal-day-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
-    .meal-day-card p{
-        text-align: center;
-        font-size: 0.8rem;
+    .meal-day-card p {
+      text-align: center;
+      font-size: 0.8rem;
     }
-    .meal-day-card h3{
-        font-size: 0.9rem;
+    .meal-day-card h3 {
+      font-size: 0.9rem;
     }
-}
+    .two-line-clamp {
+      display: -webkit-box;
+      -webkit-line-clamp: 2; /* Number of lines to show */
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+  }
+  
+  @media (min-width: 901px) and (max-width: 1360px) {
+    .structure-daily-card {
+      padding: 0.6rem;
+    }
+    .structure-daily-card h2 {
+      font-size: 1.1rem;
+    }
+    .body-card {
+      margin: 1%;
+      border-top: 1.5px solid rgb(255, 255, 255);
+      height: 70%;
+      align-items: center;
+    }
+  
+    .training-day-card p {
+      font-size: 0.8rem;
+      margin-left: 0;
+    }
+    .training-day-card h3 {
+      font-size: 1rem;
+      margin-left: 0;
+    }
+    .meal-day-card p {
+      font-size: 0.8rem;
+    }
+    .meal-day-card h3 {
+      font-size: 1-rem;
+    }
+    .two-line-clamp {
+      display: -webkit-box;
+      -webkit-line-clamp: 3; /* Number of lines to show */
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+  }

@@ -38,6 +38,7 @@
   display: flex;
   align-items: center;
   flex-wrap: wrap;
+  width: 95%;
 }
 
 .training-day-card p {
@@ -50,13 +51,11 @@
 .meal-day-card {
   width: 100%;
   font-size: 14px;
-  flex-wrap: wrap; 
+  flex-wrap: wrap;
 }
 
 @media (max-width: 900px) {
   .structure-contact-daily-card {
-    width: 95%;
-    height: 15rem;
     padding: 0.8rem;
     align-items: center;
   }
@@ -96,5 +95,47 @@
   }
   .meal-day-card h3 {
     font-size: 0.9rem;
+  }
+  .two-line-clamp {
+    display: -webkit-box;
+    -webkit-line-clamp: 2; /* Number of lines to show */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}
+
+@media (min-width: 901px) and (max-width: 1360px) {
+  .structure-contact-daily-card {
+    padding: 0.6rem;
+  }
+  .structure-contact-daily-card h2 {
+    font-size: 1.1rem;
+  }
+  .body-card {
+    margin: 1%;
+    border-top: 1.5px solid rgb(255, 255, 255);
+    height: 70%;
+    align-items: center;
+  }
+
+  .training-day-card p {
+    font-size: 0.8rem;
+    margin-left: 0;
+  }
+  .training-day-card h3 {
+    font-size: 1rem;
+    margin-left: 0;
+  }
+  .meal-day-card p {
+    font-size: 0.8rem;
+  }
+  .meal-day-card h3 {
+    font-size: 1-rem;
+  }
+  .two-line-clamp {
+    display: -webkit-box;
+    -webkit-line-clamp: 3; /* Number of lines to show */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
 }

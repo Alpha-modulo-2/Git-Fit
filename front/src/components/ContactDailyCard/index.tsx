@@ -1,9 +1,6 @@
 // import React from 'react';
 import { MouseEventHandler } from 'react';
 import { useEffect, useState } from 'react';
-// import data from '../../data.json';
-//import currentuser from '../../currentuser.json'
-// import { useAuth } from '../../context/authContext';
 import { generalRequest } from "../../generalFunction";
 import "./styles.css"
 
@@ -144,11 +141,11 @@ export const ContactDailyCard = ({ week_number, onClick, dataChanged, contactId 
       <div className="body-card">
         <div className="training-day-card">
           <h4>Treino:</h4>
-          <p>{daily_theme}</p>
+          <p className='two-line-clamp'>{daily_theme}</p>
         </div>
         <div className="meal-day-card">
           <h4>Refeições:</h4>
-          <p>{daily_food}</p>
+          <p className='two-line-clamp'>{daily_food}</p>
         </div>
       </div>
     </div>

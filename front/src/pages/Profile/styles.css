@@ -22,11 +22,11 @@ body {
 .container-profile{
   font-family: "Poppins", sans-serif;
   width: 60%;
-  height: 89vh;
+  height: 88vh;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: space-around;
+  justify-content: space-evenly;
 }
 .container-photo-bars{
   width: 100%;
@@ -64,4 +64,5 @@ body {
   background-color: #C7D3EB;
   border-radius: 20px;
   align-self: center;
+  margin-top: 30px;
 }
