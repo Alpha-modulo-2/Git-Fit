@@ -10,13 +10,13 @@ export default class UserSummaryRepository {
 
         try {
 
-            const userSummary = await userSummaryModel.findById(id);
+            const userSummary = await userSummaryModel.find({ user: id });
 
             if (!userSummary) {
                 const error = {
                     error: true,
                     statusCode: 404,
-                    message: "histórico do Usuário não encontrado"
+                    message: "Histórico do Usuário não encontrado"
                 }
                 throw error
             }

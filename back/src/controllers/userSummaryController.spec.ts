@@ -52,7 +52,11 @@ describe('UserSummaryController', () => {
 
         expect(userSummaryService.getOne).toHaveBeenCalledWith(mockUserId);
         expect(res.status).toHaveBeenCalledWith(200);
-        expect(res.json).toHaveBeenCalledWith(mockUserSummary);
+        expect(res.json).toHaveBeenCalledWith({
+            "error": false,
+            "statusCode": 200,
+            "user": mockUserSummary
+        });
     });
 
     it('should respond with error message when service returns error', async () => {

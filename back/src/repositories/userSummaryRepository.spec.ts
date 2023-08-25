@@ -1,4 +1,5 @@
 import UserSummaryRepository, { summaryCronJob } from './userSummaryRepository';
+import mongoose from 'mongoose';
 import { userSummaryModel } from '../models/userSummary';
 
 describe('UserSummaryRepository', () => {
@@ -6,10 +7,12 @@ describe('UserSummaryRepository', () => {
         summaryCronJob.stop()
     });
 
+    const userId = new mongoose.Types.ObjectId();
+
     describe('getOne', () => {
         it('should return a user summary if one exists', async () => {
             const mockSummary = {
-                user: "123",
+                user: userId,
                 weight: 90,
                 checks: {
                     trainingCard: 5,
@@ -17,10 +20,10 @@ describe('UserSummaryRepository', () => {
                 },
             };
 
-            userSummaryModel.findById = jest.fn().mockResolvedValue(mockSummary);
+            userSummaryModel.find = jest.fn().mockResolvedValue(mockSummary);
 
             const repo = new UserSummaryRepository();
-            const result = await repo.getOne("123");
+            const result = await repo.getOne(userId.toString());
 
             expect(result).toEqual({
                 error: false,
@@ -30,23 +33,23 @@ describe('UserSummaryRepository', () => {
         });
 
         it('should throw an error if no user summary exists for the given ID', async () => {
-            userSummaryModel.findById = jest.fn().mockResolvedValue(null);
+            userSummaryModel.find = jest.fn().mockResolvedValue(null);
 
             const repo = new UserSummaryRepository();
-            const result = await repo.getOne("123");
+            const result = await repo.getOne(userId.toString());
 
             expect(result).toEqual({
                 error: true,
                 statusCode: 500,
-                message: "histórico do Usuário não encontrado"
+                message: "Histórico do Usuário não encontrado"
             });
         });
 
         it('should handle any other error that might occur during the process', async () => {
-            userSummaryModel.findById = jest.fn().mockRejectedValue(new Error('Database error'));
+            userSummaryModel.find = jest.fn().mockRejectedValue(new Error('Database error'));
 
             const repo = new UserSummaryRepository();
-            const result = await repo.getOne("123");
+            const result = await repo.getOne(userId.toString());
 
             expect(result).toEqual({
                 error: true,
