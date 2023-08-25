@@ -111,14 +111,14 @@ export const Contacts = () => {
         setIsChatOpen(isOpen);
     };
 
-    function handleContactsPage(){
+    function handleContactsPage() {
         setShowRequests(false);
         getContacts().catch((err) => {
             console.error(err)
         })
     }
 
-    function handleRequestsPage(){
+    function handleRequestsPage() {
         setShowRequests(true);
         getRequests().catch((err) => {
             console.error(err)
@@ -140,17 +140,19 @@ export const Contacts = () => {
                 )}
                 <div className="content-contacts">
                     <div className="container-titles-contacts">
-                        <p className={`title-contacts title-content-left ${!showRequests ? 'active' : ''}`} onClick={ handleContactsPage}
+                        <p className={`title-contacts title-content-left ${!showRequests ? 'active' : ''}`} onClick={handleContactsPage}
                         >Contatos</p>
-                        <p className={`title-contacts title-content-right ${showRequests ? 'active' : ''}`} onClick={ handleRequestsPage}
+                        <p className={`title-contacts title-content-right ${showRequests ? 'active' : ''}`} onClick={handleRequestsPage}
                         >Solicitações</p>
                     </div>
                     <p className="contacts-line"></p>
 
                     {/* div dos cards */}
                     <div className="container-contact-cards">
-                        {(
-                            showRequests ? (
+                        {showRequests ? (
+                            requests?.length === 0 ? (
+                                <p>Você não tem solicitações</p>
+                            ) : (
                                 requests?.map((requester) => (
                                     <ContactCard
                                         key={requester._id}
@@ -161,6 +163,10 @@ export const Contacts = () => {
                                         typeOfCard="request"
                                     />
                                 ))
+                            )
+                        ) : (
+                            contacts?.length === 0 ? (
+                                <p>Você não tem contatos</p>
                             ) : (
                                 contacts?.map((friend) => (
                                     <ContactCard

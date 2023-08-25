@@ -299,7 +299,7 @@ export const Chat = ({ onChatOpen }: ChatProps) => {
                         </div>
                     </div>
                     : <div className="box-users-msgs">
-                        {user.friends.map((friend) => {
+                        {user.friends.length != 0 ? user.friends.map((friend) => {
                             const associatedChat = chats.find((chat: ChatData) => chat.members.some((member) => member._id === friend._id));
 
                             return (
@@ -318,13 +318,17 @@ export const Chat = ({ onChatOpen }: ChatProps) => {
                                     </div>
                                     {
                                         associatedChat?.unreadCount ?
-                                            <Badge badgeContent={associatedChat.unreadCount} color="secondary">
+                                            <Badge badgeContent={associatedChat.unreadCount} color="secondary" >
                                                 <MailIcon color="action" />
                                             </Badge> : <></>
                                     }
                                 </div>
                             )
-                        })}
+                        }) :
+                            <div style={{ display: "flex", alignItems: "center", height: "25rem" }}>
+                                <p>Você não tem contatos com quem conversar.</p>
+                            </div>
+                        }
                     </div>}
             </div>
         </div >
