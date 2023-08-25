@@ -1,19 +1,23 @@
 import "./styles.css"
 import { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
+
 import { Header } from "../../components/Header";
 import { ProgressBar } from "../../components/ProgressBar";
 import { CircleProgressBar } from "../../components/CircleProgressBar";
 import { PhotoProfile } from "../../components/PhotoProfile";
 import { Chat } from "../../components/Chat";
-import { useParams } from 'react-router-dom';
-import { generalRequest } from "../../generalFunction";
-import { User } from "../../interfaces/IUser.ts"
-import { useAuth } from '../../context/authContext';
 import { Modal } from "../../components/Modal";
 import { ContactDailyCard } from "../../components/ContactDailyCard/index.tsx";
 import { MiniCard } from "../../components/MiniCard/index.tsx";
 import ApexChart from "../../components/Chart";
 import { UserSummaryResponse, Summary } from "../../interfaces/IUserSummaryResponse"; 
+
+import { generalRequest } from "../../generalFunction";
+import { User } from "../../interfaces/IUser.ts"
+import { useAuth } from '../../context/authContext';
+
+import { DotsThreeVertical } from "@phosphor-icons/react";
 
 interface Task {
     _id: string;
@@ -191,6 +195,14 @@ export const Contact_profile: React.FC = () => {
     const handleChatToggle = (isOpen: boolean) => {
         setIsChatOpen(isOpen);
     };
+
+
+
+    const [isMiniCarrossel, setIsMiniCarrossel] = useState(false);
+    const handleMiniCarrossel = (isOpen: boolean) => {
+        console.log('caiu', isMiniCarrossel)
+        setIsMiniCarrossel(isOpen)
+    };
     
     const progress1 = parseInt(countMealCheckboxes().toFixed(0));
     const progress2 = parseInt(countTrainingCheckboxes().toFixed(0));
@@ -271,26 +283,43 @@ export const Contact_profile: React.FC = () => {
                     }
                 </div>
                 {isFriend ? (
-                    !isChatOpen? (
+                    (!isChatOpen || isMiniCarrossel) ? (
                         <div className="structure-carrossel-fc">
-                        <ContactDailyCard week_number={0} dataChanged={false} contactId={id}></ContactDailyCard>
-                        <ContactDailyCard week_number={1} dataChanged={false} contactId={id}></ContactDailyCard>
-                        <ContactDailyCard week_number={2} dataChanged={false} contactId={id}></ContactDailyCard>
-                        <ContactDailyCard week_number={3} dataChanged={false} contactId={id}></ContactDailyCard>
-                        <ContactDailyCard week_number={4} dataChanged={false} contactId={id}></ContactDailyCard>
-                        <ContactDailyCard week_number={5} dataChanged={false} contactId={id}></ContactDailyCard>
-                        <ContactDailyCard week_number={6} dataChanged={false} contactId={id}></ContactDailyCard>
-                    </div>
+                            <div className="container-icon-change-cards">
+                                <DotsThreeVertical
+                                    size={35}
+                                    color="white"
+                                    className="icon-change-cards"
+                                    onClick={()=> handleMiniCarrossel(!isMiniCarrossel)}
+                                />
+                            </div>
+
+                            <ContactDailyCard week_number={0} dataChanged={false} contactId={id}></ContactDailyCard>
+                            <ContactDailyCard week_number={1} dataChanged={false} contactId={id}></ContactDailyCard>
+                            <ContactDailyCard week_number={2} dataChanged={false} contactId={id}></ContactDailyCard>
+                            <ContactDailyCard week_number={3} dataChanged={false} contactId={id}></ContactDailyCard>
+                            <ContactDailyCard week_number={4} dataChanged={false} contactId={id}></ContactDailyCard>
+                            <ContactDailyCard week_number={5} dataChanged={false} contactId={id}></ContactDailyCard>
+                            <ContactDailyCard week_number={6} dataChanged={false} contactId={id}></ContactDailyCard>
+                        </div>
                     ) : (
                         <div className="structure-minicarrossel">
-                        <MiniCard week_number={0}></MiniCard>
-                        <MiniCard week_number={1}></MiniCard>
-                        <MiniCard week_number={2}></MiniCard>
-                        <MiniCard week_number={3}></MiniCard>
-                        <MiniCard week_number={4}></MiniCard>
-                        <MiniCard week_number={5}></MiniCard>
-                        <MiniCard week_number={6}></MiniCard>
-                    </div>
+                            <div className="container-icon-change-cards">
+                                <DotsThreeVertical
+                                    size={35}
+                                    color="white"
+                                    className="icon-change-cards"
+                                    onClick={()=> handleMiniCarrossel(!isMiniCarrossel)}
+                                />
+                            </div>
+                            <MiniCard week_number={0}></MiniCard>
+                            <MiniCard week_number={1}></MiniCard>
+                            <MiniCard week_number={2}></MiniCard>
+                            <MiniCard week_number={3}></MiniCard>
+                            <MiniCard week_number={4}></MiniCard>
+                            <MiniCard week_number={5}></MiniCard>
+                            <MiniCard week_number={6}></MiniCard>
+                        </div>
                     )
                 ): (
                     <div></div>

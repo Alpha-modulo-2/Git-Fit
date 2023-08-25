@@ -144,11 +144,11 @@ export const ContactDailyCard = ({ week_number, onClick, dataChanged, contactId 
       <div className="body-card">
         <div className="training-day-card">
           <h4>Treino:</h4>
-          <p>{daily_theme}</p>
+          <p className='two-line-clamp'>{daily_theme}</p>
         </div>
         <div className="meal-day-card">
           <h4>Refeições:</h4>
-          <p>{daily_food}</p>
+          <p className='two-line-clamp'>{daily_food}</p>
         </div>
       </div>
     </div>

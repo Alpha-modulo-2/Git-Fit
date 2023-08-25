@@ -1,6 +1,6 @@
-@import url('https://fonts.googleapis.com/css2?family=Italiana&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Italiana&display=swap");
 
-*{
+* {
   margin: 0;
   padding: 0;
 }
@@ -23,23 +23,23 @@
 }
 
 .logo-name-git {
-  font-family: 'Italiana', serif;
+  font-family: "Italiana", serif;
   padding-right: 1rem;
 }
 
 .logo-name-fit {
-  font-family: 'Italiana', serif;
+  font-family: "Italiana", serif;
   padding-left: 3rem;
 }
 
 .text-info {
   padding-top: 3rem;
-  width:400px ;
+  width: 400px;
 }
 
-.container-label{
+.container-label {
   padding-left: 3rem;
-  width:400px ;
+  width: 400px;
   height: 300px;
   display: flex;
   align-items: center;
@@ -47,7 +47,7 @@
   flex-direction: column;
 }
 
-.text-content{
+.text-content {
   margin-top: 6rem;
   letter-spacing: 0.2rem;
   display: flex;
@@ -55,4 +55,11 @@
   align-items: center;
   width: 400px;
   height: 500px;
+}
+
+@media (max-width: 768px) {
+  .container-all-content {
+    flex-direction: column;
+    padding: 0;
+  }
 }

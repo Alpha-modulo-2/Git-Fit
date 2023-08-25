@@ -60,6 +60,21 @@ body {
   justify-content: right;
 }
 
+.container-icon-change-cards{
+  display: flex;
+  justify-content: flex-end;
+  width: 95%;
+  padding-bottom: 15px;
+}
+.icon-change-cards {
+  background-color: rgba(115, 83, 186, 1);
+  border-radius: 20px;
+}
+
+.icon-change-cards:hover {
+  cursor: pointer;
+}
+
 @media (min-width: 380px) and (max-width: 900px) {
   .container-contact-profile {
     gap: 10px;

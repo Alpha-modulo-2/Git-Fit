@@ -11,7 +11,12 @@ import { generalRequest } from "../../generalFunction";
 import { Chat } from "../../components/Chat";
 import { MiniCard } from "../../components/MiniCard";
 import ApexChart from "../../components/Chart";
+<<<<<<< Updated upstream
 import { UserSummaryResponse, Summary } from "../../interfaces/IUserSummaryResponse"; 
+=======
+import { DotsThreeVertical } from "@phosphor-icons/react";
+
+>>>>>>> Stashed changes
 
 interface Task {
     _id: string;
@@ -118,6 +123,20 @@ export const Profile = () => {
         setIsChatOpen(isOpen);
     };
 
+    const [isMiniCarrossel, setIsMiniCarrossel] = useState(false);
+    const handleMiniCarrossel = (isOpen: boolean) => {
+        const largura = window.innerWidth
+        // || document.documentElement.clientWidth
+        // || document.body.clientWidth;
+        const altura = window.innerHeight
+        // || document.documentElement.clientHeight
+        // || document.body.clientHeight;
+        console.log(altura);
+        console.log(largura);
+        console.log('caiu', isMiniCarrossel)
+        setIsMiniCarrossel(isOpen)
+    };
+
     const progress1 = parseInt(countMealCheckboxes().toFixed(0));
     const progress2 = parseInt(countTrainingCheckboxes().toFixed(0));
 
@@ -191,6 +210,15 @@ export const Profile = () => {
                 </div>
                 {!isChatOpen ? (
                     <div className="structure-carrossel-fc">
+                        <div className="container-icon-change-cards">
+                            <DotsThreeVertical
+                                size={35}
+                                color="white"
+                                className="icon-change-cards"
+                                onClick={()=> handleMiniCarrossel(!isMiniCarrossel)}
+                            />
+                        </div>
+
                         <DailyCard week_number={0} dataChanged={false} onClick={() => navigate('/fullcard/0')}></DailyCard>
                         <DailyCard week_number={1} dataChanged={false} onClick={() => navigate('/fullcard/1')}></DailyCard>
                         <DailyCard week_number={2} dataChanged={false} onClick={() => navigate('/fullcard/2')}></DailyCard>
@@ -201,6 +229,15 @@ export const Profile = () => {
                     </div>
                 ) : (
                     <div className="structure-minicarrossel">
+                        <div className="container-icon-change-cards">
+                            <DotsThreeVertical
+                                size={35}
+                                color="white"
+                                className="icon-change-cards"
+                                onClick={()=> handleMiniCarrossel(!isMiniCarrossel)}
+                            />
+                        </div>
+
                         <MiniCard week_number={0} onClick={() => navigate('/fullcard/0')}></MiniCard>
                         <MiniCard week_number={1} onClick={() => navigate('/fullcard/1')}></MiniCard>
                         <MiniCard week_number={2} onClick={() => navigate('/fullcard/2')}></MiniCard>
