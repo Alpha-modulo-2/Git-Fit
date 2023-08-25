@@ -11,6 +11,7 @@ import { generalRequest } from "../../generalFunction";
 import { Chat } from "../../components/Chat";
 import { MiniCard } from "../../components/MiniCard";
 import ApexChart from "../../components/Chart";
+import { UserSummaryResponse, Summary } from "../../interfaces/IUserSummaryResponse"; 
 
 interface Task {
     _id: string;
@@ -48,13 +49,6 @@ interface CardData {
     }[];
 }
 
-interface History {
-    dates: string[];
-    tasks: number[];
-    meals: number[];
-    weight: number[];
-}
-
 export const Profile = () => {
     const navigate: NavigateFunction = useNavigate();
 
@@ -63,6 +57,12 @@ export const Profile = () => {
 
     const [cardData, setCardData] = useState<any[]>([]);
     const [showMiniCarrosel, setShowMiniCarrossel] = useState(true);
+    const [summary, setSummary] = useState<Summary>({
+        dates: [],
+        tasks: [],
+        meals: [],
+        weight: []
+    });
 
     useEffect(() => {
         const fetchCardsData = async () => {
@@ -121,12 +121,41 @@ export const Profile = () => {
     const progress1 = parseInt(countMealCheckboxes().toFixed(0));
     const progress2 = parseInt(countTrainingCheckboxes().toFixed(0));
 
-    const history: History = {
-        dates: ["2023-06-04", "2023-06-04", "2023-06-04"],
-        tasks: [45, 44, 42, 45],
-        meals: [70],
-        weight: [120]
-    };
+    useEffect(() => {
+        const fetchUserSummary = async () => {
+            try {
+                const response = await generalRequest(`/userSummary/${userId}`) as UserSummaryResponse
+                const data = response
+                if (data !== undefined) {
+                    const newSummary: Summary = {
+                        dates: [],
+                        tasks: [],
+                        meals: [],
+                        weight: []
+                    };
+
+                    data.userSummary.forEach(userSummary => {
+                        const date = new Date(userSummary.date);
+                        const formattedDate = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+                        const trainingPercentage = Math.round((userSummary.checks.trainingCard / 7) * 100);
+                        const mealPercentage = Math.round((userSummary.checks.mealsCard / 7) * 100);
+
+                        newSummary.dates.push(formattedDate);
+                        newSummary.tasks.push(trainingPercentage);
+                        newSummary.meals.push(mealPercentage);
+                        newSummary.weight.push(parseFloat(userSummary.weight));
+                    });
+                    console.log('newSummary', newSummary)
+                    setSummary(newSummary)
+                }
+            } catch (error) {
+                console.error('Erro ao buscar summary do usuário', error);
+            }
+        };
+        fetchUserSummary().catch(error => {
+            console.error('Erro ao buscar summary do usuário', error);
+        });
+    }, [userId]);
 
     return (
         <div className="profile">
@@ -142,7 +171,7 @@ export const Profile = () => {
                     </div>
                 )}
                 <div className="container-profile">
-                    <div className={`${history.dates.length <= 2 ? "align-centered": "container-photo-bars"}`}>
+                    <div className={`${summary.dates.length <= 2 ? "align-centered": "container-photo-bars"}`}>
                         <PhotoProfile user_name={user_name} url_photo={user_photo} />
                         <div className="container-profile-progress-bar">
                             <div className="div-profile-progress-bar">
@@ -156,8 +185,8 @@ export const Profile = () => {
                         </div>
                     </div>
                     {
-                        history.dates.length > 2 &&
-                        <ApexChart history={history} />
+                        summary.dates.length > 2 &&
+                        <ApexChart summary={summary} />
                     }
                 </div>
                 {!isChatOpen ? (

@@ -1,29 +1,13 @@
 import ReactApexChart from 'react-apexcharts';
 import React from 'react';
-
-interface HistoryProps {
-    dates: string[];
-    tasks: number[];
-    meals: number[];
-    weight: number[];
-}
-
-interface State {
-    series: any[];
-    options: any;
-    seriesLine: any[];
-    optionsLine: any;
-}
-
-interface ApexChartProps {
-    history: HistoryProps;
-}
+import { ApexChartProps, State } from '../../interfaces/IChart';
 
 class ApexChart extends React.Component<ApexChartProps, State> {
     constructor(props: ApexChartProps) {
         super(props);
 
-        const { dates, tasks, meals, weight } = props.history;
+        const { dates, tasks, meals, weight } = props.summary;
+        console.log('chart', props.summary)
     
         this.state = {
             series: [{
@@ -38,6 +22,25 @@ class ApexChart extends React.Component<ApexChartProps, State> {
             }],
             options: {
                 chart: {
+                    defaultLocale: 'pt',
+                    locales: [{
+                        name: 'pt',
+                        options: {
+                            months: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'],
+                            shortMonths: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
+                            days: ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'],
+                            shortDays: ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'],
+                            toolbar: {
+                                download: 'Baixar SVG',
+                                selection: 'Seleção',
+                                selectionZoom: 'Zoom de Seleção',
+                                zoomIn: 'Ampliar',
+                                zoomOut: 'Reduzir',
+                                pan: 'Mover',
+                                reset: 'Redefinir Zoom',
+                            }
+                        }
+                    }],
                     id: 'chart2',
                     type: 'line',
                     height: 200,
@@ -87,6 +90,25 @@ class ApexChart extends React.Component<ApexChartProps, State> {
                 }],
             optionsLine: {
                 chart: {
+                    defaultLocale: 'pt',
+                    locales: [{
+                        name: 'pt',
+                        options: {
+                            months: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'],
+                            shortMonths: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
+                            days: ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'],
+                            shortDays: ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'],
+                            toolbar: {
+                                download: 'Baixar SVG',
+                                selection: 'Seleção',
+                                selectionZoom: 'Zoom de Seleção',
+                                zoomIn: 'Ampliar',
+                                zoomOut: 'Reduzir',
+                                pan: 'Mover',
+                                reset: 'Redefinir Zoom',
+                            }
+                        }
+                    }],
                     id: 'chart1',
                     height: 80,
                     type: 'area',
@@ -128,7 +150,7 @@ class ApexChart extends React.Component<ApexChartProps, State> {
         return (
             <div id="wrapper">
                 <div id="chart-line2">
-                    <ReactApexChart options={this.state.options} series={this.state.series} type="line" height={280} />
+                    <ReactApexChart options={this.state.options} series={this.state.series} type="line" height={270} />
                 </div>
                 <div id="chart-line">
                     <ReactApexChart options={this.state.optionsLine} series={this.state.seriesLine} type="area" height={150} />

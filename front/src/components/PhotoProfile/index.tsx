@@ -6,9 +6,10 @@ import "./styles.css"
 interface PropTypes {
     url_photo: string;
     user_name: string;
+    userOccupation?: string;
 }
 
-export const PhotoProfile = ({url_photo, user_name}:PropTypes) => {
+export const PhotoProfile = ({url_photo, user_name, userOccupation}:PropTypes) => {
     const navigate = useNavigate();
     const { user } = useAuth();
 
@@ -31,6 +32,9 @@ export const PhotoProfile = ({url_photo, user_name}:PropTypes) => {
             )}
             <h3 className={`${window.location.href.includes('/profile') ? 
             "username": ""}`}>{user_name}</h3>
+           {userOccupation && (
+                <p>{userOccupation}</p>
+            )}
         </div>
     </div>
 
