@@ -98,22 +98,23 @@ export const Chat = ({ onChatOpen }: ChatProps) => {
         await chatWithFriend(friend._id, chats)
     }
 
+    const user_photo = new URL("../../assets/images/placeholderphoto.jpg", import.meta.url).href
 
     const fetchUserData = async () => {
-        if(user){
+        if (user) {
             try {
                 const response = await generalRequest(`/users/${user?._id}`);
                 setLoggedUser(response as User);
             } catch (error) {
                 console.error('Erro ao buscar dados do usuário', error);
-            } 
+            }
         }
-        
+
     };
-        
-        
-        
- 
+
+
+
+
 
     const searchChats = async (userId: string) => {
         try {
@@ -162,14 +163,14 @@ export const Chat = ({ onChatOpen }: ChatProps) => {
 
                 const newMessages = Array.isArray(messageData.chatMessage) ? messageData.chatMessage : [messageData.chatMessage];
                 setMessages(prevMessages => [...prevMessages, ...newMessages]);
-                
+
             }
         });
 
         socket.on('chatHistory', async (messages: SocketMessage) => {
             const messageList = Array.isArray(messages.chatMessage) ? messages.chatMessage : [messages.chatMessage];
             const reversedMessages = [...messageList].reverse(); // Cria uma cópia do array e inverte a ordem
-    
+
             setMessages(reversedMessages);
 
             const unreadMessages = reversedMessages.filter(message => !message.isRead && message.sender !== userId);
@@ -265,7 +266,7 @@ export const Chat = ({ onChatOpen }: ChatProps) => {
 
     return (
         <div className="chat-container">
-            <div className="chat-button" onClick={()=> toggleChat()}>
+            <div className="chat-button" onClick={() => toggleChat()}>
                 {chatOpen ?
                     <X size={40} color="white" className="close-button-msg" />
                     : <ChatCircleText size={40} color="white" />}
@@ -306,7 +307,7 @@ export const Chat = ({ onChatOpen }: ChatProps) => {
                                     <div style={{ display: "flex", gap: "10px" }}>
                                         <div className="img-card-msgs">
                                             <img
-                                                src={`/uploads/${friend.photo}` || new URL("../../assets/images/placeholderphoto.jpg", import.meta.url).href}
+                                                src={friend.photo ? `/uploads/${friend.photo}` : user_photo}
                                                 alt=""
                                             />
                                         </div>

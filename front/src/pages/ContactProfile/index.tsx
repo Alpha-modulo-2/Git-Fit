@@ -14,7 +14,7 @@ import { Modal } from "../../components/Modal";
 import { ContactDailyCard } from "../../components/ContactDailyCard/index.tsx";
 import { MiniCard } from "../../components/MiniCard/index.tsx";
 import ApexChart from "../../components/Chart";
-import { UserSummaryResponse, Summary } from "../../interfaces/IUserSummaryResponse"; 
+import { UserSummaryResponse, Summary } from "../../interfaces/IUserSummaryResponse";
 
 interface Task {
     _id: string;
@@ -101,10 +101,10 @@ export const Contact_profile: React.FC = () => {
                 console.error('Erro ao buscar dados dos cards', error);
             }
         };
-        fetchUserData().catch(()=>{
+        fetchUserData().catch(() => {
             console.error("Erro ao obter seus dados")
         });
-        fetchCardsData().catch(()=>{
+        fetchCardsData().catch(() => {
             console.error("Erro ao obter os cards")
         });
     }, []);
@@ -115,7 +115,7 @@ export const Contact_profile: React.FC = () => {
     if (userData != null) {
         user_name = userData.userName;
         if (userData.photo) {
-            user_photo = userData.photo;
+            user_photo = `/uploads/${userData.photo}`;
         }
     }
 
@@ -142,7 +142,7 @@ export const Contact_profile: React.FC = () => {
 
     useEffect(() => {
         checkFriendButton()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [userData])
 
     function addFriends(requesterId: string, recipientId: string): void {
@@ -160,25 +160,25 @@ export const Contact_profile: React.FC = () => {
     }
 
     function removeFriend(userId: string, friendId: string): void {
-        const response = generalRequest(`/user/${userId}/friend/${friendId}`, undefined , 'DELETE');
+        const response = generalRequest(`/user/${userId}/friend/${friendId}`, undefined, 'DELETE');
         response.then(response => {
-        if (response && typeof response === 'object' && 'status' in response) {
-        if (response.status === 204) {
-            setMessageModal("Amigo removido com sucesso!")
-            openModal();
-            setisFriend(false);
-        } else {
-            setMessageModal("Erro ao remover amizade")
-            openModal()
-        }
-        } else {
-        setMessageModal("Não foi possível remover a amizade")
-        openModal()
-        }
+            if (response && typeof response === 'object' && 'status' in response) {
+                if (response.status === 204) {
+                    setMessageModal("Amigo removido com sucesso!")
+                    openModal();
+                    setisFriend(false);
+                } else {
+                    setMessageModal("Erro ao remover amizade")
+                    openModal()
+                }
+            } else {
+                setMessageModal("Não foi possível remover a amizade")
+                openModal()
+            }
         })
-        .catch(error => {
-            console.error('Erro na requisição:', error);
-        });
+            .catch(error => {
+                console.error('Erro na requisição:', error);
+            });
     }
     const changeversion = () => {
         if (showMiniCarrosel) {
@@ -198,7 +198,7 @@ export const Contact_profile: React.FC = () => {
         console.log('caiu', isMiniCarrossel)
         setIsMiniCarrossel(isOpen)
     };
-    
+
     const progress1 = parseInt(countMealCheckboxes().toFixed(0));
     const progress2 = parseInt(countTrainingCheckboxes().toFixed(0));
 
@@ -254,13 +254,13 @@ export const Contact_profile: React.FC = () => {
                 <div className="container-contact-profile">
                     <div className="div-buttonAdd">
                         {!isFriend ? (
-                            <button className="buttonAdd" onClick={ () => addFriends(user?._id, id)}>Adicionar contato</button>
-                        ): (
-                            <button className="buttonAdd" onClick={ () => removeFriend(user?._id, id)}>Remover contato</button>
+                            <button className="buttonAdd" onClick={() => addFriends(user?._id, id)}>Adicionar contato</button>
+                        ) : (
+                            <button className="buttonAdd" onClick={() => removeFriend(user?._id, id)}>Remover contato</button>
                         )}
                     </div>
                     <div className={`${summary.dates.length > 2 && user?.occupation && isFriend ? "container-photo-bars" : "align-centered"}`}>
-                        <PhotoProfile user_name={user_name} url_photo={`/uploads/${user_photo}`} userOccupation={user.occupation} />
+                        <PhotoProfile user_name={user_name} url_photo={user_photo} userOccupation={userData?.occupation} />
                         <div className="container-profile-progress-bar">
                             <div className="div-profile-progress-bar">
                                 <ProgressBar progress={progress1} title_bar="Alimentação" />
@@ -285,7 +285,7 @@ export const Contact_profile: React.FC = () => {
                                     size={35}
                                     color="white"
                                     className="icon-change-cards"
-                                    onClick={()=> handleMiniCarrossel(!isMiniCarrossel)}
+                                    onClick={() => handleMiniCarrossel(!isMiniCarrossel)}
                                 />
                             </div>
 
@@ -304,7 +304,7 @@ export const Contact_profile: React.FC = () => {
                                     size={35}
                                     color="white"
                                     className="icon-change-cards"
-                                    onClick={()=> handleMiniCarrossel(!isMiniCarrossel)}
+                                    onClick={() => handleMiniCarrossel(!isMiniCarrossel)}
                                 />
                             </div>
                             <MiniCard week_number={0}></MiniCard>
@@ -316,10 +316,10 @@ export const Contact_profile: React.FC = () => {
                             <MiniCard week_number={6}></MiniCard>
                         </div>
                     )
-                ): (
+                ) : (
                     <div></div>
                 )}
-                
+
                 {modalIsOpen && (
                     <Modal children={messageModal} onClick={closeModal} />
                 )}
