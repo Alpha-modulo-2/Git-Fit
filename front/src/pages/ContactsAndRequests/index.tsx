@@ -111,6 +111,20 @@ export const Contacts = () => {
         setIsChatOpen(isOpen);
     };
 
+    function handleContactsPage(){
+        setShowRequests(false);
+        getContacts().catch((err) => {
+            console.error(err)
+        })
+    }
+
+    function handleRequestsPage(){
+        setShowRequests(true);
+        getRequests().catch((err) => {
+            console.error(err)
+        })
+    }
+
     return (
         <div className="contacts-page">
             <Header isLoggedIn={true} />
@@ -126,9 +140,9 @@ export const Contacts = () => {
                 )}
                 <div className="content-contacts">
                     <div className="container-titles-contacts">
-                        <p className={`title-contacts title-content-left ${!showRequests ? 'active' : ''}`} onClick={() => setShowRequests(false)}
+                        <p className={`title-contacts title-content-left ${!showRequests ? 'active' : ''}`} onClick={ handleContactsPage}
                         >Contatos</p>
-                        <p className={`title-contacts title-content-right ${showRequests ? 'active' : ''}`} onClick={() => setShowRequests(true)}
+                        <p className={`title-contacts title-content-right ${showRequests ? 'active' : ''}`} onClick={ handleRequestsPage}
                         >Solicitações</p>
                     </div>
                     <p className="contacts-line"></p>

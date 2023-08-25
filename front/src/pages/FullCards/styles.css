@@ -180,22 +180,24 @@ background-color: rgb(106, 99, 99);
 .task_line, .meal_line{
 display: flex;
 align-items: center;
-justify-content: flex-start;
+justify-content: space-between;
 }
 
 .task_line p{
-width: 36%;
-}
-
-.meal_line h3{
 width: 80%;
 }
+
+.meal_line p{
+width: 80%;
+font-size: 0.8rem;
+}
+
 
 .body_meal_card{
 color: white;
-width: 80%;
+width: 90%;
 height: 75%;
-padding-top: 1rem;
+padding: 1rem;
 display: flex;
 flex-direction: column;
 overflow-y: scroll;

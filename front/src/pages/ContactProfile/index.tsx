@@ -4,11 +4,14 @@ import { Header } from "../../components/Header";
 import { ProgressBar } from "../../components/ProgressBar";
 import { CircleProgressBar } from "../../components/CircleProgressBar";
 import { PhotoProfile } from "../../components/PhotoProfile";
+import { Chat } from "../../components/Chat";
 import { useParams } from 'react-router-dom';
 import { generalRequest } from "../../generalFunction";
 import { User } from "../../interfaces/IUser.ts"
 import { useAuth } from '../../context/authContext';
 import { Modal } from "../../components/Modal";
+import { ContactDailyCard } from "../../components/ContactDailyCard/index.tsx";
+import { MiniCard } from "../../components/MiniCard/index.tsx";
 import ApexChart from "../../components/Chart";
 import { UserSummaryResponse, Summary } from "../../interfaces/IUserSummaryResponse"; 
 
@@ -69,6 +72,7 @@ export const Contact_profile: React.FC = () => {
         meals: [],
         weight: []
     });
+    const [showMiniCarrosel, setShowMiniCarrossel] = useState(true);
 
     function openModal() {
         setModalIsOpen(true);
@@ -96,8 +100,12 @@ export const Contact_profile: React.FC = () => {
                 console.error('Erro ao buscar dados dos cards', error);
             }
         };
-        fetchUserData();
-        fetchCardsData();
+        fetchUserData().catch(()=>{
+            console.error("Erro ao obter seus dados")
+        });
+        fetchCardsData().catch(()=>{
+            console.error("Erro ao obter os cards")
+        });
     }, []);
 
     let user_name = "";
@@ -133,6 +141,7 @@ export const Contact_profile: React.FC = () => {
 
     useEffect(() => {
         checkFriendButton()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [userData])
 
     function addFriends(requesterId: string, recipientId: string): void {
@@ -170,6 +179,18 @@ export const Contact_profile: React.FC = () => {
             console.error('Erro na requisição:', error);
         });
     }
+    const changeversion = () => {
+        if (showMiniCarrosel) {
+            setShowMiniCarrossel(false);
+        } else {
+            setShowMiniCarrossel(true);
+        }
+    }
+
+    const [isChatOpen, setIsChatOpen] = useState(false);
+    const handleChatToggle = (isOpen: boolean) => {
+        setIsChatOpen(isOpen);
+    };
     
     const progress1 = parseInt(countMealCheckboxes().toFixed(0));
     const progress2 = parseInt(countTrainingCheckboxes().toFixed(0));
@@ -213,7 +234,16 @@ export const Contact_profile: React.FC = () => {
     return (
         <div className="profile">
             <Header isLoggedIn={true} />
-            <div className="structure-contact-profile">
+            <div className={`structure-contact-profile ${!isFriend ? "centered" : ""} `}>
+                {isChatOpen ? (
+                    <div className="message_box">
+                        <Chat onChatOpen={handleChatToggle}></Chat>
+                    </div>
+                ) : (
+                    <div className="buttoncarrossel" onClick={changeversion}>
+                        <Chat onChatOpen={handleChatToggle}></Chat>
+                    </div>
+                )}
                 <div className="container-contact-profile">
                     <div className="div-buttonAdd">
                         {!isFriend ? (
@@ -240,6 +270,32 @@ export const Contact_profile: React.FC = () => {
                         <ApexChart summary={summary} />
                     }
                 </div>
+                {isFriend ? (
+                    !isChatOpen? (
+                        <div className="structure-carrossel-fc">
+                        <ContactDailyCard week_number={0} dataChanged={false} contactId={id}></ContactDailyCard>
+                        <ContactDailyCard week_number={1} dataChanged={false} contactId={id}></ContactDailyCard>
+                        <ContactDailyCard week_number={2} dataChanged={false} contactId={id}></ContactDailyCard>
+                        <ContactDailyCard week_number={3} dataChanged={false} contactId={id}></ContactDailyCard>
+                        <ContactDailyCard week_number={4} dataChanged={false} contactId={id}></ContactDailyCard>
+                        <ContactDailyCard week_number={5} dataChanged={false} contactId={id}></ContactDailyCard>
+                        <ContactDailyCard week_number={6} dataChanged={false} contactId={id}></ContactDailyCard>
+                    </div>
+                    ) : (
+                        <div className="structure-minicarrossel">
+                        <MiniCard week_number={0}></MiniCard>
+                        <MiniCard week_number={1}></MiniCard>
+                        <MiniCard week_number={2}></MiniCard>
+                        <MiniCard week_number={3}></MiniCard>
+                        <MiniCard week_number={4}></MiniCard>
+                        <MiniCard week_number={5}></MiniCard>
+                        <MiniCard week_number={6}></MiniCard>
+                    </div>
+                    )
+                ): (
+                    <div></div>
+                )}
+                
                 {modalIsOpen && (
                     <Modal children={messageModal} onClick={closeModal} />
                 )}
