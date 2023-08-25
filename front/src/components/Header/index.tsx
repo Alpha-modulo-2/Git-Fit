@@ -14,8 +14,8 @@ export const Header = ({ isLoggedIn }: PropTypes) => {
   const navigate = useNavigate();
   const logo = new URL("../../assets/images/logo.png", import.meta.url).href;
 
-  function logoutPage(){
-    if(isLoggedIn){
+  function logoutPage() {
+    if (isLoggedIn) {
       document.cookie = 'session=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
       logout();
       navigate('/login');
@@ -24,13 +24,14 @@ export const Header = ({ isLoggedIn }: PropTypes) => {
 
   return (
     <header className="header">
-      <div>
-        <Link to="/landing_page" className="logo-img">
-          <img src={logo} alt="Logo" />
-        </Link>
-      </div>
+
       {!isLoggedIn && (
         <>
+          <div>
+            <Link to="/landing_page" className="logo-img">
+              <img src={logo} alt="Logo" />
+            </Link>
+          </div>
           <div className="header-menu">
             <nav className="header-menu-items">
               <Link to="/register" className="menu-items">
@@ -47,6 +48,11 @@ export const Header = ({ isLoggedIn }: PropTypes) => {
 
       {isLoggedIn && (
         <>
+          <div>
+            <Link to="/profile" className="logo-img">
+              <img src={logo} alt="Logo" />
+            </Link>
+          </div>
           <div className="header-menu">
             <nav className="header-menu-items">
               <Link to="/fullcard/0" className="menu-items">
@@ -75,4 +81,4 @@ export const Header = ({ isLoggedIn }: PropTypes) => {
       )}
     </header>
   );
-}; 
+};

@@ -68,7 +68,7 @@
 }
 
 .container-second-content-register {
-  padding-top: 2rem;
+  padding-top: 3.3rem;
 }
 
 .container-choose-photo-register{
@@ -90,8 +90,8 @@
 }
 
 .custom-file-label-register {
-  width: 8vw;
-  height: 8vw;
+  width: 12rem;
+  height: 12rem;
   display: inline-block;
   padding: 10px;
   border-radius: 50%;
@@ -105,8 +105,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 7vw;
-  height: 7vw;
+  width: 10rem;
+  height: 10rem;
   content: "+";
   font-size: 7vw;
   border-radius: 50%;
@@ -343,9 +343,6 @@ input:checked + .sliderR-round:before {
     width: 75px;
     height: 75px;
     font-size: 75px;
-  }
-  .container-second-content-register {
-    padding-top: 0.6rem;
   }
   .input-weight-register, .input-hight-register {
     height: 52px;

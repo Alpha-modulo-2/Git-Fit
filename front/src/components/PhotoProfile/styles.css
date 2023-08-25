@@ -2,7 +2,6 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  position: relative;
 }
 
 .name-profile {
@@ -10,8 +9,17 @@
   background-color: #c7d3eb;
   width: 170px;
   text-align: center;
+  height: 50px;
   padding: 0.5rem;
   border: 1px solid rgb(0, 0, 0);
+}
+.name-profile p{
+  font-size: 14px;
+  color: rgb(44, 44, 44);
+}
+
+.username {
+  margin-top: -30px;
 }
 
 .moldure-photo {
@@ -38,10 +46,12 @@
   justify-content: center;
   width: 30px;
   height: 30px;
-  bottom: 50px;
-  right: 20px;
+  bottom: 40px;
+  left: 110px;
   border-radius: 30px;
+  position: relative;
 }
+
 .icon-edit-container:hover {
   cursor: pointer;
   scale: 1.2;

@@ -6,9 +6,10 @@ import "./styles.css"
 interface PropTypes {
     url_photo: string;
     user_name: string;
+    userOccupation?: string;
 }
 
-export const PhotoProfile = ({url_photo, user_name}:PropTypes) => {
+export const PhotoProfile = ({url_photo, user_name, userOccupation}:PropTypes) => {
     const navigate = useNavigate();
     const { user } = useAuth();
 
@@ -21,15 +22,19 @@ export const PhotoProfile = ({url_photo, user_name}:PropTypes) => {
     return (
     <div className="structure-photo-profile">
         <div className="moldure-photo">
+            <img className="photo-profile" src={url_photo} />
+        </div>
+        <div className="name-profile">
             { window.location.href.includes('/profile') && (
                 <div className="icon-edit-container" onClick={verifyUser}>
                     <PencilSimpleLine size={20} color="black" className="icon-editpage" />
                 </div>
             )}
-            <img className="photo-profile" src={url_photo} />
-        </div>
-        <div className="name-profile">
-            <h3>{user_name}</h3>
+            <h3 className={`${window.location.href.includes('/profile') ? 
+            "username": ""}`}>{user_name}</h3>
+           {userOccupation && (
+                <p>{userOccupation}</p>
+            )}
         </div>
     </div>
 

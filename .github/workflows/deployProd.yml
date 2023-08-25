@@ -18,7 +18,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Create .env file
+      - name: Create ./back/.env file
         run: |
           echo HOST=${{ secrets.HOST }} >> ./back/.env
           echo PORT=${{ secrets.PORT }} >> ./back/.env
@@ -29,6 +29,13 @@ jobs:
           echo SSL_CERT_PATH=${{ secrets.SSL_CERT_PATH }} >> ./back/.env
           echo REDIS_HOST=${{ secrets.REDIS_HOST }} >> ./back/.env
           echo REDIS_PORT=${{ secrets.REDIS_PORT }} >> ./back/.env
+          echo REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }} >> ./back/.env
+
+      - name: Create .env file
+        run: |
+            echo MONGO_INITDB_ROOT_USERNAME=${{ secrets.MONGO_INITDB_ROOT_USERNAME }} >> ./.env
+            echo MONGO_INITDB_ROOT_PASSWORD=${{ secrets.MONGO_INITDB_ROOT_PASSWORD }} >> ./.env
+            echo REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }} >> ./.env
 
       - name: Create .key file
         run: |

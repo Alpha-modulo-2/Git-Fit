@@ -12,7 +12,7 @@ interface FormProps {
   handleHeightChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handlePasswordChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleConfirmPasswordChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  handleOccupationChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleOccupationChange: (occupation: string) => void;
   handleDeleteAccount: () => void;
   
   inputsPhotoValue: string;
@@ -28,13 +28,11 @@ interface FormProps {
 }
 
 export default function EditForm(props: FormProps) {
-  const [isProfessional, setIsProfessional] = useState(false);
-  const [occupation, setOccupation] = useState('');
-  const [selectedPhoto, setSelectedPhoto] = useState<string>(`./uploads/${props.inputsPhotoValue}`);
+  const [selectedPhoto, setSelectedPhoto] = useState<string>('');
+  const [isProfessional, setIsProfessional] = useState(props.inputsOccupationValue ? true  : false);
 
   const handleLocalPhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-
     if (file) {
       const reader = new FileReader();
 
@@ -48,9 +46,13 @@ export default function EditForm(props: FormProps) {
   };
 
   useEffect(() => {
+      const photoAddress = `/uploads/${props.inputsPhotoValue}`;
+      setSelectedPhoto(photoAddress);
+  }, [props.inputsPhotoValue]);
+
+  useEffect(() => {
     if (props.inputsOccupationValue) {
       setIsProfessional(true);
-      setOccupation(props.inputsOccupationValue);
     }
   }, [props.inputsOccupationValue]);
 
@@ -59,12 +61,12 @@ export default function EditForm(props: FormProps) {
     setIsProfessional(isChecked);
 
     if (!isChecked) {
-      setOccupation('');
+      props.handleOccupationChange("");
     }
   };
 
-  const handleOccupationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setIsProfessional(e.target.checked);
+  const handleLocalOccupationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    props.handleOccupationChange(e.target.value);
   };
 
   const handleWeightChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -212,8 +214,8 @@ export default function EditForm(props: FormProps) {
               type="text"
               className="input-edit"
               placeholder="Profissão"
-              value={occupation}
-              onChange={handleOccupationChange}
+              value={props.inputsOccupationValue}
+              onChange={handleLocalOccupationChange}
             />
           )}
         </div>

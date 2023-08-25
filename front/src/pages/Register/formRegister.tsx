@@ -46,7 +46,7 @@ const RegisterForm: React.FC<FormProps> = (props) => {
 
   const handleUserNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    const formattedValue = value.replace(/[^a-z]/g, "");
+    const formattedValue = value.replace(/[^a-zA-Z]/g, "");
     props.handleUserNameChange({
       target: { value: formattedValue },
     } as React.ChangeEvent<HTMLInputElement>);

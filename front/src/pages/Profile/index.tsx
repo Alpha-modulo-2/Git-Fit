@@ -10,12 +10,9 @@ import { useAuth } from '../../context/authContext';
 import { generalRequest } from "../../generalFunction";
 import { Chat } from "../../components/Chat";
 import { MiniCard } from "../../components/MiniCard";
+import ApexChart from "../../components/Chart";
+import { UserSummaryResponse, Summary } from "../../interfaces/IUserSummaryResponse"; 
 
-const convertToNumber = (stringValue: string) => {
-    const numericValue = stringValue ? stringValue.replace(/\D/g, '') : '';
-    const numberValue = parseFloat(numericValue) / (stringValue && stringValue.includes('cm') ? 100 : 1);
-    return numberValue;
-};
 interface Task {
     _id: string;
     description: string;
@@ -52,29 +49,6 @@ interface CardData {
     }[];
 }
 
-const Calc_IMC = (weight_imc: number, height_imc: number) => {
-    const imc = weight_imc / (height_imc * height_imc);
-    const imc_obj = {
-        imc_media: imc,
-        imc_class: "",
-        imc_color: "#00ff3c"
-    }
-    if (imc < 18.5) {
-        imc_obj.imc_class = "IMC: Abaixo";
-    }
-    if (imc >= 18.5 && imc < 25) {
-        imc_obj.imc_class = "IMC: Normal";
-    }
-    if (imc >= 25 && imc < 30) {
-        imc_obj.imc_class = "IMC: Sobrepeso";
-    }
-    if (imc >= 30) {
-        imc_obj.imc_class = "IMC: Obesidade";
-    }
-    return (imc_obj);
-}
-
-
 export const Profile = () => {
     const navigate: NavigateFunction = useNavigate();
 
@@ -83,6 +57,12 @@ export const Profile = () => {
 
     const [cardData, setCardData] = useState<any[]>([]);
     const [showMiniCarrosel, setShowMiniCarrossel] = useState(true);
+    const [summary, setSummary] = useState<Summary>({
+        dates: [],
+        tasks: [],
+        meals: [],
+        weight: []
+    });
 
     useEffect(() => {
         const fetchCardsData = async () => {
@@ -102,21 +82,14 @@ export const Profile = () => {
     }, [userId]);
 
     let user_name = "";
-    let weight = 0;
-    let heigth = 0;
     let user_photo = new URL("../../assets/images/placeholderphoto.jpg", import.meta.url).href
 
     if (user != null) {
         user_name = user.userName;
-        weight = convertToNumber(user.weight);
-        heigth = convertToNumber(user.height);
         if (user.photo) {
             user_photo = `/uploads/${user.photo}`;
         }
     }
-    const calcIMC = Calc_IMC(weight, heigth);
-    const progressIMC = (calcIMC.imc_media * 100) / 40;
-    const progressIMCircle = parseInt(progressIMC.toFixed(0));
 
     const countTrainingCheckboxes = () => {
         const totalDays = cardData.length;
@@ -148,6 +121,42 @@ export const Profile = () => {
     const progress1 = parseInt(countMealCheckboxes().toFixed(0));
     const progress2 = parseInt(countTrainingCheckboxes().toFixed(0));
 
+    useEffect(() => {
+        const fetchUserSummary = async () => {
+            try {
+                const response = await generalRequest(`/userSummary/${userId}`) as UserSummaryResponse
+                const data = response
+                if (data !== undefined) {
+                    const newSummary: Summary = {
+                        dates: [],
+                        tasks: [],
+                        meals: [],
+                        weight: []
+                    };
+
+                    data.userSummary.forEach(userSummary => {
+                        const date = new Date(userSummary.date);
+                        const formattedDate = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+                        const trainingPercentage = Math.round((userSummary.checks.trainingCard / 7) * 100);
+                        const mealPercentage = Math.round((userSummary.checks.mealsCard / 7) * 100);
+
+                        newSummary.dates.push(formattedDate);
+                        newSummary.tasks.push(trainingPercentage);
+                        newSummary.meals.push(mealPercentage);
+                        newSummary.weight.push(parseFloat(userSummary.weight));
+                    });
+                    
+                    setSummary(newSummary)
+                }
+            } catch (error) {
+                console.error('Erro ao buscar summary do usuário', error);
+            }
+        };
+        fetchUserSummary().catch(error => {
+            console.error('Erro ao buscar summary do usuário', error);
+        });
+    }, [userId]);
+
     return (
         <div className="profile">
             <Header isLoggedIn={true} />
@@ -162,21 +171,23 @@ export const Profile = () => {
                     </div>
                 )}
                 <div className="container-profile">
-                    <PhotoProfile user_name={user_name} url_photo={user_photo} />
-                    <div className="container-progress-bar">
-                        <div className="div-progress-bar">
-                            <ProgressBar progress={progress1} title_bar="Alimentação" />
-                            <CircleProgressBar progress={progress1} title_bar={""} />
-                        </div >
-                        <div className="div-progress-bar">
-                            <ProgressBar progress={progress2} title_bar="Exercícios" />
-                            <CircleProgressBar progress={progress2} title_bar={""} />
-                        </div>
-                        <div className="div-progress-bar">
-                            <ProgressBar progress={progressIMC} title_bar={calcIMC.imc_class} />
-                            <CircleProgressBar progress={progressIMCircle} title_bar={calcIMC.imc_media.toFixed(1)} />
+                    <div className={`${summary.dates.length <= 2 ? "align-centered": "container-photo-bars"}`}>
+                        <PhotoProfile user_name={user_name} url_photo={user_photo} />
+                        <div className="container-profile-progress-bar">
+                            <div className="div-profile-progress-bar">
+                                <ProgressBar progress={progress1} title_bar="Alimentação" />
+                                <CircleProgressBar progress={progress1} title_bar={""} />
+                            </div >
+                            <div className="div-profile-progress-bar">
+                                <ProgressBar progress={progress2} title_bar="Exercícios" />
+                                <CircleProgressBar progress={progress2} title_bar={""} />
+                            </div>
                         </div>
                     </div>
+                    {
+                        summary.dates.length > 2 &&
+                        <ApexChart summary={summary} />
+                    }
                 </div>
                 {!isChatOpen ? (
                     <div className="structure-carrossel-fc">

@@ -1,0 +1,100 @@
+.structure-contact-daily-card {
+  margin-bottom: 1rem;
+  width: 95%;
+  height: 15rem;
+  background-color: #151b228f;
+  border: 2px solid rgb(255, 255, 255);
+  border-radius: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  padding: 1.3rem;
+  color: rgb(255, 255, 255);
+  font-family: "Arial";
+}
+
+.structure-contact-daily-card:hover {
+  background-color: #151b22e9;
+}
+
+.structure-contact-daily-card:active {
+  background-color: #151b22e7;
+  border: 2px solid rgb(0, 0, 0);
+}
+
+.structure-contact-daily-card h2 {
+  line-height: 2rem;
+}
+
+.body-card {
+  margin: 1%;
+  border-top: 1.5px solid rgb(255, 255, 255);
+  display: flex;
+  height: 70%;
+  flex-direction: column;
+  justify-content: space-around;
+}
+
+.training-day-card {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.training-day-card p {
+  width: 100%;
+  font-size: 14px;
+  margin-left: 0.5rem;
+  word-wrap: break-word;
+}
+
+.meal-day-card {
+  width: 100%;
+  font-size: 14px;
+  flex-wrap: wrap; 
+}
+
+@media (max-width: 900px) {
+  .structure-contact-daily-card {
+    width: 95%;
+    height: 15rem;
+    padding: 0.8rem;
+    align-items: center;
+  }
+  .structure-contact-daily-card h2 {
+    font-size: 1rem;
+  }
+  .body-card {
+    margin: 1%;
+    border-top: 1.5px solid rgb(255, 255, 255);
+    height: 70%;
+    align-items: center;
+  }
+
+  .training-day-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .training-day-card p {
+    font-size: 0.8rem;
+    margin-left: 0;
+  }
+  .training-day-card h3 {
+    font-size: 0.9rem;
+    margin-left: 0;
+  }
+
+  .meal-day-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .meal-day-card p {
+    text-align: center;
+    font-size: 0.8rem;
+  }
+  .meal-day-card h3 {
+    font-size: 0.9rem;
+  }
+}
