@@ -110,7 +110,7 @@ export const Contact_profile: React.FC = () => {
     }, []);
 
     let user_name = "";
-    let user_photo = "https://www.logolynx.com/images/logolynx/b4/b4ef8b89b08d503b37f526bca624c19a.jpeg";
+    let user_photo = new URL("../../assets/images/placeholderphoto.jpg", import.meta.url).href
 
     if (userData != null) {
         user_name = userData.userName;
@@ -260,7 +260,7 @@ export const Contact_profile: React.FC = () => {
                         )}
                     </div>
                     <div className={`${summary.dates.length > 2 && user?.occupation && isFriend ? "container-photo-bars" : "align-centered"}`}>
-                        <PhotoProfile user_name={user_name} url_photo={user_photo} userOccupation={user.occupation} />
+                        <PhotoProfile user_name={user_name} url_photo={`/uploads/${user_photo}`} userOccupation={user.occupation} />
                         <div className="container-profile-progress-bar">
                             <div className="div-profile-progress-bar">
                                 <ProgressBar progress={progress1} title_bar="Alimentação" />
