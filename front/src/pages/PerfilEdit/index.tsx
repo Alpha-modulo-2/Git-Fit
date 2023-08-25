@@ -130,11 +130,9 @@ export const PerfilEdit = () => {
                 body: formData,
                 credentials: 'include'
             })
-            console.log('antes', req)
+
             if (req.ok) {
-                console.log('meio', req)
                 const result = await req.json()
-                console.log(result)
 
                 if (result.error == false && result.user !== undefined) {
                     setLoggedUser(result.user)

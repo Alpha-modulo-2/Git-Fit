@@ -145,7 +145,7 @@ export const Profile = () => {
                         newSummary.meals.push(mealPercentage);
                         newSummary.weight.push(parseFloat(userSummary.weight));
                     });
-                    console.log('newSummary', newSummary)
+                    
                     setSummary(newSummary)
                 }
             } catch (error) {

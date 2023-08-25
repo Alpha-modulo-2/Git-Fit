@@ -33,7 +33,6 @@ export default function EditForm(props: FormProps) {
 
   const handleLocalPhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    console.log(file)
     if (file) {
       const reader = new FileReader();
 
