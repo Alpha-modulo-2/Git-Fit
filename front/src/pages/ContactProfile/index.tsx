@@ -242,7 +242,7 @@ export const Contact_profile: React.FC = () => {
         <div className="profile">
             <Header isLoggedIn={true} />
             <div className={`structure-contact-profile ${!isFriend ? "centered" : ""} `}>
-                {isChatOpen ? (
+                {isChatOpen || isMiniCarrossel ? (
                     <div className="message_box">
                         <Chat onChatOpen={handleChatToggle}></Chat>
                     </div>

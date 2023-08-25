@@ -167,7 +167,7 @@ export const Profile = () => {
         <div className="profile">
             <Header isLoggedIn={true} />
             <div className="structure-profile">
-                {isChatOpen && isMiniCarrossel  ? (
+                {isChatOpen || isMiniCarrossel ? (
                     <div className="message_box">
                         <Chat onChatOpen={handleChatToggle}></Chat>
                     </div>
