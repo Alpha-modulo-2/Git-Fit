@@ -20,7 +20,6 @@ const userController = new UserController();
 
 const uploadMiddleware = multer(multerConfig);
 
-// router.post("/users/", validateInsert, clearCache, userController.insert);
 router.post("/users/", uploadMiddleware.single('photo'), validateInsert, clearCache, userController.insert);
 router.get("/users/search", authenticate, cacheMiddleware, validateQuery, userController.getByName);
 router.get("/users/:id", authenticate, cacheMiddleware, validateId, userController.getOne);
@@ -31,7 +30,6 @@ router.delete("/user/:userId/friend/:friendId", authenticate, validateRemoveFrie
 
 const cardController = new CardController();
 
-//Card Routes
 router.post("/cards/:userId", authenticate, clearCacheForCards, cardController.insert);
 router.get("/allcards/:userId", authenticate, cacheMiddleware, cardController.getAllCardsByUser);
 router.get("/card/:cardId", authenticate, cardController.getOne);
@@ -52,7 +50,6 @@ router.get("/friendRequests/:userId", authenticate, friendRequestsController.fri
 router.patch("/acceptFriend", authenticate, clearCache, friendRequestsController.acceptFriend);
 router.delete("/rejectFriend/:requestId", authenticate, clearCache, friendRequestsController.rejectFriend);
 
-
 const loginController = new LoginController();
 
 router.post("/login", validateLogin, loginController.login);
@@ -69,7 +66,7 @@ router.post("/messages/markAsRead", messageController.markAsRead);
 
 const userSummaryController = new UserSummaryController();
 
-router.post("/userSummary/:userId", authenticate, userSummaryController.getOne);
+router.get("/userSummary/:userId", authenticate, userSummaryController.getOne);
 
 router.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, '../public/index.html'));

@@ -14,8 +14,7 @@ export default class UserSummaryController {
 
         try {
             const result = await this.service.getOne(userId);
-            return res.status(result.statusCode).json(result.statusCode >= 300 ? result.message : result.user);
-
+            return res.status(result.statusCode).json(result.statusCode >= 300 ? result.message : result);
         } catch (error: any) {
             return res.status(500).json({
                 error: true,

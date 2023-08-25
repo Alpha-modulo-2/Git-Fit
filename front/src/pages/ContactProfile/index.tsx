@@ -13,6 +13,7 @@ import { Modal } from "../../components/Modal";
 import { ContactDailyCard } from "../../components/ContactDailyCard/index.tsx";
 import { MiniCard } from "../../components/MiniCard/index.tsx";
 import ApexChart from "../../components/Chart";
+import { UserSummaryResponse, Summary } from "../../interfaces/IUserSummaryResponse"; 
 
 interface Task {
     _id: string;
@@ -55,7 +56,6 @@ export const Contact_profile: React.FC = () => {
     const { user } = useAuth();
     if (user == undefined) {
         throw new Error("Usuário é undefined");
-
     }
 
     if (id == undefined) {
@@ -66,6 +66,12 @@ export const Contact_profile: React.FC = () => {
     const [isFriend, setisFriend] = useState<boolean>(false);
     const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
     const [messageModal, setMessageModal] = useState<string>('');
+    const [summary, setSummary] = useState<Summary>({
+        dates: [],
+        tasks: [],
+        meals: [],
+        weight: []
+    });
     const [showMiniCarrosel, setShowMiniCarrossel] = useState(true);
 
     function openModal() {
@@ -188,13 +194,42 @@ export const Contact_profile: React.FC = () => {
     
     const progress1 = parseInt(countMealCheckboxes().toFixed(0));
     const progress2 = parseInt(countTrainingCheckboxes().toFixed(0));
-    
-    const history = {
-        dates: ["2023-06-04", "2023-06-04", "2023-06-04"],
-        tasks: [45, 44, 42, 45],
-        meals: [70],
-        weight: [120]
-    };
+
+    useEffect(() => {
+        const fetchUserSummary = async () => {
+            try {
+                const response = await generalRequest(`/userSummary/${id}`) as UserSummaryResponse
+                const data = response
+                if (data !== undefined) {
+                    const newSummary: Summary = {
+                        dates: [],
+                        tasks: [],
+                        meals: [],
+                        weight: []
+                    };
+
+                    data.userSummary.forEach(userSummary => {
+                        const date = new Date(userSummary.date);
+                        const formattedDate = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+                        const trainingPercentage = Math.round((userSummary.checks.trainingCard / 7) * 100);
+                        const mealPercentage = Math.round((userSummary.checks.mealsCard / 7) * 100);
+
+                        newSummary.dates.push(formattedDate);
+                        newSummary.tasks.push(trainingPercentage);
+                        newSummary.meals.push(mealPercentage);
+                        newSummary.weight.push(parseFloat(userSummary.weight));
+                    });
+                    console.log('newSummary', newSummary)
+                    setSummary(newSummary)
+                }
+            } catch (error) {
+                console.error('Erro ao buscar summary do usuário', error);
+            }
+        };
+        fetchUserSummary().catch(error => {
+            console.error('Erro ao buscar summary do usuário', error);
+        });
+    }, [id]);
 
     return (
         <div className="profile">
@@ -217,8 +252,8 @@ export const Contact_profile: React.FC = () => {
                             <button className="buttonAdd" onClick={ () => removeFriend(user?._id, id)}>Remover contato</button>
                         )}
                     </div>
-                    <div className={`${history.dates.length > 2 && userData?.occupation && isFriend ? "container-photo-bars" : "align-centered"}`}>
-                        <PhotoProfile user_name={user_name} userOccupation={userData?.occupation} url_photo={user_photo} />
+                    <div className={`${summary.dates.length > 2 && userData?.occupation && isFriend ? "container-photo-bars" : "align-centered"}`}>
+                        <PhotoProfile user_name={user_name} url_photo={user_photo} />
                         <div className="container-profile-progress-bar">
                             <div className="div-profile-progress-bar">
                                 <ProgressBar progress={progress1} title_bar="Alimentação" />
@@ -231,8 +266,8 @@ export const Contact_profile: React.FC = () => {
                         </div>
                     </div>
                     {
-                        history.dates.length > 2 && userData?.occupation && isFriend &&
-                        <ApexChart history={history} />
+                        summary.dates.length > 2 && userData?.occupation && isFriend &&
+                        <ApexChart summary={summary} />
                     }
                 </div>
                 {isFriend ? (
